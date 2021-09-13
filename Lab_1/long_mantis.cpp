@@ -2,15 +2,8 @@
 #include <vector>
 #include <string>
 using namespace std;
-/*
-struct mnt{
 
-    char* mas;
-    int dgr;
-    bool is_negative;
 
-};
-*/
 class mnt
 {   
     public:
@@ -29,62 +22,6 @@ int pow(int a, int step)
         return a*pow(a, step-1);
     return pow(a*a, step/2);
 }
-
-/*
-void rv (vector<int> A)
-{
-    int tmp, sz;
-    sz = A.size();
-
-    for (int i = 0; i < sz/2 + sz% 1; i++)
-    {
-        tmp = A[sz-1-i];
-        A[sz-1-i] = A[i];
-        A[i] = tmp;
-
-    }
-
-}
-
-
-mnt sum(mnt a, mnt b)
-{
-    if (a.dgr > b.dgr)
-    {
-        for (int i = 0; i < a.dgr-b.dgr; i++)
-        {
-            b.A.insert(b.A.begin(), 0);
-        }
-    }
-
-    else
-    {
-        for(int i = 0; i < b.dgr - a.dgr; i++)
-        {
-            a.A.insert(a.A.begin(), 0);
-        }
-    }
-    rv(a.A);
-    rv(b.A);
-    // now they are both reversed, starting summing
-   
-    bool add_one = false;
-
-    mnt ret;
-    ret.dgr = a.dgr;
-    ret.A = vector<int> (a.A.size());
-
-
-    for(int i = 0; i < a.A.size(); i++)
-    {
-
-    }
-
-
-
-}
-*/
-
 
 
 
@@ -466,13 +403,14 @@ mnt multiplication(mnt a, mnt b)
     res.dgr = 0;
     res.is_negative =false;
     res.size = 1;
-
+    cout << endl;
     for(int i = b.size-1; i >= 0; i--)
     {
-        val = solo_mult(a, b.mas[i], b.size - i-2);
-        //pr_mas(val.mas, val.is_negative, val.dgr);
+        val = solo_mult(a, b.mas[i], a.dgr + b.size - i);
         res = sbm2(res, val);
+       
     }
+    cout << endl;
     res.dgr = a.dgr + b.dgr;
     return res;
     
@@ -483,10 +421,10 @@ mnt multiplication(mnt a, mnt b)
 int main()
 {
     /*
-    121341224124123
-    5
-    54474731812
-    8
+8834212
+4
+2438213
+1
     */
 
     
@@ -505,11 +443,14 @@ int main()
     a2 = cnv(s2, s2.size(), str_int(dg2), s2[0] == '-');
  
  
-    a3 = multiplication(a1, a2);
-    //a3 = solo_mult(a1, 2, 0);
+    //a3 = multiplication(a1, a2);
+    //a3 = solo_mult(a1, 9, 1);
+    a3 = sbm2(a1, a2);
     pr_mas(a3.mas, a3.is_negative, a3.dgr);
-    
-    
+    cout.precision(16);
+    //cout.adjustfield(16)
+    //cout << 88342.12 * 24.38213 << endl;
+    //cout << 82.1 * 321<< endl;
     return 0;
 
 }

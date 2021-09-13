@@ -68,14 +68,18 @@ void print(mnt a)
     if(a.is_negative)
         cout << '-';
 
-    for(int i = a.dgr; i < 0; i++)
+    if(a.dgr < 0)
+        cout << "0.";
+
+    for(int i = a.dgr; i < -1; i++)
     {
         cout << '0';
     }
+
     for(int i = 0; i <= a.dgr; i++)
         cout << (int) a.mas[i];
     
-    if(a.dgr != a.size -1)cout << '.' ;
+    if(a.dgr != a.size -1 && a.dgr >= 0)cout << '.' ;
 
     for(int i = max(a.dgr+1, 0); i < a.size; i++)
         cout << (int) a.mas[i];
@@ -119,7 +123,7 @@ mnt sbm2(mnt a, mnt b)
     }
 
     int a_sz = a.size +b_dgr, b_sz = b.size + a_dgr;
-    for(int i = 0; i < a_sz - b_sz; i++, shift++, cout << "HERE 1" << endl)
+    for(int i = 0; i < a_sz - b_sz; i++, shift++)
         if(a.size - 1 -i >= 0)
             ret.mas[shift] = (a.mas[a.size - 1 -i]);
         else{
@@ -129,7 +133,7 @@ mnt sbm2(mnt a, mnt b)
     
     
 
-    for(int i = 0; i < b_sz - a_sz; i++, shift++, cout << "HERE 2" << endl)
+    for(int i = 0; i < b_sz - a_sz; i++, shift++)
     {
         if(b.size - 1 -i >= 0) 
             ret.mas[shift] = b.mas[b.size - 1 -i];
@@ -157,7 +161,7 @@ mnt sbm2(mnt a, mnt b)
                 val -= 10;
                 add_one = 1;
             }
-            cout << "HERE 3" << endl;
+            //cout << "HERE 3" << endl;
 
             ret.mas[shift] = val;
             
@@ -173,7 +177,7 @@ mnt sbm2(mnt a, mnt b)
             }
             
             ret.mas[shift] = val;
-            cout << "HERE 4" << endl;
+            //cout << "HERE 4" << endl;
         
         }
     }
@@ -198,7 +202,7 @@ mnt sbm2(mnt a, mnt b)
                 }
 
                 add_one = 0;
-                cout << "HERE " <<(int) a.mas[i] << endl;
+                //cout << "HERE " <<(int) a.mas[i] << endl;
                 if(val > 9)
                 {
                     val -= 10;
@@ -206,7 +210,7 @@ mnt sbm2(mnt a, mnt b)
                 }
                 ret.mas[shift] = val;
 
-                cout << "HERE " << (int) val<< endl << endl;
+                //cout << "HERE " << (int) val<< endl << endl;
             }
     }
     else
@@ -230,7 +234,7 @@ mnt sbm2(mnt a, mnt b)
                 add_one = 1;
             }
             ret.mas[shift] = val;
-            cout << "HERE 6" << endl;
+            //cout << "HERE 6" << endl;
         }
     }
     int n_dgr = max(a.dgr, b.dgr);
@@ -251,6 +255,148 @@ mnt sbm2(mnt a, mnt b)
     return ret;
 }
 
+bool bigger (mnt a, mnt b)
+{
+
+    if(a.dgr > b.dgr)
+        return true;
+    else if(b.dgr > a.dgr)
+        return false;
+
+    else
+    {
+        for(int i = 0; i < min(a.size, b.size); i++)
+        {
+            if(a.mas[i] > b.mas[i])
+                return true;
+            if(b.mas[i] > a.mas[i])
+                return false;
+        }
+    }    
+
+    return false;
+
+}
+
+
+mnt substraction(mnt a, mnt b, bool is_negative = false)
+{
+    mnt ret;
+    int remove_one = 0, val;
+    bool writed_number;
+    // a - b, 
+    if(bigger(b, a))
+        return substraction(b, a, true);
+
+
+    int a_dgr = a.dgr, b_dgr = b.dgr;
+    while(a_dgr < 0 || b_dgr < 0)
+    {
+        a_dgr++;
+        b_dgr++;
+    }
+
+    int a_sz = a.size + b_dgr, b_sz = b.size + a_dgr, shift = 0;
+
+    for(int i = 0; i < a_sz - b_sz; i++, shift++)
+        ret.mas[shift] =a.mas[a.size - 1 -i];
+
+    if (b_sz > a_sz)
+    {
+        for(int i = 0; i < b_sz - a_sz; i++, shift++)
+        {
+            if(b.size - 1 -i >= 0)
+                val = 0 - remove_one - b.mas[b.size - 1 -i];
+            else
+                val = 0 - remove_one;
+            if (val < 0)
+            {
+                val += 10;
+                remove_one = 1;
+                writed_number = true;
+            }
+            //cout << "HERE1 " << val << endl;
+            ret.mas[shift] = val;;
+        
+        }
+    }
+
+
+    for(int i = 0; i < min(a.size, b.size) - abs(a_dgr- b_dgr); i++, shift++)
+    {
+        if(a_sz > b_sz)
+        {
+            val = a.mas[a.size - i - 1 - (a_sz - b_sz)] - b.mas[b.size - i - 1] - remove_one;
+            remove_one = 0; 
+            if (val < 0)
+            {
+                val += 10;
+                remove_one = 1;
+            }
+            ret.mas[shift] = val;
+        }
+        else
+        {
+            val = a.mas[a.size - i - 1] - b.mas[b.size - i - 1 - (b_sz - a_sz)] - remove_one;
+            remove_one = 0; 
+            if (val < 0)
+            {
+                val += 10;
+                remove_one = 1;
+            }
+            //cout<< "HERE2 " << (int) val << endl;
+            ret.mas[shift] = val;
+        }
+    }
+    
+    if (a.dgr > b.dgr)
+    {
+        for(int i = a.dgr - b.dgr - 1; i >= 0; i--, shift++)
+        {
+                
+            if(a.size > i)
+                val = a.mas[i] - remove_one;
+            else if(!writed_number)
+                val = 0 - remove_one;
+            else
+            {
+                shift --;
+                continue;
+            }
+            remove_one = 0;
+            if (val < 0)
+            {
+                val += 10;
+                remove_one = 1;
+            }
+            //cout << "HERE3 " << (int) val << endl;
+            ret.mas[shift] = val;
+        }
+    }
+
+    int i = shift-1, n_dgr = a.dgr;
+    //cout << "HERE4 " << i << ' ' << (int) (ret.mas[i] == 0)<< endl;
+    while(ret.mas[i] == 0)
+    {
+        i--;
+        n_dgr--;
+        shift--;
+    }
+
+
+    /*
+    problem with zero!!!! need specific zero-number type.
+    */
+
+
+    ret.size = shift;
+    ret.dgr = n_dgr;
+    ret.is_negative = is_negative;
+    reverse(ret);
+    return ret;
+
+}
+
 
 int main()
 {
@@ -261,7 +407,7 @@ int main()
 
     //cout << a.dgr << ' ' << b.dgr << endl;
  
-   mnt res = sbm2(a, b);
+   mnt res = substraction(a, b);
 
     //pr_mas(res.mas, res.size);
    print(res);

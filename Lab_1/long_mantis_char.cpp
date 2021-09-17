@@ -3,13 +3,13 @@
 
 using namespace std;
 
-
+const int SIZE = 256;
 class mnt
 {   
     public:
-        char mas[256];
+        char mas[SIZE];
         int dgr = 0;
-        int size = 256;
+        int size = SIZE;
         bool is_negative = false;
         bool is_zero = false;
    
@@ -22,7 +22,7 @@ mnt copy(mnt a)
 {
     mnt b;
 
-    char mas_cp[256];
+    char mas_cp[SIZE];
     b.dgr = a.dgr;
     b.is_negative = a.is_negative;
     b.size = a.size;
@@ -74,7 +74,7 @@ mnt convert(string s, int n)
 
     for(int i = 1; i < s.size(); i++)
     {
-        a.mas[i] = s[i] - '0';
+        a.mas[i - is_negative] = s[i] - '0';
         //cout << (int) a.mas[i] << ' ';
     }    
 
@@ -134,6 +134,43 @@ mnt take_input()
     //cout << s.size() << ' ' << d << endl;
     //cout << s << endl;
     return(convert(s, d));
+}
+
+void clear(string &s)
+{
+    for(int i = s.size(); i >= 1; i++)
+    {
+        if(s[i] == '0')
+            s.erase(i);
+    }
+
+    
+}
+
+mnt take_input_one_line()
+{
+    string s;
+    getline(cin, s);
+
+    int s_pos = 0;
+    bool finded = false;
+    for(; s_pos < s.size(); s_pos++)
+    {
+        if(s[s_pos] == '.')
+        {
+            finded = true;
+            break;
+        }    
+    }
+    
+    if(finded)
+    {
+        clear(s);
+        return convert(s, s_pos-1);
+    }
+
+    
+
 }
 
 mnt sbm2(mnt a, mnt b)
@@ -431,9 +468,6 @@ mnt substraction(mnt a, mnt b, bool is_negative = false)
     }
 
 
-    /*
-    problem with zero!!!! need specific zero-number type.
-    */
 
 
     ret.size = shift;
@@ -608,6 +642,13 @@ public:
     void print()
     {
         cout << endl;
+
+    if(value.is_zero)
+    {
+        cout << "0.0" << endl;
+        return;
+    }
+
     if(value.is_negative)
         cout << '-';
 
@@ -648,6 +689,8 @@ int main()
     LongFloat C;
   
     C = A * B;
+    A.print();
+    B.print();
     C.print();
     
    

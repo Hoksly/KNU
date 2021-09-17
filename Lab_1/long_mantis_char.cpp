@@ -470,6 +470,15 @@ mnt multipicata_one_digit(mnt &a, char d, char add_dgr)
 
 mnt multipication(mnt &a, mnt &b)
 {
+    if(a.is_zero || b.is_zero)
+    {
+        mnt res;
+        res.is_zero = true;
+        res.size = 1;
+        res.mas[0] = 0;
+        res.dgr = 0;
+        return res;
+    }
     mnt res, q;
     res.dgr = 0;
     res.is_negative = false;
@@ -631,25 +640,16 @@ public:
 
 int main()
 {
-    mnt a, b;
-    a = take_input();
-    b = take_input();
+
     
-    
-    //cout << a.dgr << ' ' << b.dgr << endl;
-    LongFloat A(a);
-    LongFloat B(b);
+   
+    LongFloat A(take_input());
+    LongFloat B(take_input());
     LongFloat C;
-   //mnt res = multipicata_one_digit(a, 2, 0);
-   //mnt res = copy(a);
-   // mnt res = sbm2(a, b);
-    //pr_mas(res.mas, res.size);
-    
+  
     C = A * B;
     C.print();
     
-    
-   //cout << (int) res.mas[0] << endl;
    
 
 

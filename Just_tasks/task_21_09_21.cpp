@@ -1,6 +1,19 @@
 #include <iostream>
+#include <cmath>
 
 using namespace std;
+
+
+long double cos_rec(long double x, int n, long double accuracy = 1e-15)
+{
+    if(fabs(x) < accuracy)
+        return x;
+
+    else{
+        return x + cos_rec(x*2*n/(2*n *(2*n-1)), n+1) * (n%2 == 1)? -1: 1;
+    }
+
+}
 
 
 int cos_sm( double x, double accuracy =1e-15)
@@ -70,7 +83,7 @@ int main()
     double x, accuracy;
     //cin >> x >> accuracy;
     cin >> x;
-    double res = sin_sm(x);
+    double res = cos_rec(x, 0);
     cout.precision(16);
-    //cout << res << endl;
+    cout << res << endl;
 }

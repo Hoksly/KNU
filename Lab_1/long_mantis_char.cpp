@@ -689,11 +689,12 @@ int main()
     LongFloat C;
   
     C = A * B;
-    A.print();
-    B.print();
+    //A.print();
+    //B.print();
     C.print();
     
-   
+    char a = '0';
+    //out << a - 1 << endl;
 
 
     return 0;

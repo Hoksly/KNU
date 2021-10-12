@@ -14,17 +14,20 @@ const unsigned int MAX_QUANT_OF_VAR = 40;
 const unsigned int MAX_LEN_FILE = 1000;
 const unsigned int MAX_STRING_AS_VALUE_LEN = 128;
 const unsigned int MAX_FUNCTION_NAME_LEN = 56;
-const unsigned int MAX_NUMBER_LEN = 128;
+const unsigned int MAX_NUMBER_LEN = 127;
+
 
 const char STRING_TYPE_NAME[MAX_TYPE_LEN] = "string";
 const char INT_TYPE_NAME[MAX_TYPE_LEN] = "int";
-
+char PRINT_FUNCTION[MAX_FUNCTION_NAME_LEN] = "print";
 
 
 map <char*, char*> Variables;
 map <char*, long*> Variables_int_values;
 map <char*, char*> Variables_string_values;
-vector<char*> Functions_name;
+vector <char*> Functions_name(1, PRINT_FUNCTION);
+
+
 
 //specific container, which would contain pointers to containers with values -> function of clearing values, when it's changing type
 
@@ -57,7 +60,7 @@ void read_file(char *filename, char out_str[][256])
         //std::cout << out_str[f] << '\n';
         f++;
     }while(true);
-
+    
     fclose(file);
 
 }
@@ -138,25 +141,36 @@ int const_identificator(char **ch, long *ret_int,const  int &line_number)
     return 0;
     
 }
+bool is_string(char **ch)
+{
+    return (**ch == '"');
+}
 
+bool is_number(char **ch)
+{
+    return('0' <= **ch && **ch <= '9');
+}
 int const_string_identificator(char **ch, char* ret, const int &line_number)
-{   
+{   int counter = 0;
     if(**ch != '"')
         {cout << "Wrong usage of function, which finding string constants! Rewrite core code!" << endl; return 1;}
     (*ch)++;
-
+    
     while(**ch != '"')
     {
-        if (**ch == '\n')
+        if (**ch == 0)
         {
-            cout << "Error while parsing string in line: "<<line_number<< "Have you missed symbol " << '"' << '?'<< endl;; 
+            cout << "Error while parsing string in line "<<line_number<< ". Have you missed symbol '" << '"' << "'?"<< endl;; 
             return 1;
         } 
+        if(counter > MAX_STRING_AS_VALUE_LEN)
+            {cout << "Error in line " << line_number << " string is too large (max size - 127 symbols)." << endl; return 1;}
         *ret = **ch;
         ret++;
         (*ch)++;
-
+        ++counter;
     }
+    cout << endl;
     
     *ret = '\0';
     return 0;
@@ -198,14 +212,18 @@ int type_identificator(char **ch, char *ret,const int &line_number)
 }
 
 
-int oprtr(char **ch, char* ret)
+int oprtr(char **ch, char* ret, const int &line_number, bool show_message = true)
 {
     clear_spaces(ch); //Is it necessary here? YES
+    
     if(!(**ch == '+'|| **ch == '/' || **ch == '-' || **ch == '*' || **ch == '='))
-    {
+    {   
+        if(show_message)
+            cout << "Error in line " << line_number << " Have you miss operator?" << endl;
         return 1;
+         
     }
-
+    
     *ret = **ch;   
     (*ch)++;
     
@@ -235,6 +253,43 @@ bool is_declarated_variable(char *var)
             return true;         
     }  
     return false;
+}
+
+int delete_variable(char *var_name)
+{
+    auto var_1_pointer = Variables.begin();
+    auto var_int_pointer = Variables_int_values.begin();
+    auto var_string_pointer = Variables_string_values.begin();
+
+    for(; var_1_pointer != Variables.end(); ++var_1_pointer)
+    {
+        if(!strcmp(var_1_pointer->first, var_name)) 
+            break;       
+    }
+    if(!strcmp(var_1_pointer->first, var_name))
+        Variables.erase(var_1_pointer);
+    else{
+        cout << "Variable " << var_name << " Has not been declarated yet" << endl; return 1;}
+    
+
+    for(; var_int_pointer != Variables_int_values.end(); ++var_int_pointer)
+    {
+        if(!strcmp(var_int_pointer->first, var_name)) 
+            break;       
+    }
+    if(!strcmp(var_int_pointer->first, var_name))
+        Variables_int_values.erase(var_int_pointer);  
+
+    for(; var_string_pointer != Variables_string_values.end(); ++var_string_pointer)
+    {
+        if(!strcmp(var_string_pointer->first, var_name)) 
+            break;       
+    }
+
+    if(!strcmp(var_string_pointer->first, var_name))
+        Variables_string_values.erase(var_string_pointer); 
+
+    return 0; 
 }
 
 int clear_or_create_new_int_variable(char *var_name)
@@ -364,6 +419,7 @@ int clear_or_create_new_string_variable(char *var_name)
 
 int operation_assigment_string_value(char *var_name, char *new_value , const int &line_number)
 {
+    
     if(clear_or_create_new_string_variable(var_name))
         return 1;
     
@@ -373,9 +429,9 @@ int operation_assigment_string_value(char *var_name, char *new_value , const int
         if(!strcmp(var_pointer->first, var_name))
             break;
     }
-
+    
     if(!strcmp(var_pointer->second, var_name))
-        {cout << "Error in line " << line_number << "Is declarated in wrong way? (couldn't find it in list of string variables)" << endl; return 1;}
+        {cout << "Error in line " << line_number << "Is declarated in wrong way? (couldn't find it in list of string variables)" << endl; return 1;}    
     strcpy(var_pointer->second, new_value);
     
 
@@ -417,7 +473,8 @@ int compare_types(char *var1, char *var2, const int &line_number, char *res, con
             break;         
     }  
 
-    if(!strcmp(var_2_pointer->second, var_2_pointer->second))
+    if(!strcmp(var_1_pointer->second, var_2_pointer->second))
+    {   
         if(!strcmp(var_2_pointer->second, STRING_TYPE_NAME))
         {
             strcpy(res, STRING_TYPE_NAME);
@@ -428,13 +485,14 @@ int compare_types(char *var1, char *var2, const int &line_number, char *res, con
             strcpy(res, INT_TYPE_NAME);
             return 0;
         }
+    }
     else
     {   
-        cout << "Error in line: " << line_number << " operation'"<< operation<< "' is not defined for clases ";
+        cout << "Error in line: " << line_number << " operation '"<< operation<< "' is not defined for clases ";
         cout << var_2_pointer->second << " and " << var_1_pointer->second << endl;
         return 1;
     }
-
+    return 0;
 }
 
 int operation_plus(char *var1, char *var2, char *var3, const int &line_number)
@@ -519,9 +577,10 @@ int operation_plus(char *var1, char *var2, char *var3, const int &line_number)
     return 0;
 }
 
+
+
 int operation_minus(char *var1, char *var2, char *var3, const int &line_number)
 {
-
     return 0;
 }
 
@@ -538,34 +597,111 @@ int operation_division_type_1(char *var1, char *var2, char *var3, const int &lin
 }
 
 
+int work_with_function(char **ch, char *function_name, const int &line_number)
+{
+    return 0;
+}
+
 
 
 
 int simple_operation(char **ch, char *var1, const int &line_number)
 {
     
-    char var2[MAX_VAR_LEN], var3[MAX_VAR_LEN];
+    //char var2[MAX_VAR_LEN], var3[MAX_VAR_LEN];
+    char *var2 = new char[MAX_VAR_LEN];
+    char *var3 = new char[MAX_VAR_LEN];
+    
     clear_spaces(ch);
-    var_identificator(ch, var2, line_number);
+    
+    if(is_string(ch))
+        {
+            
+            char *string_value = new char[MAX_STRING_AS_VALUE_LEN];
+            
+            
+            if(const_string_identificator(ch, string_value, line_number) == 1)
+                {delete [] string_value; return 1;}
+            
+            if(operation_assigment_string_value(var2, string_value, line_number) == 1)
+                {delete [] string_value; return 1;}
 
-    if(!is_declarated_variable(var2)){
-        cout <<"Error in " << line_number << "line: "<< var2 << " is not declarated is this scope" << endl; 
-        return 1;}
+        }
+
+    else if(is_number(ch))
+    {
+       
+        long *long_value = new long;
+            
+            
+        if(const_identificator(ch, long_value, line_number) == 1)
+            {delete long_value; return 1;}
+        if(operation_assigment_int_value(var2, long_value, line_number) == 1)
+            {delete long_value; return 1;}
+        
+    }
+    else
+    {  
+        if(var_identificator(ch, var2, line_number) == 1)
+            {cout << "errr" << endl; return 1;}
+
+        if(!is_declarated_variable(var2)){
+            cout <<"Error in " << line_number << "line: "<< var2 << " is not declarated is this scope" << endl; 
+            return 1;}
+    }
+    
 
     clear_spaces(ch);
+
     char oper[1];
-    oprtr(ch, oper);
-
+    
+    if(oprtr(ch, oper, line_number, true) == 1)
+        return 1;
+    
     if(oper[0] == '=') 
         cout <<"Error in " << line_number << "line: "<< "Second operator '='" << endl;
     
     clear_spaces(ch);
-
-    var_identificator(ch, var3, line_number);
     
-    if(!is_declarated_variable(var3)){
-        cout <<"Error in " << line_number << "line: "<< var2 << " is not declarated is this scope" << endl; 
-        return 1;}
+    if(**ch == 0)
+        {var1 = var2; return 0;}
+    
+    if(is_string(ch))
+        {
+            
+            char *string_value = new char[MAX_STRING_AS_VALUE_LEN];
+            
+            
+            if(const_string_identificator(ch, string_value, line_number) == 1)
+                {delete [] string_value; return 1;}
+            
+            if(operation_assigment_string_value(var3, string_value, line_number) == 1)
+                {delete [] string_value; return 1;}
+
+        }
+
+    else if(is_number(ch))
+    {   
+        
+        long *long_value = new long;
+            
+            
+        if(const_identificator(ch, long_value, line_number) == 1)
+            {delete long_value; return 1;}
+        if(operation_assigment_int_value(var3, long_value, line_number) == 1)
+            {delete long_value; return 1;}
+        
+    }
+    else
+    {
+        
+        if(var_identificator(ch, var3, line_number) == 1)
+            return 1;
+
+        if(!is_declarated_variable(var3)){
+            cout <<"Error in " << line_number << "line: "<< var2 << " is not declarated is this scope" << endl; 
+            return 1;}
+    }
 
 
     if(oper[0] == '+')
@@ -580,6 +716,16 @@ int simple_operation(char **ch, char *var1, const int &line_number)
     else if(oper[0] == '/')
         operation_division_type_1(var1, var2, var3, line_number);
 
+
+    delete [] var1;
+    delete [] var2;
+    return 0;
+}
+
+
+int not_simple_operation(char **ch, char *var1, const int &line_number)
+{
+    
     return 0;
 }
 
@@ -600,7 +746,7 @@ int work_with_one_line(char *ch_pointer, const int &line_number)
 
     char oprt[1];
     
-    if(oprtr(ch, oprt))
+    if(oprtr(ch, oprt, line_number, false))
         cout << "Error while parsing expression in line "<< line_number <<". Did you miiss operator?" << endl << ch_pointer << endl; // also should call real error
     
     clear_spaces(ch);
@@ -612,14 +758,17 @@ int work_with_one_line(char *ch_pointer, const int &line_number)
         
         if(**ch == '"')
         {
-            
+               
             char *string_value = new char[MAX_STRING_AS_VALUE_LEN];
             
             
-            const_string_identificator(ch, string_value, line_number);
+            if(const_string_identificator(ch, string_value, line_number) == 1)
+                {delete [] string_value; return 1;}
             
-            operation_assigment_string_value(var1, string_value, line_number);
-            delete [] string_value;
+            if(operation_assigment_string_value(var1, string_value, line_number) == 1)
+                {delete [] string_value; return 1;}
+            
+            return 0;
             
         }
         else if('0' <= **ch && **ch <= '9')
@@ -627,9 +776,10 @@ int work_with_one_line(char *ch_pointer, const int &line_number)
             long *long_value = new long;
             
             
-            const_identificator(ch, long_value, line_number);
-            operation_assigment_int_value(var1, long_value, line_number);
-            
+            if(const_identificator(ch, long_value, line_number) == 1)
+                {delete long_value; return 1;}
+            if(operation_assigment_int_value(var1, long_value, line_number) == 1)
+                {delete long_value; return 1;}
         }
         else
         {
@@ -643,19 +793,20 @@ int work_with_one_line(char *ch_pointer, const int &line_number)
         return 1;
     }
     
-
+    delete ch;
+    
 
     return 0;
 }
 
 
 
-void process()
+int process()
 {
     
     
     char file[MAX_LEN_FILE][MAX_LEN_LINE];
-    read_file("example.py", file);
+    read_file("example.txt", file);
     int line = 0;
     while (file[line][0] != 0)
     {   
@@ -664,13 +815,15 @@ void process()
 
         char *uk = file[line];
         char **pntr = new char*;
-        cout << line << endl;
-        work_with_one_line(uk, line+1);
+        //cout << line << endl;
+        if(work_with_one_line(uk, line+1) == 1)
+            return 1;
         
         ++line;
     
     }
-
+    
+    // Debug
     for(auto it = Variables.begin(); it != Variables.end(); ++it)
         cout << it->first << ' ' << it->second << endl;
     
@@ -679,7 +832,7 @@ void process()
 
     for(auto it = Variables_string_values.begin(); it != Variables_string_values.end(); ++it)
         cout << it->first << ' ' << (it->second) << endl;
-
+    
     
     /*
     *pntr = uk;
@@ -690,7 +843,7 @@ void process()
     
     
     
-
+   return 0;
    
 }
 

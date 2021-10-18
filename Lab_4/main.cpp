@@ -613,7 +613,7 @@ int simple_operation(char **ch, char *var1, const int &line_number)
     char *var3 = new char[MAX_VAR_LEN];
     
     clear_spaces(ch);
-    
+    /**/
     if(is_string(ch))
         {
             

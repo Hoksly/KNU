@@ -11,6 +11,7 @@ const int MAX_NAME_LEN = 40;
 const int MAX_DATE_OF_BIRTH_LEN = 11;
 const int MAX_LINE_LEN = 350;
 const int MAX_COMMAND_LEN  = 15;
+const int UNIVERSAL_LEN = 40;
 
 char CLOSE_CONDITION[] = ":q";
 char CLOSE_CONDITION_UPPER[] = ":Q";
@@ -26,12 +27,12 @@ char SELECT_COMMAND[] = "SELECT";
 char WRITE_DOWN_COMMAND[] = "WRITE_DOWN";
 
 //other variables
-char EMPTY_STRING[] = "";
-char NAME_PARAM[] = "name";
-char SECOND_NAME_PARAM[] = "second_name";
-char IS_MALE_PARAM[] = "is_male";
-char TELEGRAM_ID_PARAM[] = "telegram_id";
-char DATE_OF_BIRTH_PARAM[] = "date_of_birth";
+string EMPTY_STRING = "";
+string NAME_PARAM = "name";
+string SECOND_NAME_PARAM = "second_name";
+string IS_MALE_PARAM = "is_male";
+string TELEGRAM_ID_PARAM = "telegram_id";
+string DATE_OF_BIRTH_PARAM = "date_of_birth";
 
 /*
 struct Person
@@ -57,6 +58,7 @@ struct str_with_pos
     }
     char get_ch_nm()
     {
+        //cout << s[pos] << endl;
         return s[pos];
     }
 
@@ -195,24 +197,26 @@ int write_in_file(char *filename, vector<Person*> *people)
     return 0;
 }
 
-int add_new_person(vector<Person*> *people, char *name, char *second_name, char *date_of_birthday, long telegram_id, bool is_male)
+
+
+int add_new_person(vector<Person*> *people, string name, string second_name, string date_of_birthday, long telegram_id, bool is_male)
 {
     Person *ptr = new Person;
-    for(int i = 0; i < MAX_NAME_LEN; i++, name++)
-        ptr->name[i] = *name;
-    for(int i = 0; i < MAX_NAME_LEN; i++, second_name++)
-        ptr->second_name[i] = *second_name;
-    for(int i = 0; i < MAX_DATE_OF_BIRTH_LEN; i++, date_of_birthday++)
-        ptr->date_of_birth[i] = *date_of_birthday;
+    for(int i = 0; i < MAX_NAME_LEN; i++)
+        ptr->name[i] = name[i];
+    for(int i = 0; i < MAX_NAME_LEN; i++)
+        ptr->second_name[i] = second_name[i];
+    for(int i = 0; i < MAX_DATE_OF_BIRTH_LEN; i++)
+        ptr->date_of_birth[i] = date_of_birthday[i];
     
     ptr->is_male = is_male;
     ptr->telegram_id = telegram_id;
     people->push_back(ptr);
 
-    cout << ptr->name << endl;
-    cout << ptr->second_name << endl;
-    cout << ptr->telegram_id << endl;
-    cout << ptr->date_of_birth << endl;
+    //cout << ptr->name << endl;
+    //cout << ptr->second_name << endl;
+    //cout << ptr->telegram_id << endl;
+    //cout << ptr->date_of_birth << endl;
 
     return 0;
 }
@@ -248,8 +252,8 @@ int find_word(char **ch, char *word, int &i)
 
 int find_command(str_with_pos &ch, char *command, int &i)
 {
-    int q = 0;
-    while(q < MAX_COMMAND_LEN && ch.get_ch_nm() != ' ')
+    int q = 0, s_len = ch.s.length();
+    while(q < s_len && ch.get_ch_nm() != ' ' && ch.get_ch_nm() != 0)
     {
         *command = toupper(ch.get_ch());
         
@@ -257,9 +261,10 @@ int find_command(str_with_pos &ch, char *command, int &i)
         if(i++ > MAX_LINE_LEN)
             {cout <<"max line len: " << MAX_LINE_LEN << endl; return 1;}
     }
-    if(ch.get_ch_nm() == 0 || q >= 15)
-        {cout << "Error while parsing command"; return 1;}
+    if(q >= 15)
+        {cout << "Error while parsing command (command length >)"; return 1;}
     *command = '\0';
+    
     return 0;
 }
 
@@ -316,11 +321,11 @@ int find_params_and_values(str_with_pos &ch, vector<pair<string, string>> &list_
 {
     
     while(true)
-    {   //cout <<"HERE" << endl;
+    {   
         string param = "", value = "";
         find_param_and_value(ch, param, value, i);
         pair<string, string> A =  make_pair(param, value);
-        cout << A.first << ' ' << A.second << endl;
+        //cout << A.first << ' ' << A.second << endl;
         
         list_of_params.push_back(A);
         //cout << list_of_params->find(covert_char_to_string(param))->first << ' ' << list_of_params->find(covert_char_to_string(param))->second << endl;  
@@ -341,40 +346,46 @@ int find_params_and_values(str_with_pos &ch, vector<pair<string, string>> &list_
     
    
 }
+string find_val(vector<pair<string, string>> A, string target)
+{
+    for(auto i = A.begin(); i != A.end(); i++)
+        if(i->first == target) 
+            return i->second;
+
+    string s = "";
+    return s;
+    
+}
 
 int command_insert(str_with_pos &ch, vector<Person*> *people, int &i)
 {
     vector <pair<string, string>> params_list;
     find_params_and_values(ch, params_list, i);
     
-    char *is_male = new char[MAX_BOOL_LEN];
-    char *date_of_birth = new char[MAX_DATE_OF_BIRTH_LEN];
-    //print_map(params_list);
-    /*
-    if(!strcmp(EMPTY_STRING, params_list.find(NAME_PARAM)->second) && !strcmp(EMPTY_STRING, params_list.find(SECOND_NAME_PARAM)->second))
+    //char *is_male = new char[MAX_BOOL_LEN];
+    //char *date_of_birth = new char[MAX_DATE_OF_BIRTH_LEN];
+    string  date_of_birth;
+    
+    if(EMPTY_STRING != find_val(params_list, NAME_PARAM) && EMPTY_STRING != find_val(params_list, SECOND_NAME_PARAM))
     {
         long telegram_id;
-        bool is_realy_male;
-        date_of_birth = params_list.find(DATE_OF_BIRTH_PARAM)->second;
-        is_male = params_list.find(IS_MALE_PARAM)->second;
-        
-        if((int) params_list.find(TELEGRAM_ID_PARAM)->second[0] > 0)
-            telegram_id = strtol(params_list.find(TELEGRAM_ID_PARAM)->second, 0, 10);
+        bool is_realy_male = (bool) stoi(find_val(params_list, IS_MALE_PARAM), 0, 10);
+        date_of_birth = find_val(params_list, DATE_OF_BIRTH_PARAM);
+        //is_male = find_val(params_list, IS_MALE_PARAM);
+
+        if(find_val(params_list, TELEGRAM_ID_PARAM) != EMPTY_STRING)
+            telegram_id = stol(find_val(params_list, TELEGRAM_ID_PARAM), 0, 10);
         else
             telegram_id = 0;
         
         if(date_of_birth[0] < 0)
             date_of_birth = EMPTY_STRING;
         
-        if(is_male[0] < 0)
-            is_realy_male = true;
-        else
-            is_realy_male = (bool) strtol(is_male, 0, 10);
-        cout << "HERE" << endl;
-        cout << params_list.find(NAME_PARAM)->second << endl;
+        
+        
     
-        add_new_person(people,params_list.find(NAME_PARAM)->second, 
-        params_list.find(SECOND_NAME_PARAM)->second, 
+        add_new_person(people,find_val(params_list, NAME_PARAM), 
+        find_val(params_list, SECOND_NAME_PARAM), 
         date_of_birth, telegram_id, is_realy_male);
 
 
@@ -384,15 +395,7 @@ int command_insert(str_with_pos &ch, vector<Person*> *people, int &i)
         cout << "Error in insert command: gap 'name' and 'second_name' cannot be empty or been ignored" << endl;
         return 1;
     }
-    */
-    /*
-    
-    strcpy(name, params_list.find(NAME_PARAM)->second);
-    strcpy(second_name, params_list.find(SECOND_NAME_PARAM)->second);
-    strcpy(telegram_id, params_list.find(TELEGRAM_ID_PARAM)->second);
-    strcpy(is_male, params_list.find(IS_MALE_PARAM)->second);
-    strcpy(date_of_birth, params_list.find(DATE_OF_BIRTH_PARAM)->second);
-    */
+   
 
     
     
@@ -405,15 +408,16 @@ int command_insert(str_with_pos &ch, vector<Person*> *people, int &i)
 int parse_command(str_with_pos &input, vector<Person*> *people)
 {
 
-    char *main_command = new char[MAX_COMMAND_LEN];
+    char main_command[MAX_COMMAND_LEN];
     int i = 0;
     find_command(input, main_command, i);
     clear_spaces(input, i);
-    
-    cout <<"Comand: "<< main_command << endl;
+    //cout << "String: " << input.s << endl;
+    //cout <<"Comand: "<< main_command << endl;
 
     if(!strcmp(main_command, WRITE_DOWN_COMMAND))
     {
+        //cout << "HERE" << endl;
         write_in_file(FILENAME, people);
     }
     
@@ -441,10 +445,21 @@ int parse_command(str_with_pos &input, vector<Person*> *people)
     else
     {cout << "Error while parsing command: couldn't recognize command" << endl; return 1;}
 
-
+    
     return 0;
 }
 
+void print_db(vector<Person*> people)
+{
+    for(int i = 0; i < people.size(); i++)
+    {
+        cout << people[i]->name << endl;
+        cout << people[i]->second_name << endl;
+        cout << people[i]->is_male<< endl;
+        cout << people[i]->date_of_birth << endl;
+        cout << people[i]->telegram_id << endl;
+    }
+}
 
 
 int process()
@@ -481,12 +496,13 @@ int process()
     str_with_pos input;
     while (true)
     {
-        
+        input.s = "";
         getline(cin, input.s);
         
         if(input.s == CLOSE_CONDITION || input.s == CLOSE_CONDITION_UPPER)
         {
-            //write_in_file(FILENAME, &people);
+            print_db(people);
+            write_in_file(FILENAME, &people);
             cout << "Exiting..." << endl;
             break;
         }

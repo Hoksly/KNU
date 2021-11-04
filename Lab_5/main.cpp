@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <iostream>
 #include <vector>
 #include <cstring>
@@ -24,6 +25,7 @@ char INSERT_COMMAND[] = "INSERT";
 char DELETE_COMMAND[] = "DELETE";
 char UPDATE_COMMAND[] = "UPDATE";
 char SELECT_COMMAND[] = "SELECT";
+const string WHERE_COMMAND = "WHERE";
 char WRITE_DOWN_COMMAND[] = "WRITE_DOWN";
 
 //other variables
@@ -61,16 +63,31 @@ struct str_with_pos
         //cout << s[pos] << endl;
         return s[pos];
     }
+    void clear()
+    {
+        pos = 0;
+        s = "";
+    }
 
 };
+/*
 struct Person
 {   
-    char name[40];
-    char second_name[40];
+    char *name = new char[MAX_NAME_LEN];
+    char *second_name = new char[MAX_NAME_LEN];
     bool is_male;
     long telegram_id;
-    char date_of_birth[11];
+    char *date_of_birth = new char[MAX_DATE_OF_BIRTH_LEN];
 
+};
+*/
+struct Person
+{
+    char name[MAX_NAME_LEN];
+    char second_name[MAX_NAME_LEN];
+    bool is_male;
+    long telegram_id;
+    char date_of_birth[MAX_DATE_OF_BIRTH_LEN];
 };
 
 
@@ -148,7 +165,7 @@ int read_file(char *filename, vector<Person*> *people)
     fclose(file);
     return 0;
 }
-
+/*
 int simple_write()
 {
     FILE *file;
@@ -170,6 +187,7 @@ int simple_write()
 
     return 0;
 }
+*/
 
 int write_in_file(char *filename, vector<Person*> *people)
 {
@@ -232,22 +250,6 @@ int add_new_person(vector<Person*> *people, string name, string second_name, str
         }
 
 }
-/*
-int find_word(char **ch, char *word, int &i)
-{
-    while(('a' <= **ch && **ch <= 'z') || ('A' <= **ch && **ch <= 'Z'))
-    {
-        *word = **ch;
-        word++;
-        (*ch)++;
-        if(i++ > MAX_LINE_LEN)
-            {cout <<"max line len: " << MAX_LINE_LEN << endl; return 1;}
-    }
-    
-
-    return 0;
-}
-*/
 
 
 int find_command(str_with_pos &ch, char *command, int &i)
@@ -317,6 +319,57 @@ string covert_char_to_string(char *param)
     return s;
 }
 
+int find_param(str_with_pos &ch, string &res, int &i)
+{
+    clear_spaces(ch, i);
+    int q = 0;
+    //cout<<"s: " << ch.pos << endl;
+    while(!isblank(ch.get_ch_nm()) && ch.get_ch_nm() != ',' && ch.get_ch_nm() != 0)
+    {
+        
+        res.push_back(ch.get_ch());
+        //cout << "q: " << (int) ch.get_ch_nm() << endl;
+        q++;
+        
+        if(i > MAX_LINE_LEN)
+            {cout <<"max line len: " << MAX_LINE_LEN << endl; return 1;}
+    }
+    //cout << "HER: " << res.length() << endl;
+    clear_spaces(ch, i);
+    //select name
+    return 0;
+}
+
+int find_params(str_with_pos &ch, vector<string> &list_of_params, int &i)
+{
+    
+    string s;
+    clear_spaces(ch, i);
+    while (true)
+    {
+    
+    s = "";
+    find_param(ch, s, i);
+    
+    list_of_params.push_back(s);
+    
+    
+    if(ch.get_ch_nm() != ',' || ch.get_ch_nm() == '\0')
+        return 0;
+
+    ch.pos++; // symbol ','
+    clear_spaces(ch, i);
+    if(i++ > MAX_LINE_LEN)
+        {cout <<"max line len: " << MAX_LINE_LEN << endl; return 1;}
+    
+    }
+    clear_spaces(ch, i);
+    
+
+    return 0;
+}
+
+
 int find_params_and_values(str_with_pos &ch, vector<pair<string, string>> &list_of_params, int &i)
 {
     
@@ -324,11 +377,12 @@ int find_params_and_values(str_with_pos &ch, vector<pair<string, string>> &list_
     {   
         string param = "", value = "";
         find_param_and_value(ch, param, value, i);
+        
         pair<string, string> A =  make_pair(param, value);
-        //cout << A.first << ' ' << A.second << endl;
+        
         
         list_of_params.push_back(A);
-        //cout << list_of_params->find(covert_char_to_string(param))->first << ' ' << list_of_params->find(covert_char_to_string(param))->second << endl;  
+        
         
         
         clear_spaces(ch, i);
@@ -337,7 +391,13 @@ int find_params_and_values(str_with_pos &ch, vector<pair<string, string>> &list_
         if(ch.get_ch_nm() != ',' || ch.get_ch_nm() == '\0')
             return 0;
 
-        ch.pos++; // symbol ','
+        //ch.pos++; // symbol ','
+        
+        if(ch.get_ch_nm() == ',')
+            ch.pos++; 
+        
+        
+
         clear_spaces(ch, i);
         if(i++ > MAX_LINE_LEN)
             {cout <<"max line len: " << MAX_LINE_LEN << endl; return 1;}
@@ -402,7 +462,251 @@ int command_insert(str_with_pos &ch, vector<Person*> *people, int &i)
 
    return 0;
 }
+string ch_to_srt(char *ch)
+{
+    string s = "";
+    while(*ch)
+        {s.push_back(*ch); ch++;}
+    
+    return s;
 
+}
+bool check_birth(string main, string src)
+{
+    bool res = true;
+    for(int i = 0; i < MAX_DATE_OF_BIRTH_LEN; i++)
+    {
+        if(src[i] == src[i+1]&& src[i] == '0')
+            {i++; continue;}
+        
+        if(src[i] != main[i])
+            res = false;
+        
+    }
+    return res;
+
+}
+int strmatch(string s1, char * s2)
+{
+    //cout << s2 << ' ' << strlen(s2) << endl;
+    //cout<<"HERE: " << s2 << endl;
+    if(s1.size() != strlen(s2))
+        return 1;
+    
+    int sz = s1.size();
+    for(int i = 0; i < sz; i++)
+        if(s1[i] != s2[i]) 
+            return s1[i] - s2[sz];
+    return 0;
+}
+
+bool matching(Person* prs, const vector<pair<string, string>> &params)
+{
+    bool res = true;
+    for(int i = 0; i < params.size(); i++)
+    {
+        if(params[i].first == NAME_PARAM)
+        {
+            if(strmatch(params[i].second, prs->name))
+                {res = false;}
+        }
+        else if(params[i].first == SECOND_NAME_PARAM)
+        {
+            if(strmatch(params[i].second, prs->second_name))
+                {res = false;}
+        }
+        else if(params[i].first == TELEGRAM_ID_PARAM)
+        {
+            if(stol(params[i].second, 0, 10) != prs->telegram_id)
+                {res = false;}
+        }
+        else if(params[i].first == IS_MALE_PARAM)
+        {
+            if((bool) params[i].second[0] == prs->is_male)
+                {res = false;}
+        }
+        else if(params[i].first == DATE_OF_BIRTH_PARAM)
+        {
+            if(!check_birth(ch_to_srt(prs->date_of_birth), params[i].second))
+                res = false;
+        }  
+        else
+        {
+            cout << "Couldn\'t recognize parametr after WHERE: " << params[i].first << endl;
+            return 1;
+        } 
+
+    }
+    
+    return res;
+}
+
+string convert_mas_to_str(vector<vector<string>> s)
+{
+    /*
+    name, second_name
+    name, second_name
+    name, second_name
+    
+    i - quant of params
+    j - quant of people
+    */
+    string res = "";
+    int j = (!s.empty())? s.size(): 0, i;
+    if(j != 0)
+        i = (!s[0].empty())? s[0].size():0;
+    else 
+        i = 0;
+    cout << i<< ' ' << j << endl;
+    for(int p = 0; p < j; p++)
+    {
+        for(int q = 0; q < i; q++)
+        {
+            res += s[p][q] + " ";
+            cout<<"adding: " << s[p][q] << endl;
+        }
+        res += "\n";
+    }
+    return res;
+}
+
+string give_selected_results(vector<Person*> &printed, vector<string> params)
+{
+    int par_sz = params.size(), pr_sz = printed.size();
+    string s = "";
+    //vector<vector<string>> s(pr_sz, vector<string>(par_sz));
+    int pers_sz = printed.size(), param_sz = params.size();
+
+    for(int i = 0; i < pers_sz; i++)
+    {
+        for(int j = 0; j < param_sz; j++)
+        {
+            if(params[j] == NAME_PARAM)
+                {s += printed[i]->name;
+                s += " "; }
+            if(params[j] == SECOND_NAME_PARAM)
+                {s += printed[i]->second_name;
+                s += " "; }
+            if(params[j] == DATE_OF_BIRTH_PARAM)
+                {s += printed[i]->date_of_birth;
+                s += " "; }
+            if(params[j] == IS_MALE_PARAM)
+                s += (printed[i]->is_male)? "male ": "female ";
+            if(params[j] == TELEGRAM_ID_PARAM)
+                s +=to_string(printed[i]->telegram_id) + " ";
+                     
+        
+        }
+        s += "\n";
+    }
+    //cout << endl;
+    //cout << s << endl;
+    return s;
+
+   
+    
+    
+}
+
+int command_select(str_with_pos &ch,  vector<Person*> &people, int &i)
+{
+    vector <string> params_list;
+    vector<pair<string, string>> where_list;
+    vector<Person*> res;
+
+
+    find_params(ch, params_list, i);
+    string where = "";
+    find_param(ch, where, i); // searching for WHERE param
+   
+    if(where == WHERE_COMMAND)
+        {find_params_and_values(ch, where_list, i);}
+    
+    int sz = people.size();
+    for(int i = 0; i < sz; i++)
+    {
+        if(matching(people[i], where_list))
+            res.push_back(people[i]);
+    }
+    
+
+    string s = give_selected_results(res, params_list);
+    cout << endl << s;
+    return 0;
+    // SELECT name WHERE date_of_birth = 00:00:0000
+    
+
+}
+
+
+void strcp(char * s1, string s2)
+{
+    memset(s1, '\0', strlen(s1));
+    int sz = s2.size();
+    
+    for(int i = 0; i < sz; i++)
+        s1[i] = s2[i];
+   
+    
+}
+
+int update_values( vector<Person*> &people,  vector<pair<string, string>> to_update)
+{
+    int update_sz = to_update.size();
+    int people_sz = people.size();
+
+    for(int i = 0; i < update_sz; i++)
+    {
+        if(to_update[i].first == NAME_PARAM)
+            for(int j = 0; j < people_sz; j++)
+                strcp(people[j]->name, to_update[i].second);
+        if(to_update[i].first == SECOND_NAME_PARAM)
+            for(int j = 0; j < people_sz; j++)
+                strcp(people[j]->second_name, to_update[i].second);  
+        
+        if(to_update[i].first == DATE_OF_BIRTH_PARAM)
+            for(int j = 0; j < people_sz; j++)
+                strcp(people[j]->date_of_birth, to_update[i].second);  
+
+        if(to_update[i].first == TELEGRAM_ID_PARAM)
+            for(int j = 0; j < people_sz; j++)
+                people[j]->telegram_id = stol(to_update[i].second, 0, 10);  
+        if(to_update[i].first == NAME_PARAM)
+            for(int j = 0; j < people_sz; j++)
+                people[j]->is_male = (bool) to_update[i].second[0];       
+            
+        
+    }
+    return 0;
+}
+
+int command_update(str_with_pos &ch,  vector<Person*> &people, int &i)
+{
+    vector<pair<string, string>> to_what_update;
+    vector<pair<string, string>> where_update;
+    string where;
+    vector<Person*> res;
+
+    find_params_and_values(ch, to_what_update, i);
+    find_param(ch, where, i); // searching for WHERE param
+     if(where == WHERE_COMMAND)
+        {find_params_and_values(ch, where_update, i);}
+    
+    else
+        cout << "Usage: UPDATE <param = value> WHERE <param = value>";
+    
+    int sz = people.size();
+    for(int i = 0; i < sz; i++)
+    {
+        if(matching(people[i], where_update))
+            res.push_back(people[i]);
+    }
+    cout << (res.empty())? "EMPTY": res[0]->name;
+    cout << endl;
+    update_values(res, to_what_update);
+    //UPDATE name = Bily WHERE name = Billy
+    return 0;
+}
 
 
 int parse_command(str_with_pos &input, vector<Person*> *people)
@@ -429,7 +733,7 @@ int parse_command(str_with_pos &input, vector<Person*> *people)
     
     else if(!strcmp(main_command, UPDATE_COMMAND))
     {
-        
+        command_update(input, *people, i);
     }
     
     else if(!strcmp(main_command, DELETE_COMMAND))
@@ -440,13 +744,14 @@ int parse_command(str_with_pos &input, vector<Person*> *people)
     else if(!strcmp(main_command, SELECT_COMMAND))
     {
         
+        command_select(input, *people, i);
     }
     
     else
-    {cout << "Error while parsing command: couldn't recognize command" << endl; return 1;}
+    {cout << "Error while parsing command: couldn't recognize command: "<< main_command << endl; return 1;}
 
     
-    return 0;
+    return 0; //SELECT name, second_name WHERE name = Andrew
 }
 
 void print_db(vector<Person*> people)
@@ -461,7 +766,21 @@ void print_db(vector<Person*> people)
     }
 }
 
+void show_all_help()
+{
+    cout << endl <<endl;
+    cout << "Welcome to the consol version of TelegramDb controller"<< endl;
+    cout << "Some tips for it's usage: " << endl;
+    cout <<"To select something: SELECT param1, param2... WHERE statement1 = s-th1, statement2 = s-th2" << endl;
+    cout <<"To delete something: DELETE WHERE cond1, cond2..." << endl;
+    cout << "To insert something: INSERT param1 = value1, param2 = value2..." << endl;
+    cout << "To update something: UPDATE param1 = value1, param2 = value2... WHERE condition1, condition2... ";
+    cout << "To write changes: WRITE_DOWN (automaticly write when close)" << endl;
+    cout << "To exit program: '"<<CLOSE_CONDITION <<'\''<< endl;
+    cout << "Additional information about all functions: <Command> --help" << endl << endl;
+}
 
+//int process(int arg, char *argv[])
 int process()
 {
     vector<Person*> people;
@@ -474,7 +793,7 @@ int process()
     //simple_write();
     //Person pp = *(people[0]);
     //Debug
-   
+    
     cout << people.size() << endl;
     for(int i = 0; i < people.size(); i++)
     {
@@ -482,22 +801,15 @@ int process()
         cout << pp.name << ' ' << pp.second_name << ' ' << pp.date_of_birth << endl;
     }
     
-    cout << endl <<endl;
-    cout << "Welcome to the consol version of TelegramDb controller"<< endl;
-    cout << "Some tips for it's usage: " << endl;
-    cout <<"To select something: SELECT param1, param2... WHERE statement1 = s-th1, statement2 = s-th2" << endl;
-    cout <<"To delete something: DELETE WHERE cond1, cond2..." << endl;
-    cout << "To insert something: INSERT param1 = value1, param2 = value2..." << endl;
-    cout << "To update something: UPDATE param1 = value1, param2 = value2... WHERE condition1, condition2... ";
-    cout << "To write changes: WRITE_DOWN (automaticly write when close)" << endl;
-    cout << "To exit program: '"<<CLOSE_CONDITION <<'\''<< endl;
-    cout << "Additional information about all functions: <Command> --help" << endl << endl;
+    
+    
     
     str_with_pos input;
     while (true)
     {
-        input.s = "";
+        input.clear();
         getline(cin, input.s);
+        cout<< "line: " << input.s << endl;
         
         if(input.s == CLOSE_CONDITION || input.s == CLOSE_CONDITION_UPPER)
         {
@@ -516,9 +828,12 @@ int process()
 }
 
 
-int main()
+int main(int arg, char *argv[])
 {
+    
+    //process(arg, argv);
     process();
+    
     //simple_write();
     return 0;   
 
@@ -527,6 +842,6 @@ int main()
 /*
 Adding new person with command insert not wotking properly, debug with cin
 
-INSERT name = Andrew, second_name = Nelitskiy, is_male = 1, telegram_id = 123, date_of_birth = 30:09:2004
+INSERT name = Van, second_name = Darkholm, is_male = 1, telegram_id = 123, date_of_birth = 12:07:1987
 
 */

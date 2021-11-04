@@ -17,6 +17,8 @@ const int UNIVERSAL_LEN = 40;
 char CLOSE_CONDITION[] = ":q";
 char CLOSE_CONDITION_UPPER[] = ":Q";
 
+string HELP_CONDITION = "--help";
+
 const int MAX_VALUE_LEN = 40;
 const int MAX_PARAM_LEN = 20;
 const int MAX_BOOL_LEN = 2;
@@ -689,7 +691,7 @@ int command_update(str_with_pos &ch,  vector<Person*> &people, int &i)
 
     find_params_and_values(ch, to_what_update, i);
     find_param(ch, where, i); // searching for WHERE param
-     if(where == WHERE_COMMAND)
+    if(where == WHERE_COMMAND)
         {find_params_and_values(ch, where_update, i);}
     
     else
@@ -706,6 +708,46 @@ int command_update(str_with_pos &ch,  vector<Person*> &people, int &i)
     update_values(res, to_what_update);
     //UPDATE name = Bily WHERE name = Billy
     return 0;
+}
+
+int delete_person(vector<Person*> &people, vector<Person*> &to_delete)
+{
+    
+    for(auto i = people.begin(); i != people.end(); i++)
+    {
+        for(auto j = to_delete.begin(); j != to_delete.end(); j++)
+        {
+            if(*i == *j)
+                {people.erase(i); i--;}
+        }
+    }
+    return 0;
+}
+
+int delete_command(str_with_pos &ch,  vector<Person*> &people, int &i)
+{
+    string where;
+    find_param(ch, where, i); // searching for WHERE param
+    vector<pair<string, string>> what_to_delete;
+
+    if(where == WHERE_COMMAND)
+        {find_params_and_values(ch, what_to_delete, i);}
+    
+    else
+        cout << "Usage: DELETE WHERE <param = value>";
+    
+    vector<Person*> res;
+    int sz = people.size();
+    for(int i = 0; i < sz; i++)
+    {
+        if(matching(people[i], what_to_delete))
+            res.push_back(people[i]);
+    }
+
+    delete_person(people, res);
+
+    return 0;
+
 }
 
 
@@ -738,7 +780,7 @@ int parse_command(str_with_pos &input, vector<Person*> *people)
     
     else if(!strcmp(main_command, DELETE_COMMAND))
     {
-        
+        delete_command(input, *people, i);   
     }
     
     else if(!strcmp(main_command, SELECT_COMMAND))
@@ -769,8 +811,6 @@ void print_db(vector<Person*> people)
 void show_all_help()
 {
     cout << endl <<endl;
-    cout << "Welcome to the consol version of TelegramDb controller"<< endl;
-    cout << "Some tips for it's usage: " << endl;
     cout <<"To select something: SELECT param1, param2... WHERE statement1 = s-th1, statement2 = s-th2" << endl;
     cout <<"To delete something: DELETE WHERE cond1, cond2..." << endl;
     cout << "To insert something: INSERT param1 = value1, param2 = value2..." << endl;
@@ -793,13 +833,14 @@ int process()
     //simple_write();
     //Person pp = *(people[0]);
     //Debug
-    
+    /*
     cout << people.size() << endl;
     for(int i = 0; i < people.size(); i++)
     {
         Person pp = *(people[i]);
         cout << pp.name << ' ' << pp.second_name << ' ' << pp.date_of_birth << endl;
     }
+    */
     
     
     
@@ -809,7 +850,7 @@ int process()
     {
         input.clear();
         getline(cin, input.s);
-        cout<< "line: " << input.s << endl;
+        //cout<< "line: " << input.s << endl;
         
         if(input.s == CLOSE_CONDITION || input.s == CLOSE_CONDITION_UPPER)
         {
@@ -818,7 +859,11 @@ int process()
             cout << "Exiting..." << endl;
             break;
         }
-        parse_command(input, ptr);
+        else if(input.s == HELP_CONDITION)
+            show_all_help();
+        
+        else
+            parse_command(input, ptr);
 
 
     }

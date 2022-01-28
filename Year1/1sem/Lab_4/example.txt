@@ -1,0 +1,5 @@
+qq = "qweqwe"
+b = 234
+c = qq + b
+
+

@@ -69,10 +69,3 @@ char * ReadFileToOne(char *filename)
 
 }
 
-int main()
-{
-    char *c = ReadFileToOne("exf.txt");
-
-    printf("%s", c);
-        
-}

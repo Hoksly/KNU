@@ -21,7 +21,7 @@ typedef struct MarkovPart
 
 class MarkovList
 {
-    int size = 0;
+    int _size = 0;
     MarkovPtr FIRST = nullptr;
 
     //functions

@@ -25,7 +25,7 @@ void MarkovList::CreateNewParts(int add_size)
    
     
     MarkovPtr ptr, new_part;        
-    if(size == 0)
+    if(_size == 0)
     {
         ptr = new MarkovPart;
         FIRST = ptr;
@@ -196,13 +196,15 @@ void MarkovList::Replace(MarkovPtr ptr,std::string what, std::string to)
 
 int MarkovList::replace(std::string what, std::string to)
 {
-
+    int i = 0;
     MarkovPtr ptr = FIRST;
     while((ptr = Search(ptr, what)))
     {
+        ++i;
         Replace(ptr, what, to);
 
     }
 
+    return i;
 
 }

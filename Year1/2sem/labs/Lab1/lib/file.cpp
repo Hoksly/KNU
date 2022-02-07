@@ -54,7 +54,7 @@ char * ReadFileToOne(char *filename)
     if(file == NULL)
     {    printf("Error while opening file \n"); return ret;}
 
-    ret = new char[10000];
+    ret = new char[100000];
     cp = ret;
 
     while ((c = fgetc(file)) != EOF)

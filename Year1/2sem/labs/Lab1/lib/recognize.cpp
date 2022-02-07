@@ -44,9 +44,12 @@ bool is_symbol(char *str, char target)
 char extract_symbol(char **ch)
 {
     clear_spaces(ch);
+   
     char c = **ch;
-    if(*((*ch)+1) == ',')
+    clear_spaces(ch);
+    if(*(++(*ch)) == ',')
         (*ch)++;
+
     return c;
 }
 
@@ -54,9 +57,14 @@ int extract_mas(char **ch, char * mas)
 {
     while(**ch != '}' && **ch != '\0')
     {
-        *mas = extract_symbol(ch);
+     
+        clear_spaces(ch);
+        char c = extract_symbol(ch);
+    
+        *mas = c;
         mas++;
-        (*ch)++;
+        
+        
     }
 
     *mas = '\0';
@@ -95,13 +103,24 @@ int extract_alphabet(char **ch, char * alp)
 
 int one_command(char **ch,  std::vector<command> &V, int n)
 {
-    std::string s1, s2;
+    std::string s1 = "", s2 = "";
     bool is_end = false;
     clear_spaces(ch);
   
     while(isprint(**ch))
     {   
         //cout << **ch << endl;
+        if(**ch == ' ')
+        {
+            if((*((*ch) + 1)) == '-' && (*((*ch) + 2)) == '>')
+        {
+            *ch += 3;
+            if(**ch == '.')
+            {(*ch)++ ; is_end = true;}
+            break;
+        }
+            
+        }
         if(**ch == '-' && (*((*ch) + 1)) == '>')
         {
             *ch += 2;
@@ -114,8 +133,10 @@ int one_command(char **ch,  std::vector<command> &V, int n)
 
     }
     //cout << **ch << endl;
+    clear_spaces(ch);
     while (isprint(**ch))
     {
+       
         s2 += **ch;
         (*ch)++;
     }
@@ -146,12 +167,14 @@ A = {} //Alphabet to input
 
     for(int i = 0; i < 2; i++)
     {
+        
         clear_spaces_and_lines(ch);
         if(**ch == 'T')
             extract_tuple(ch, tuple);
         else if(**ch == 'A')
             extract_alphabet(ch, alphabet);
     }
+
     clear_spaces_and_lines(ch);
     int n = 0;
     while(!one_command(ch, V, n))

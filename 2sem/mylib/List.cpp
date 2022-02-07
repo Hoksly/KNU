@@ -76,7 +76,7 @@ class List
     }
 
     X& operator[] (const int);
-     List<X> operator + (List<X>);
+    List<X> operator + (List<X>);
     List<X> operator= (List<X>);
 
     void push_back(X new_value);
@@ -227,14 +227,14 @@ void List<X>::create_new_parts(int add_size)
         PART<X> *ptr = new PART<X>;
         FIRST = ptr;
         LAST = ptr; 
-        
+        ptr = LAST; //??
         add_size--;
       
     }
     else
         {PART<X> *ptr = give_last();}
 
-    ptr = FIRST; // ????????????????????? 
+    ptr = LAST; // ????????????????????? 
 
     for(register int i = 0; i < add_size; i++)
     {

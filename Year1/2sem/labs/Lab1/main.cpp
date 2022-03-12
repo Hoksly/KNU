@@ -1,12 +1,17 @@
 #include "lib/recognize.hpp"
 #include "lib/classes.hpp"
 #include "lib/file.hpp"
+#include "lib/Markov.hpp"
+
 #include <iostream>
 using namespace std;
 
 char ALGO_FILENAME[] = "alg.txt";
-
 char INPUT_FILENAME[] = "inp.txt";
+char OUTPUT_FILENAME[] = "out.txt";
+
+bool SAVE_RES = false;
+
 
 int main()
 {
@@ -18,9 +23,13 @@ int main()
     
     vector<command> Commands;
     extract(&filedata, Alphabet, Tuple, Commands);    
-    for(auto i:Commands)
-    {cout << i.first<< ' ' << i.second << endl; }
-    //for (int i = 0; i < Commands.size(); ++i);
 
-    return 0;
+    MarkovList ML(input_data);
+    ML.show();
+
+    RunAlgoritm(ML, Commands, true, false, false);
+    if (SAVE_RES);
+        //WriteToFile(ML.data_char(), OUTPUT_FILENAME);
+
+   return 0;
 }

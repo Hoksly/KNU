@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <string.h>
+#include <iostream>
+
 
 struct command
 {
@@ -46,5 +48,8 @@ class MarkovList
 
     int size();
     int replace(std::string, std::string);
+    void show();
+    std::string data();
+    char * data_char();
 
 };

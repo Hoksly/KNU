@@ -69,3 +69,11 @@ char * ReadFileToOne(char *filename)
 
 }
 
+void WriteToFile(char* data, char* filename)
+{
+    FILE *file; 
+
+    file = fopen(filename, "w");
+    fputs(data, file);
+        
+}

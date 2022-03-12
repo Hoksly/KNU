@@ -192,6 +192,32 @@ void MarkovList::Replace(MarkovPtr ptr,std::string what, std::string to)
 
     }
     ReplaceValue(ptr, to);
+    _size += (to.size() - what.size());
+}
+
+void MarkovList::show()
+{
+    MarkovPtr ptr = FIRST;
+    while (ptr)
+    {
+        std::cout << ptr->val;
+        ptr = ptr->next;
+    }
+    std::cout << '\n';
+
+}
+
+std::string MarkovList::data()
+{
+    std::string ret;
+    MarkovPtr ptr = FIRST;
+    while (ptr)
+    {
+        ret += ptr->val;
+        ptr = ptr->next;
+    }
+
+    return ret;
 }
 
 int MarkovList::replace(std::string what, std::string to)
@@ -206,5 +232,24 @@ int MarkovList::replace(std::string what, std::string to)
     }
 
     return i;
+
+}
+
+char * MarkovList::data_char()
+{
+    char * out = new char[_size];
+
+    MarkovPtr ptr = FIRST;
+    for(int i = 0; i < _size ; i++)
+    {
+        if (!ptr)
+            {   
+                std::cout << "Error in returning data with char" << std::endl;
+                break;
+            }
+        out[i] = ptr->val;
+        ptr = ptr->next;
+    }
+    return out;
 
 }

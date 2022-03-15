@@ -7,40 +7,35 @@
 #include <cstring>
 #include <stdexcept>
 #include <iostream>
-typedef std::string token;
-enum Type
-{
-    Variable,
-    Constant,
-    Operator,
-    NullType
-};
-
-enum OperatorType
-{
-    Plus, 
-    Minus,
-    Mult,
-    Div,
-    Pow,
-    NullOPerator
-};
+#include <iostream>
+#include "functions.hpp"
+#include "enums.hpp"
+#include "loader.hpp"
 
 class Lexeme
-{
-    bool is_const;
+{ 
+    public:
     Type _type;
 
-    char * variable = nullptr;
-    double * value = nullptr;
-    OperatorType oper = NullOPerator;
+    Var *variable = nullptr; // if variable
+    double * value = nullptr; // if constant
+    OperatorType oper = NullOPerator; //if operator 
+    bool isnone = false;
     
     Lexeme* parent = nullptr;
     Lexeme* right_child = nullptr;
     Lexeme* left_child = nullptr;
 
-    public:
-    Lexeme(Type what, Lexeme* Parent, Lexeme* LeftChild, Lexeme *RightChild, void * value, OperatorType);
+    
+    
+    Lexeme(double);
+    Lexeme(Var*);
+    Lexeme(OperatorType); // optimize with pointers 
+    Lexeme(OperatorType, Lexeme*);
+    Lexeme(const std::string&, Lexeme*, Lexeme*); // constructor with undifined vaslue and childrens
+     
+    bool empty() {return isnone;}
+    Type tp(){return _type;}
     
     void change_left(Lexeme *);
     void change_right(Lexeme *);
@@ -63,9 +58,8 @@ public:
     explicit Parser(const char* input) : input(input) {} // Конструктор, принимает строку с выражением
     Expression parse(); // Основная функция парсинга
     std::vector<std::string> give_vars();
-    
+        
 private:
-    
     std::vector<std::string> variables;
     std::string parse_token(); // Парсит один токен
     Expression parse_simple_expression(); // Парсит простое выражение
@@ -73,3 +67,38 @@ private:
 
     const char* input; // Кусок строки, который еще не распарсили
 };
+
+class Variables
+{
+    public:
+    Variables();
+
+    Var* give(std::string);
+    void set(std::string, double);
+    std::vector<Var*> give_data() {return data;};
+    private:
+    Var* add(std::string);
+    std::vector<Var*> data;
+
+};
+
+class LexParser
+{
+    public:
+    explicit LexParser(const char* input) : input(input) {}
+    Lexeme* parse();
+    Variables give_vars() {return Vars;}
+
+    private:
+    const char *input;
+    std::string parse_token(); // Парсит один токен
+    Lexeme* parse_simple_expression(); // Парсит простое выражение
+    Lexeme* parse_binary_expression(int min_priority); // Парсит бинарное выражение
+    
+    void make_three(Lexeme, Lexeme, Lexeme);
+    Lexeme * makelexeme(std::string);
+    Variables Vars;
+
+
+};
+

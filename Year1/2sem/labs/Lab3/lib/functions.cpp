@@ -21,6 +21,16 @@ void simplify(string &str)
     str = out_str;
 
 }
+
+OperatorType give_operator(string s)
+{
+    for(auto t = _Operators.begin(); t!= _Operators.end(); t++)
+        if(t->first == s)
+            return t->second;
+    return NullOPerator;
+}
+
+/*
 inline bool isoperator(char i)
 {
     return i == '+' || i == '-' || i == '*' || i == '^' || i == '/' ;
@@ -203,3 +213,4 @@ void BuildThree(Lexeme *Parent, Lexeme *RightChild, Lexeme *LeftChild)
 
     
 }
+*/

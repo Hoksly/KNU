@@ -30,187 +30,69 @@ OperatorType give_operator(string s)
     return NullOPerator;
 }
 
-/*
-inline bool isoperator(char i)
+
+
+bool XOR (void *p1, void *p2)
 {
-    return i == '+' || i == '-' || i == '*' || i == '^' || i == '/' ;
+    return ((bool) p1) ^ ((bool) p2);
 }
 
-void parse_digit(string &part, const string &s, int &i, const int &l)
+bool NotNULL(void *p1, void *p2)
 {
-    while(isdigit(s[i]) && i < l)
-        {
-            part += s[i];
-            ++i; 
-        }
-        if(s[i] == '.')
-        {
-            part += '.';
-            ++i;
-            if(!isdigit(s[i]))
-                throw runtime_error("Must be a digit after '.'");
-            while(isdigit(s[i]))
-            {
-                part += s[i];
-                ++i;
-              
-            }
-           
-        }
-
+    return p1 != nullptr && p2 != nullptr;
 }
-inline bool isvar(char c)
+bool NotNULL(void *p)
 {
-    return islower(c) || isupper(c);
+    return p != nullptr;
 }
 
-void parse_digit_or_var(string &part, const string &s, int &i, const int &l)
+
+bool deq(double *d1, double *d2)
 {
-    if(isdigit(s[i]))
-        parse_digit(part, s, i, l);
-    if(isvar(s[i]))
+    if(NotNULL(d1, d2))
+        return fabs(*d1 - *d2) < EPS;
+    
+    return d1 == d2; // both are nullptr
+    
+
+}
+
+bool isin(OperatorType op, std::vector<OperatorType> V)
+{
+    for(auto t = V.begin(); t != V.end(); t++)
     {
-        part += s[i];
-        ++i;
+        if(*t == op)
+            return true;
     }
+    return false;
 }
 
-
-vector<string> ToStrigns(const string &s)
+void print(std::string s )
 {
-    vector<string> out;
-    string part;
-    
-    bool previous_was_operator, previous_was_digit, previous_was_closing_bracket, previous_was_var;
-    previous_was_operator = false;
-    previous_was_digit = false;
-    previous_was_closing_bracket = false; // second is for unar minus
-    previous_was_var = false;
-
-    int l = s.length();
-
-    for(int i = 0; i < l;)
-    {   
-        part = "";
-        
-        //parsing numbers and variables
-        
-        if(isvar(s[i]))
-        {
-            part += s[i];
-            ++i;
-            
-            if(previous_was_digit || previous_was_var)
-                out.push_back("*");
-            
-            previous_was_digit = false;
-            previous_was_operator = false;
-            previous_was_closing_bracket = false;
-            previous_was_var = true;
-            out.push_back(part);
-            continue;
-
-        }
-
-        if(isdigit(s[i]))
-            {
-            parse_digit(part, s, i, l);
-            previous_was_digit = true;
-            previous_was_operator = false;
-            previous_was_closing_bracket = false;
-            out.push_back(part);
-            
-            continue;
-
-            }
-        
-
-        //parisng operators
-        if(isoperator(s[i]))
-        {
-
-            
-            if(s[i] != '-' || previous_was_digit || previous_was_closing_bracket)
-            {
-                part += s[i];
-                out.push_back(part);
-                
-                ++i;
-                
-                previous_was_digit = false;
-                previous_was_operator = true;
-                previous_was_closing_bracket = false;
-                continue;
-            }
-            else //unar minus
-            {   
-                if(i+1 < l && isdigit(s[i+1]))
-                {
-                    part += s[i];
-                    parse_digit(part, s, ++i, l);
-                    out.push_back(part);
-                }
-                
-                else if (isvar(s[i+1]))
-                {
-                    part += s[i+1];
-                    i += 2;
-
-                    //out.push_back("(");
-                    out.push_back("-1");
-                    out.push_back("*");
-                    out.push_back(part);
-                    //out.push_back(")");
-                }
-                
-                else
-                    throw runtime_error("Unar minus detected in input, but without following it digits");
-                
-                
-                previous_was_digit = true;
-                previous_was_operator = false;
-                previous_was_closing_bracket = false;
-            
-            }
-            continue;
-        }
-        //parsing '(' and ')'
-
-        if(s[i] == ')' || s[i] == '(')
-        {
-            part += s[i];
-            out.push_back(part);
-            ++i;
-            previous_was_digit = false;
-            previous_was_operator = false;
-            previous_was_closing_bracket = s[i-1] == ')';
-            continue;
-        }
-        
-        throw runtime_error("Usage of not allowed symbol in input detected, please chaeck your input");
-
-
-
-    }
-    
-    return out;
-
+    std::cout << s << endl;
 }
 
-int give_priority(string s)
+void print(bool b)
 {
-    if (s == "+") return 4;
-    if (s == "-") return 4;
-    if (s == "/") return 3;
-    if (s == "*") return 3;
-    if (s == "^") return 2;
-    return 0;
-
+    if(b)
+        std::cout << "YES" << endl;
+    else
+        std::cout << "NO" << endl;
 }
 
-void BuildThree(Lexeme *Parent, Lexeme *RightChild, Lexeme *LeftChild)
+bool vareq(Var* v1, Var* v2)
 {
-
+    if(NotNULL(v1, v2))
+        return v1->name == v2->name;
     
+    return v1 == v2;
 }
-*/
+bool IsNull(void *p1)
+{
+    return p1 == nullptr;
+}
+
+bool IsNull(void *p1, void *p2)
+{
+    return IsNull(p1) && IsNull(p2);
+}

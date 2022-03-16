@@ -20,7 +20,7 @@ class Lexeme
     Var *variable = nullptr; // if variable
     double * value = nullptr; // if constant
     OperatorType oper = NullOPerator; //if operator 
-    bool isnone = false;
+
     
     Lexeme* parent = nullptr;
     Lexeme* right_child = nullptr;
@@ -33,15 +33,14 @@ class Lexeme
     Lexeme(OperatorType); // optimize with pointers 
     Lexeme(OperatorType, Lexeme*);
     Lexeme(const std::string&, Lexeme*, Lexeme*); // constructor with undifined vaslue and childrens
-     
-    bool empty() {return isnone;}
-    Type tp(){return _type;}
     
     void change_left(Lexeme *);
     void change_right(Lexeme *);
     void change_parent(Lexeme *);
 
+    bool operator== (const Lexeme &);
 
+    std::string str_value();
 };    
 
 struct Expression {

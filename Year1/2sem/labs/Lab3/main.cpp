@@ -1,5 +1,6 @@
 #include "lib/classes.hpp" 
 #include "lib/functions.hpp"
+#include "lib/rules.hpp"
 
 using namespace std;
 
@@ -8,6 +9,7 @@ using namespace std;
 #include <queue>
 #include <cmath>
 #include <queue>
+
 using namespace std;
 
 std::string prtLex(Lexeme * lex)
@@ -79,18 +81,20 @@ int main()
 {
 
     
-    char str1[] = "-x^x";
-    char str2[] = "-x^x";
+    char str1[] = "3*x + 3*x";
+    char str2[] = "2 * x + 3 * x";
     LexParser parser1(str1);
     LexParser parser2(str2);
     
     Lexeme * Head1 = parser1.parse();
     Lexeme * Head2 = parser2.parse();
     
-   print((*Head1) == (*Head2));
+    //print((*Head1) == (*Head2));
     
     //PrintTree(Head1);
-    
+    complex_plus(Head2);
+    add_constants(Head2->right_child);
+    PrintTree(Head2);
     
     return 0;
 }

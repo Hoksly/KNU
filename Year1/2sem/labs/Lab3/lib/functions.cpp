@@ -50,7 +50,10 @@ bool NotNULL(void *p)
 bool deq(double *d1, double *d2)
 {
     if(NotNULL(d1, d2))
-        return fabs(*d1 - *d2) < EPS;
+        {
+            return *d1 == *d2;
+            //return fabs(*d1 - *d2) < EPS;
+        }
     
     return d1 == d2; // both are nullptr
     
@@ -72,7 +75,7 @@ void print(std::string s )
     std::cout << s << endl;
 }
 
-void print(bool b)
+void printb(bool b)
 {
     if(b)
         std::cout << "YES" << endl;

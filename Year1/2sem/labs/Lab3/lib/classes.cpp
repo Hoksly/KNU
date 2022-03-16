@@ -213,7 +213,7 @@ Var * Variables::give(std::string name)
             {//std::cout << "FOUND " << (*v) << '\n'; 
                 return (*v);}
     }
-    Var * v = add(name);
+    
 
     return add(name);
 
@@ -327,6 +327,7 @@ bool Lexeme::operator==(const Lexeme &L)
 
     //std::cout << this->str_value() << ' ' <<prtLex(L) << '\n';
     //print(vareq(L.variable, this->variable));
+    //printb(vareq(L.variable, this->variable));
     if(vareq(L.variable, this->variable) && deq(this->value, L.value) && L.oper == this->oper)
     {
         //print("HERE");
@@ -374,4 +375,29 @@ bool Lexeme::operator==(const Lexeme &L)
     }
 
     return false;
+}
+
+void Lexeme::clear()
+{
+    if(value)
+        delete value;
+    if(variable)
+        variable->count--;
+    
+    if(right_child)
+        right_child->clear();
+    if(left_child)
+        left_child->clear();
+
+    delete this; // How and why?
+}
+
+void Lexeme::del()
+{
+    if(value)
+        delete value;
+    if(variable)
+        variable->count--;
+
+    delete this;
 }

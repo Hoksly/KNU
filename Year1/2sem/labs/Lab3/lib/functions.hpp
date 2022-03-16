@@ -21,5 +21,5 @@ bool deq(double *, double *);
 bool vareq(Var*, Var*);
 
 void print(std::string);
-void print(bool);
+void printb(bool);
 

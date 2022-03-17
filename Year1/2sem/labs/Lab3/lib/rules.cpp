@@ -281,7 +281,94 @@ bool collect_and_delete(Lexeme * Head, Lexeme * target)
     return false;
 }
 
-void const_minus(Lexeme *Node)
-{
+bool remove_zero(Lexeme * Node)
+{   
+    //Binary operations
+    if(Node->_type == Operator && NotNULL(Node->right_child, Node->left_child)) 
+    {
+        Lexeme * tmp;
+        switch (Node->oper)
+        {
+        case Plus:
+            if(Node->right_child->_type == Constant && *Node->right_child->value == 0)
+            {
+                tmp = Node->left_child;
+                Node->right_child->del();
+                Node->del();
+                Node = tmp;
+                return true;  
+            }
+            else if(Node->left_child->_type == Constant && *Node->left_child->value == 0)
+            {
 
+                tmp = Node->right_child;
+                Node->left_child->del();
+                Node->del();
+                Node = tmp;
+                return true;  
+            }
+            
+            return false;
+        
+        
+        case Minus:
+            if(Node->right_child->_type == Constant && *Node->right_child->value == 0)
+            {
+                tmp = Node->left_child;
+                Node->right_child->del();
+                Node->del();
+                Node = tmp;
+                return true;  
+            }
+            else if(Node->left_child->_type == Constant && *Node->left_child->value == 0)
+            {
+
+                tmp = Node->right_child;
+                Node->left_child->del();
+                Node->del();
+                Node = tmp;
+                return true;  
+            }
+            return false;
+        
+        case Div:
+            if(Node->right_child->_type == Constant && *Node->right_child->value == 0)
+            {
+                throw std::runtime_error("Division by zero detected. Aborting");
+            }
+            else if(Node->left_child->_type == Constant && *Node->left_child->value == 0)
+            {
+                tmp = Node->left_child;
+                Node->right_child->clear();
+                Node->del();
+                Node = tmp;
+                return true;  
+            }
+            return false;
+
+        case Mult:
+        if(Node->right_child->_type == Constant && *Node->right_child->value == 0)
+            {
+                tmp = Node->right_child;
+                Node->left_child->clear();
+                Node->del();
+                Node = tmp;
+                return true;  
+            }
+            else if(Node->left_child->_type == Constant && *Node->left_child->value == 0)
+            {
+                tmp = Node->left_child;
+                Node->right_child->clear();
+                Node->del();
+                Node = tmp;
+                return true;  
+            }
+            return false;
+        
+        default:
+            return false;
+        }
+        
+    }
+    return false;
 }

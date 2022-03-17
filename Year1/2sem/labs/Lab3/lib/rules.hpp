@@ -7,3 +7,4 @@ bool subs_constants(Lexeme * Node);
 bool mult_constants(Lexeme * Node);
 bool div_constants(Lexeme * Node);
 bool complex_plus(Lexeme * Node);
+bool remove_zero(Lexeme * Node);

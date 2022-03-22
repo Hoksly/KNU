@@ -9,6 +9,7 @@ using namespace std;
 #include <queue>
 #include <cmath>
 #include <queue>
+#include <stack>
 
 using namespace std;
 
@@ -18,13 +19,13 @@ std::string prtLex(Lexeme * lex)
     switch (lex->_type)
     {
     case Variable:
-        //cout << "Variable" << endl;
+        
         if(lex->variable == nullptr)
-            cout << "FUCK" << endl;
+            cout << "IDK" << endl;
         return (lex->variable->name);
     
     case Operator:
-        //cout << "Operator" << endl;
+
         
         switch (lex->oper)
         {
@@ -46,7 +47,7 @@ std::string prtLex(Lexeme * lex)
         return to_string(*(lex->value));
     
     default:
-        return "BIG FUCK";
+        return "BIG ERROR";
     }  
     
 }
@@ -77,24 +78,35 @@ void PrintTree(Lexeme * Head)
 }
 
 
+void PrintTreeS(Lexeme * Head, string &s)
+{
+    if(Head == nullptr)
+        return;
+
+   PrintTreeS(Head->left_child, s);
+   s += Head->str_value();
+   PrintTreeS(Head->right_child, s);   
+}
+
 int main()
 {
 
     
-    char str1[] = "3*x + 3*x";
-    char str2[] = "2 * x + 3 * x";
-    LexParser parser1(str1);
+   
+    char str2[30] = "x^2 + 2*x^2";
+    //cin >> str2;
     LexParser parser2(str2);
     
-    Lexeme * Head1 = parser1.parse();
+
     Lexeme * Head2 = parser2.parse();
-    
-    //print((*Head1) == (*Head2));
-    
-    //PrintTree(Head1);
-    complex_plus(Head2);
-    add_constants(Head2->right_child);
-    PrintTree(Head2);
-    
+
+    Simplyfier S;
+
+    S.simplify(Head2);
+
+    string s;
+    PrintTreeS(Head2, s);
+    print(s);
+   
     return 0;
 }

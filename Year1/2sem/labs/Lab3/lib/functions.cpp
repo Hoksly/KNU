@@ -70,10 +70,24 @@ bool isin(OperatorType op, std::vector<OperatorType> V)
     return false;
 }
 
-void print(std::string s )
+void print(string s )
 {
     std::cout << s << endl;
+
 }
+
+void print(int s )
+{
+    std::cout << s << endl;
+
+}
+
+void print(long s )
+{
+    std::cout << s << endl;
+
+}
+
 
 void printb(bool b)
 {
@@ -99,3 +113,15 @@ bool IsNull(void *p1, void *p2)
 {
     return IsNull(p1) && IsNull(p2);
 }
+
+
+bool IsPorM(OperatorType p)
+{
+    return p == Minus || p == Plus;
+}
+
+bool isMinus(OperatorType p)
+{
+    return p == Minus;
+}
+

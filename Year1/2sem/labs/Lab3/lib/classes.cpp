@@ -194,6 +194,7 @@ Lexeme* LexParser::parse_binary_expression(int min_priority) {
         
         
         left_expr = new Lexeme(op, left_expr, right_expr); // Undefined value is not good enough...
+
     } // Повторяем цикл: парсинг операции, и проверка ее приоритета.
 }
 
@@ -278,7 +279,7 @@ std::string Lexeme::str_value()
         return std::to_string(*(value));
     
     default:
-        return "BIG FUCK";
+        return "BIG ERROR";
     }  
     
 }
@@ -314,7 +315,7 @@ std::string prtLex(const Lexeme &lex)
         return std::to_string(*(lex.value));
     
     default:
-        return "BIG FUCK";
+        return "BIG ERROR";
     }  
     
 }
@@ -341,11 +342,13 @@ bool Lexeme::operator==(const Lexeme &L)
                 return *(this->left_child) == *(L.left_child) && *(this->right_child) == *(L.right_child);
             }
             else
-                throw std::runtime_error("Binary operators must have both of arguments, not Null");     
+                {print("H");throw std::runtime_error("Binary operators must have both of arguments, not Null");}     
         }
 
         if(isin(this->oper, EqualOperators)) // operators such as + and *
         {
+            print(std::to_string(this->oper));
+            print(this->str_value());
             if(NotNULL(this->right_child, this->left_child)&&NotNULL(L.left_child, L.right_child))
             {
                 bool res_line = (*(this->left_child) == *(L.left_child) && *(this->right_child) == *(L.right_child));
@@ -353,7 +356,7 @@ bool Lexeme::operator==(const Lexeme &L)
                 return  res_line || res_reverse;
             }
             else
-                throw std::runtime_error("Binary operators must have both of arguments, not Null");     
+                    {print("H2");throw std::runtime_error("Binary operators must have both of arguments, not Null");}  
         }
         
 
@@ -385,11 +388,25 @@ void Lexeme::clear()
         variable->count--;
     
     if(right_child)
-        right_child->clear();
+        right_child->deep_clear();
     if(left_child)
-        left_child->clear();
+        left_child->deep_clear();
 
     delete this; // How and why?
+}
+void Lexeme::deep_clear()
+{
+     if(value)
+        {delete value; value = nullptr;}
+    if(variable)
+        {variable->count--; variable = nullptr;}
+    
+    if(right_child)
+        right_child->deep_clear();
+    if(left_child)
+        left_child->deep_clear();
+
+    //delete this; // How and why?
 }
 
 void Lexeme::del()
@@ -401,3 +418,43 @@ void Lexeme::del()
 
     delete this;
 }
+void Lexeme::to_zeroes()
+{
+    if(this->value)
+        {delete value; value = nullptr;}
+
+    if(this->variable)
+    {
+        variable->count--; variable = nullptr;
+    }    
+
+    if(this->oper)
+        oper = NullOPerator;
+    _type = NullType;
+    right_child = nullptr;
+    left_child = nullptr;
+}
+
+void Lexeme::to_const(double * val)
+{
+    if(_type != NullType)
+        throw std::runtime_error("Type of Lexeme is not NullType, should use to_zeroes first");
+    
+    _type = Constant;
+    value = val;
+}
+void Lexeme::to_oper(OperatorType op)
+{
+     if(_type != NullType)
+        throw std::runtime_error("Type of Lexeme is not NullType, should use to_zeroes first");
+
+    _type = Operator;
+    oper = op;
+}
+
+
+
+
+
+
+

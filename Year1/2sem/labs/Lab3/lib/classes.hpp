@@ -27,7 +27,7 @@ class Lexeme
     Lexeme* left_child = nullptr;
 
     
-    
+    Lexeme() {}
     Lexeme(double);
     Lexeme(Var*);
     Lexeme(OperatorType); // optimize with pointers 
@@ -41,8 +41,13 @@ class Lexeme
     bool operator== (const Lexeme &);
 
     std::string str_value();
+    void deep_clear();
     void clear();
     void del();
+    void to_zeroes(); //clear all input, but not deltete;
+    void to_const(double*);
+    void to_oper(OperatorType);
+
     
 };    
 

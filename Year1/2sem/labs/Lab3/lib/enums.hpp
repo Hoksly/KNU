@@ -15,6 +15,7 @@ enum Type
 
 enum OperatorType
 {
+    NullOPerator,
     Plus, 
     Minus,
     Mult,
@@ -23,8 +24,8 @@ enum OperatorType
     Sin, 
     Cos, 
     Mod, 
-    Abs,
-    NullOPerator
+    Abs
+    
 };
 
 struct Var

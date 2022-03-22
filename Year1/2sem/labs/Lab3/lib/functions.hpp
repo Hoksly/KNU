@@ -21,5 +21,11 @@ bool deq(double *, double *);
 bool vareq(Var*, Var*);
 
 void print(std::string);
+void print(int);
+void print(long);
 void printb(bool);
+bool IsPorM(OperatorType p);
+bool isMinus(OperatorType p);
+
+
 

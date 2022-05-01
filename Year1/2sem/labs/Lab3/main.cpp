@@ -93,8 +93,7 @@ int main()
 
     
    
-    char str2[30] = "x^2 + 2*x^2";
-    //cin >> str2;
+    char str2[30] = "(2+3+4+6+7)*X";
     LexParser parser2(str2);
     
 

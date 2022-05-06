@@ -5,55 +5,80 @@ using std::vector;
 AntMap::AntMap(uchar size, int **m)
 {
     DistanceMap = m;
+    n = size;
     FeromonMap = new double *[size];
     double *mas;
 
     for (uchar i = 0; i < size; ++i)
     {
         mas = new double[size - i];
-        memset(mas, INIT_FEROMON, size - i);
+        set(mas, INIT_FEROMON, size - i); // idk
+        // print_dd(mas, size - i);
         FeromonMap[i] = mas;
     }
 }
+AntMap::~AntMap()
+{
+    delete DistanceMap;
+    delete FeromonMap;
+}
+
 void AntMap::evaporate_feromon()
 {
     for (uchar i = 0; i < n; ++i)
     {
-        for (uchar j = i + 1; j < n; ++j)
+        for (uchar j = i; j < n; ++j)
             FeromonMap[i][j] *= EVOPARTION_CONST;
     }
 }
 
-inline void AntMap::add_feromon_to_road(uchar i, uchar j, double v)
+void AntMap::add_feromon_to_road(const uchar i, const uchar j, double v)
 {
-    if (i > j)
-        FeromonMap[j][i] += v;
+    if (j > i)
+        FeromonMap[i][j - i] += v;
     else
-        FeromonMap[i][j] += v;
+        FeromonMap[j][i - j] += v;
 }
 
-int AntMap::calculate_path(vector<uchar> &path, const int &n)
+int AntMap::calculate_path(uchar *path)
 {
-    int ret = 0;
-    for (int i = 1; i < n; ++i)
+    int ret = 0, mx = n + 1;
+
+    for (int i = 1; i < mx; ++i)
         ret += give_distance(DistanceMap, path[i - 1], path[i]);
 
     return ret;
 }
 
-void AntMap::add_feromon(vector<uchar> &path)
+void AntMap::add_feromon(uchar *path)
 {
-    int s = path.size();
-    double feromon_per_unit = FEROMON_PER_ANT / calculate_path(path, s);
-    for (int i = 1; i < s; ++i)
+    // std::cout << "RECALC" << '\n';
+
+    double feromon_per_unit = FEROMON_PER_ANT / calculate_path(path);
+    uchar mx = n + 1; // len of path
+
+    // for (uchar i = 0; i < mx; ++i)
+    // std::cout << path[i] << ' ';
+    // std::cout << '\n';
+
+    for (uchar i = 1; i < mx; ++i)
     {
-        add_feromon_to_road(path[i - 1], path[i], give_distance(DistanceMap, path[i - 1], path[i]) * feromon_per_unit);
+        // for (uchar i = 0; i < mx; ++i)
+        // std::cout << path[i] << ' ';
+        // std::cout << '\n';
+        uchar a, b;
+        a = path[i - 1];
+        b = path[i];
+        // std::cout << "Cur: " << i << ' ' << path[i - 1] << ' ' << path[i] << '\n';
+        //  std::cout << feromon_per_unit << '\n';
+        give_distance(DistanceMap, a, b);
+        add_feromon_to_road(a, b, give_distance(DistanceMap, path[i - 1], path[i]) * feromon_per_unit);
     }
 }
 
-void AntMap::recalculate_feromon(vector<vector<uchar>> &Pathes)
+void AntMap::recalculate_feromon(uchar **Pathes, int ants_n)
 {
-    for (vector<uchar> path : Pathes)
-        add_feromon(path);
+    for (int i = 0; i < ants_n; ++i)
+        add_feromon(Pathes[i]);
     evaporate_feromon();
 }

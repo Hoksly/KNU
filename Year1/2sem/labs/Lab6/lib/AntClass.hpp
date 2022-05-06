@@ -4,6 +4,7 @@
 #include "AntMapClass.hpp"
 #include <vector>
 #include <random>
+#include <algorithm>
 
 struct Ant
 {

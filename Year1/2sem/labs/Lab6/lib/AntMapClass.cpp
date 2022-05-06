@@ -11,8 +11,8 @@ AntMap::AntMap(uchar size, int **m)
 
     for (uchar i = 0; i < size; ++i)
     {
-        mas = new double[size - i];
-        set(mas, INIT_FEROMON, size - i); // idk
+        mas = new double[size];
+        set(mas, INIT_FEROMON, size); // idk
         // print_dd(mas, size - i);
         FeromonMap[i] = mas;
     }
@@ -27,17 +27,15 @@ void AntMap::evaporate_feromon()
 {
     for (uchar i = 0; i < n; ++i)
     {
-        for (uchar j = i; j < n; ++j)
+        for (uchar j = 0; j < n; ++j)
             FeromonMap[i][j] *= EVOPARTION_CONST;
     }
 }
 
 void AntMap::add_feromon_to_road(const uchar i, const uchar j, double v)
 {
-    if (j > i)
-        FeromonMap[i][j - i] += v;
-    else
-        FeromonMap[j][i - j] += v;
+    FeromonMap[i][j] += v;
+    FeromonMap[j][i] += v;
 }
 
 int AntMap::calculate_path(uchar *path)

@@ -28,16 +28,16 @@ inline void Ant::go_to(uchar node, uchar iter)
 
 uchar Ant::choose_next(bool *allowed, AntMap &Map, uchar from, uchar n_of_allowed)
 {
-    std::cout << "ALLOWED: ";
-    print_mas(allowed, Map.n);
-    std::cout << n_of_allowed << '\n';
+    // std::cout << "ALLOWED: ";
+    // print_mas(allowed, Map.n);
+    // std::cout << n_of_allowed << '\n';
     uchar n = Map.n, cur = 0;
     // by using array instead of vector we will have O(n) asymptotic insted of O(n^2)
     // because vector.push_back on it's own has O(n) asympotic
     double total_len = 0;
-    std::cout << "HERE" << '\n';
+
     std::vector<pair<uchar, double>> chances(n_of_allowed);
-    std::cout << "HERE3" << '\n';
+
     double val;
     for (uchar i = 0; i < n; ++i)
     {
@@ -64,6 +64,7 @@ uchar Ant::choose_next(bool *allowed, AntMap &Map, uchar from, uchar n_of_allowe
     chance = ((double)rand()) / RAND_MAX;
 
     // shuffle chances?
+    std::random_shuffle(chances.begin(), chances.end());
 
     for (uchar i = 0; i < n_of_allowed; ++i)
     {
@@ -98,11 +99,11 @@ void Ant::move(uchar begin, AntMap &Map)
     // std::cout << "N: " << n << '\n';
     for (uchar i = 1; i < n; ++i)
     {
-        std::cout << "Moving " << (int)i << " from " << current_node << std::endl;
+        // std::cout << "Moving " << (int)i << " from " << current_node << std::endl;
         allowed[current_node] = false;
 
         next = choose_next(allowed, Map, current_node, n - i);
-        std::cout << "NEXT: " << (int)next << '\n';
+        // std::cout << "NEXT: " << (int)next << '\n';
 
         go_to(next, i);
     }

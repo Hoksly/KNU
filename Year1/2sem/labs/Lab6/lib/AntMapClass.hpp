@@ -9,6 +9,7 @@ struct AntMap
     uchar n;
     int **DistanceMap;
     double **FeromonMap;
+
     void recalculate_feromon(std::vector<std::vector<uchar>> &V);
     void recalculate_feromon(uchar **Pathes, int);
 

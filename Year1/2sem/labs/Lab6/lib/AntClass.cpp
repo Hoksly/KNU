@@ -138,10 +138,10 @@ inline uchar Ant::give_nearest(uchar beg, AntMap &Map)
     return ret;
 }
 
-std::vector<uchar> Ant::give_shortest(uchar begin, AntMap &Map)
+uchar *Ant::give_shortest(uchar begin, AntMap &Map)
 {
     uchar n = Map.n;
-    std::vector<uchar> ret(n + 1);
+    uchar *ret = new uchar[n + 1];
     ret[0] = begin;
 
     memset(allowed, true, n);
@@ -151,6 +151,7 @@ std::vector<uchar> Ant::give_shortest(uchar begin, AntMap &Map)
     {
         ret[i] = give_nearest(ret[i - 1], Map);
     }
+    ret[n] = begin;
     return ret;
 }
 void Ant::update(uchar n)

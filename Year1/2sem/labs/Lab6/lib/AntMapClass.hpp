@@ -19,7 +19,7 @@ struct AntMap
     void evaporate_feromon();
 
     int calculate_path(std::vector<uchar> &path, const int &n); // just because we already know n
-    int calculate_path(uchar *path);
+    int calculate_path(uchar *path, uchar);
 
     void add_feromon_to_road(const uchar i, const uchar j, double v);
 

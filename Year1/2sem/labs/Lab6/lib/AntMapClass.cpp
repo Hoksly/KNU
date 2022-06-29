@@ -38,11 +38,11 @@ void AntMap::add_feromon_to_road(const uchar i, const uchar j, double v)
     FeromonMap[j][i] += v;
 }
 
-int AntMap::calculate_path(uchar *path)
+int AntMap::calculate_path(uchar *path, uchar mx)
 {
-    int ret = 0, mx = n + 1;
+    int ret = 0;
 
-    for (int i = 1; i < mx; ++i)
+    for (uchar i = 1; i < mx; ++i)
         ret += give_distance(DistanceMap, path[i - 1], path[i]);
 
     return ret;
@@ -52,7 +52,7 @@ void AntMap::add_feromon(uchar *path)
 {
     // std::cout << "RECALC" << '\n';
 
-    double feromon_per_unit = FEROMON_PER_ANT / calculate_path(path);
+    double feromon_per_unit = FEROMON_PER_ANT / calculate_path(path, n + 1);
     uchar mx = n + 1; // len of path
 
     // for (uchar i = 0; i < mx; ++i)

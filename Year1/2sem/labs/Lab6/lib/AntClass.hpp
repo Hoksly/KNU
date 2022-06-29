@@ -4,6 +4,7 @@
 #include "AntMapClass.hpp"
 #include <vector>
 #include <random>
+#include <string.h>
 #include <algorithm>
 
 struct Ant
@@ -17,7 +18,7 @@ struct Ant
     uchar choose_next(bool *allowed, AntMap &Map, uchar from, uchar n);
     void move(uchar begin, AntMap &Map);
     void update(uchar n);
-    std::vector<uchar> give_shortest(uchar i, AntMap &);
+    uchar *give_shortest(uchar i, AntMap &);
     ~Ant();
     Ant(uchar n);
     Ant() = default;

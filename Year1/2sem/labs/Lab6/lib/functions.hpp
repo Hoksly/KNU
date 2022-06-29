@@ -1,6 +1,9 @@
 #pragma once
 #include "TypesAndDefinitions.hpp"
 #include <iostream>
+#include <string>
+#include <cstring>
+#include <fstream>
 #include <cmath>
 
 // DEBUG
@@ -8,6 +11,7 @@ void print_mas(bool *mas, int n);
 void print_d(double **mas, int n);
 void print_i(int **mas, int n);
 void print_dd(double *mas, int n);
+void print_s(std::string s);
 
 void set(double *mas, double what, int n);
 void set(bool *mas, bool what, int n);
@@ -40,5 +44,11 @@ inline void calculate_distance(int **to, std::pair<int, int> *what, uchar n)
         }
     }
 }
+int **file_input(uchar &, std::string);
+
 int **input_matrix(uchar);
 int **input(uchar &);
+
+void display_help();
+char *search_value(char *, int, char **);
+char *search_key(char *, int, char **);

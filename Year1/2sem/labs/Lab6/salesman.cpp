@@ -18,13 +18,6 @@ uchar **gather(Ant *mas)
     return ret;
 }
 
-inline void print_res(uchar *mas, uchar n)
-{
-    for (uchar i = 0; i < n; ++i)
-        std::cout << mas[i] << ' ';
-    std::cout << std::endl;
-}
-
 uchar *run(Ant *Ants, AntMap &Map, uchar n, bool print = true)
 {
     uchar cur, **Pathes;
@@ -42,7 +35,6 @@ uchar *run(Ant *Ants, AntMap &Map, uchar n, bool print = true)
         Map.recalculate_feromon(Pathes, ANTS_NUMBER);
     }
 
-    // print_res(Ants[0].give_shortest(0, Map), n + 1);
     return Ants[0].give_shortest(0, Map);
 }
 
@@ -86,11 +78,42 @@ double GiveLen(double alpha, double beta, AntMap &Map, int generations, int ant_
     return Map.calculate_path(run(Ants, Map, Map.n, true), Map.n + 1);
 }
 
+uchar *full_run(int n, int **Matrix, int &total_len,
+
+                double alpha = 1,
+                double beta = 1,
+                double init_fer = 0.3,
+                double evap_const = 0.8,
+                double fer_per_ant = 100,
+                int generations = 100,
+                int ants = 100,
+                bool silent = true)
+{
+    ALPHA = alpha;
+    BETA = beta;
+    INIT_FEROMON = init_fer;
+    EVOPARTION_CONST = evap_const;
+    FEROMON_PER_ANT = fer_per_ant;
+    GENERATIONS = generations;
+    ANTS_NUMBER = ants;
+
+    AntMap Map(n, Matrix);
+
+    Ant Ants[ANTS_NUMBER];
+
+    for (int i = 0; i < ANTS_NUMBER; ++i)
+        Ants[i].update(n);
+
+    uchar *path = run(Ants, Map, Map.n, !silent); // aray of vertices
+    total_len = Map.calculate_path(path, n);
+    return path;
+}
+
 int main(int argc, char **argv)
 {
 
     int **Matrix;
-    uchar n, cur, **Pathes, *res;
+    uchar n;
 
     if (argc > 1)
     {
@@ -213,7 +236,9 @@ int main(int argc, char **argv)
         display_help();
         return 0;
     }
-    bool silent = (bool)search_key("-s", argc, argv);
+    bool silent, special;
+    silent = (bool)search_key("-s", argc, argv);
+    special = (bool)search_key("-n", argc, argv);
 
     AntMap Map(n, Matrix);
 
@@ -222,10 +247,18 @@ int main(int argc, char **argv)
     for (int i = 0; i < ANTS_NUMBER; ++i)
         Ants[i].update(n);
 
-    uchar *path = run(Ants, Map, Map.n, !silent); // aray of vertices
-    std::cout << "Total length: " << Map.calculate_path(path, Map.n) << std::endl;
-    std::cout << "Path: ";
-    for (uchar i = 0; i < n; ++i)
-        std::cout << path[i] << ' ';
-    std::cout << std::endl;
+    uchar *path = run(Ants, Map, Map.n, !(silent || special)); // aray of vertices
+    if (!special)
+    {
+        std::cout << "Total length: " << Map.calculate_path(path, Map.n) << std::endl;
+        std::cout << "Path: ";
+        for (uchar i = 0; i < n; ++i)
+            std::cout << path[i] << ' ';
+        std::cout << std::endl;
+    }
+    else
+    {
+        std::cout << Map.calculate_path(path, Map.n) << std::endl;
+    }
+    return 0;
 }

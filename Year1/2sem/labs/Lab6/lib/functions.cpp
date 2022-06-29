@@ -202,5 +202,6 @@ void display_help()
     std::cout << "-e evaporation constant: from 0 to 1" << '\n';
     std::cout << "-g - generations count" << '\n';
     std::cout << "-a ants count" << '\n';
-    std::cout << "-s silrnt mode" << '\n';
+    std::cout << "-s silent mode" << '\n';
+    std::cout << "-n spicial mode for neural network" << '\n';
 }

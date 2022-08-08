@@ -38,7 +38,7 @@ inline bool comp(triple a, triple b)
         return a.x < b.x;
 }
 
-long merge(vector<triple> &V)
+long long merge(vector<triple> &V)
 {
     sort(V.begin(), V.end(), comp);
 
@@ -72,8 +72,8 @@ long merge(vector<triple> &V)
     if (index < n)
         res.push_back(V[index]);
 
-    long DIV = 10e9 + 7;
-    long ret = 0;
+    long long DIV = 10e9 + 7;
+    long long ret = 0;
     for (int i = 0; i < res.size(); ++i)
     {
         ret += res[i].end - res[i].beg;
@@ -83,14 +83,115 @@ long merge(vector<triple> &V)
     return ret;
 }
 
+long solve(vector<vector<int>> &rec)
+{
+    vector<triple> rt;
+    split(rec, rt);
+    return merge(rt);
+}
+
+enum EVS
+{
+    OPEN,
+    CLOSE
+};
+
+struct event
+{
+    long long y, x1, x2;
+    EVS act;
+    event(long long a, EVS e, long long b, long long c)
+    {
+        y = a;
+        act = e;
+        x1 = b;
+        x2 = c;
+    }
+};
+
+bool mycmp(const event &a, const event &b)
+{
+    if (a.y != b.y)
+        return a.y < b.y;
+    else if (a.act != b.act)
+        return a.act < b.act;
+    else if (a.x1 != b.x1)
+        return a.x1 < b.x1;
+
+    return a.x2 < b.x2;
+}
+
+long long query(vector<pair<long long, long long>> &active)
+{
+    long long ans = 0, cur = -1;
+    for (pair<long long, long long> act : active)
+    {
+        cur = max(cur, act.first);
+        ans += max((long long)0, act.second - cur);
+        cur = max(cur, act.second);
+    }
+
+    return ans;
+}
+
+const long long DIV = 1000000007;
+long long inline norm(long long what)
+{
+    return ((what + DIV) % DIV);
+}
+void print_events(vector<event> &V)
+{
+    string s;
+    for (event ev : V)
+    {
+        s = (ev.act == OPEN) ? "OPEN" : "CLOSE";
+        cout << ev.y << ' ' << s << ' ' << ev.x1 << ' ' << ev.x2 << endl;
+    }
+}
+
+long long linesweep(vector<vector<int>> &rectangles)
+{
+    vector<event> V;
+    V.reserve(rectangles.size() * 2);
+    for (vector<int> rectangle : rectangles)
+    {
+        V.push_back(event(rectangle[1], OPEN, rectangle[0], rectangle[2]));
+        V.push_back(event(rectangle[3], CLOSE, rectangle[0], rectangle[2]));
+    }
+
+    auto print_message = [](std::string message) {
+
+    };
+
+    sort(V.begin(), V.end(), mycmp);
+    print_events(V);
+
+    vector<pair<long long, long long>> active;
+    long long cur_y = V[0].y;
+    long long ans = 0;
+
+    for (event ev : V)
+    {
+        ans += norm(query(active)) * norm(ev.y - cur_y);
+        ans = norm(ans);
+        if (ev.act == OPEN)
+            active.push_back(make_pair(ev.x1, ev.x2));
+        else
+            active.erase(find(active.begin(), active.end(), make_pair(ev.x1, ev.x2)));
+
+        cur_y = ev.y;
+    }
+
+    return norm(ans);
+}
+
 class Solution
 {
 public:
     int rectangleArea(vector<vector<int>> &rectangles)
     {
-        vector<triple> splited;
-        split(rectangles, splited);
-        return merge(splited);
+        // return linesweep(rectangles);
+        return solve(rectangles);
     }
 };
 
@@ -98,7 +199,7 @@ public:
 int main()
 {
 
-    vector<vector<int>> V = {{0, 0, 1000000000, 1000000000}};
+    vector<vector<int>> V = {{49, 40, 62, 100}, {11, 83, 31, 99}, {19, 39, 30, 99}};
     Solution s;
     cout << "Merged: " << s.rectangleArea(V) << endl;
 }

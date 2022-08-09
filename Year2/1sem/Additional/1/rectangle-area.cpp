@@ -78,9 +78,9 @@ int merge(vector<line> V)
 
     if (index != n)
         res.push_back(V[index]);
-    V.clear()
-        // debug
-        print_V(res);
+    V.clear();
+    // debug
+    print_V(res);
     cout << endl;
     int ret = 0;
     for (int i = 0; i < res.size(); ++i)

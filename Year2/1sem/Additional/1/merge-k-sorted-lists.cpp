@@ -1,6 +1,4 @@
 #include <vector>
-#include <string.h>
-#include <iostream>
 
 using namespace std;
 
@@ -13,42 +11,37 @@ struct ListNode
     ListNode(int x, ListNode *next) : val(x), next(next) {}
 };
 
-void print_all(ListNode *list)
+int find_min(vector<ListNode *> &lists)
 {
-    while (list != nullptr)
-    {
-        cout << list->val << ' ';
-        list = list->next;
-    }
-    cout << endl;
-}
-
-ListNode *count_merge(vector<ListNode *> &lists)
-{
-    int mn;
-
-    int counts[100000000];
-    memset(counts, 0, 20000);
-
+    int mn = 2000000;
     for (ListNode *list : lists)
     {
-        while (list != nullptr)
-        {
-            counts[(list->val) + 10000]++;
-            list = list->next;
-        }
+        if (list != nullptr)
+            mn = min(mn, list->val);
     }
-    ListNode node, *nodeptr = nullptr;
+    return mn;
+}
 
-    for (int i = 0; i < 20000; ++i)
+ListNode *no_additional_memory_merge(vector<ListNode *> &lists)
+{
+}
+
+ListNode *append(ListNode *head, const int &val)
+{
+    return new ListNode(val, head);
+}
+
+ListNode *reverseList(ListNode *head)
+{
+    ListNode *prev = NULL, *cur = head, *tmp;
+    while (cur)
     {
-        for (int j = 0; j < counts[i]; ++j)
-        {
-            node = (ListNode(i - 10000, nodeptr));
-            nodeptr = &node;
-        }
+        tmp = cur->next;
+        cur->next = prev;
+        prev = cur;
+        cur = tmp;
     }
-    return nodeptr;
+    return prev;
 }
 
 class Solution
@@ -56,5 +49,46 @@ class Solution
 public:
     ListNode *mergeKLists(vector<ListNode *> &lists)
     {
+        bool gatherd = true;
+        int mn = 200000, n = lists.size();
+        ListNode *List = nullptr;
+        while (gatherd)
+        {
+            mn = find_min(lists);
+
+            if (mn == 2000000)
+                break;
+
+            for (int i = 0; i < n; ++i)
+            {
+                if (lists[i] && lists[i]->val == mn)
+                {
+                    List = append(List, mn);
+                    lists[i] = lists[i]->next;
+                }
+            }
         }
+
+        return reverseList(List);
+    }
 };
+
+int main()
+{
+    /*
+    ListNode *list = nullptr;
+    list = new ListNode(5, list);
+    list = new ListNode(4, list);
+    list = new ListNode(3, list);
+    vector<ListNode *> V;
+    V.push_back(list);
+    list = nullptr;
+    list = new ListNode(2, list);
+    list = new ListNode(1, list);
+    V.push_back(list);
+
+    Solution s;
+    list = s.mergeKLists(V);
+    */
+    return 0;
+}

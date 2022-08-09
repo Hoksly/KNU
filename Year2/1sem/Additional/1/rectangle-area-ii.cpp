@@ -130,7 +130,6 @@ long long query(vector<pair<long long, long long>> &active)
         ans += max((long long)0, act.second - cur);
         cur = max(cur, act.second);
     }
-
     return ans;
 }
 
@@ -138,15 +137,6 @@ const long long DIV = 1000000007;
 long long inline norm(long long what)
 {
     return ((what + DIV) % DIV);
-}
-void print_events(vector<event> &V)
-{
-    string s;
-    for (event ev : V)
-    {
-        s = (ev.act == OPEN) ? "OPEN" : "CLOSE";
-        cout << ev.y << ' ' << s << ' ' << ev.x1 << ' ' << ev.x2 << endl;
-    }
 }
 
 long long linesweep(vector<vector<int>> &rectangles)
@@ -164,7 +154,6 @@ long long linesweep(vector<vector<int>> &rectangles)
     };
 
     sort(V.begin(), V.end(), mycmp);
-    print_events(V);
 
     vector<pair<long long, long long>> active;
     long long cur_y = V[0].y;
@@ -173,16 +162,21 @@ long long linesweep(vector<vector<int>> &rectangles)
     for (event ev : V)
     {
         ans += norm(query(active)) * norm(ev.y - cur_y);
+
         ans = norm(ans);
+
         if (ev.act == OPEN)
+        {
             active.push_back(make_pair(ev.x1, ev.x2));
+            sort(active.begin(), active.end());
+        }
         else
             active.erase(find(active.begin(), active.end(), make_pair(ev.x1, ev.x2)));
 
         cur_y = ev.y;
     }
 
-    return norm(ans);
+    return ans;
 }
 
 class Solution
@@ -190,8 +184,8 @@ class Solution
 public:
     int rectangleArea(vector<vector<int>> &rectangles)
     {
-        // return linesweep(rectangles);
-        return solve(rectangles);
+        return linesweep(rectangles);
+        // return solve(rectangles);
     }
 };
 
@@ -201,5 +195,6 @@ int main()
 
     vector<vector<int>> V = {{49, 40, 62, 100}, {11, 83, 31, 99}, {19, 39, 30, 99}};
     Solution s;
-    cout << "Merged: " << s.rectangleArea(V) << endl;
+    cout << "Merged: " << endl
+         << s.rectangleArea(V) << endl;
 }

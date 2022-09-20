@@ -1,25 +1,26 @@
+#pragma once
 #include <string.h>
 #include <iostream>
-#pragma once
+
 #define SURNAME_LEN 20
 #define CITY_LEN 20
 #define DETAIL_NAME_LEN 20
 #define COLOR_NAME_LEN 10
 struct provider
 {
-    int code_p;
+    int code;
     char sur[SURNAME_LEN];
     char city[CITY_LEN];
 
     provider(int key, char *surname, char *city)
     {
-        this->code_p = key;
+        this->code = key;
         strcpy(this->city, city);
         strcpy(this->sur, surname);
     }
     provider(int key, const char *surname, const char *city)
     {
-        this->code_p = key;
+        this->code = key;
         strcpy(this->city, city);
         strcpy(this->sur, surname);
     }
@@ -28,7 +29,7 @@ struct provider
 
 struct _provider_dev
 {
-    provider pv;
+    provider master;
 
     int delivery_count = 0;
     long first_delivery = -1;
@@ -36,13 +37,13 @@ struct _provider_dev
 
     unsigned char to_del = 0;
 
-    _provider_dev(provider p) : pv(p) {}
+    _provider_dev(provider p) : master(p) {}
     _provider_dev() = default;
 };
 
 struct detail
 {
-    int code_d;
+    int code;
     char name[DETAIL_NAME_LEN];
     int mas;
     char color[COLOR_NAME_LEN];
@@ -52,7 +53,7 @@ struct detail
 
     detail(int key, char *name, int mas, char *color, char *city)
     {
-        this->code_d = key;
+        this->code = key;
         strcpy(this->city, city);
         this->mas = mas;
         strcpy(this->color, color);
@@ -61,7 +62,7 @@ struct detail
 
     detail(int key, const char *name, int mas, const char *color, const char *city)
     {
-        this->code_d = key;
+        this->code = key;
         strcpy(this->city, city);
         this->mas = mas;
         strcpy(this->color, color);
@@ -72,7 +73,7 @@ struct detail
 
 struct _detail_dev
 {
-    detail dt;
+    detail master;
 
     int detail_count = 0;
     long first_detail = -1;
@@ -80,7 +81,7 @@ struct _detail_dev
 
     unsigned char to_del = 0;
 
-    _detail_dev(detail d) : dt(d) {}
+    _detail_dev(detail d) : master(d) {}
     _detail_dev() = default;
 };
 
@@ -91,14 +92,17 @@ struct delivery
     int quantity;
     int price;
 
-    delivery(int a, int b, int c, int d) : code_p(a), code_d(b), quantity(c), price(d) {}
+    delivery(int provider_code, int detail_code, int _quantity, int _price) : code_p(provider_code),
+                                                                              code_d(detail_code), quantity(_quantity), price(_price) {}
     delivery() = default;
 };
 
 struct _delivery_dev
 {
-    delivery dv;
+    delivery master;
     int next_ind = -1;
     int prev_ind = -1;
     int index = -1;
+    _delivery_dev(delivery del) : master(del) {}
+    _delivery_dev() = default;
 };

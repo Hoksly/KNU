@@ -1,17 +1,23 @@
 #include "insert.hpp"
 #include <iostream>
+#include <string.h>
 using namespace std;
 
 template <typename master_T>
-int insert_master(master_T dev_pr, char index_filename[] = "data/S.ind", char data_filename[] = "data/S.fl")
+void insert_master(master_T dev_pr, const char *index_filename, const char *data_filename)
 {
+
     FILE *datafile, *tmp;
 
     // for some reason fseek will not work correctly with file opend for writing
 
-    datafile = fopen(data_filename, "r+b");
-    if (!datafile)
+    // datafile = fopen(data_filename, "r+b");
+    if (access(data_filename, F_OK) == 0)
+        datafile = fopen(data_filename, "r+b");
+    else
         datafile = fopen(data_filename, "w+b");
+
+    cout << (long)datafile << endl;
 
     fseek(datafile, 0L, SEEK_END);
     int index = ftell(datafile) / sizeof(master_T);
@@ -20,12 +26,13 @@ int insert_master(master_T dev_pr, char index_filename[] = "data/S.ind", char da
 
     fwrite(&dev_pr, sizeof(master_T), 1, datafile);
     fclose(datafile);
-    insert_index(index, dev_pr.pv.code_p, index_filename);
+
+    insert_index(index, dev_pr.master.code, index_filename);
 }
 
-void insert_slave(_delivery_dev *slave, char *slave_filename, char *master_datafilename, char *master_indexfilename)
+void insert_slave(_delivery_dev *slave, const char *slave_filename, const char *master_datafilename, const char *master_indexfilename)
 {
-    _provider_dev *prov = get_m_dev(slave->dv.code_p, master_indexfilename, master_datafilename);
+    _provider_dev *prov = get_m_dev(slave->master.code_p, master_indexfilename, master_datafilename);
     _delivery_dev *last_deliv = find_last_slave(prov->position);
 
     FILE *datafile;
@@ -74,23 +81,22 @@ int insert_provider(int code, const char *surname, const char *city)
     provider prov(code, surname, city);
     _provider_dev dev_prov(prov);
 
-    insert_master(dev_prov, "data/S.ind", "data/S.fl");
+    insert_master(dev_prov, PROVIDERS_INDEX_FILE, PROVIDERS_DATA_FILE);
 
     return 0;
 }
 
-int insert_delivery(int provide_code, int detail_code, int quantity, int price)
-{
-}
-
-int insert_detail(int code, const char *name, int mas, const char *color, const char *city)
+void insert_detail(int code, const char *name, int mas, const char *color, const char *city)
 {
     detail det(code, name, mas, color, city);
     _detail_dev det_dv(det);
 
-    insert_master(det_dv, "data/D.ind", "data/D.fl");
+    insert_master(det_dv, DETAILS_INDEX_FILE, DETAILS_DATA_FILE);
 }
 
-int _insert_detail_dev(_detail_dev dt_dev, char *data_dilename, char *index_filename)
+void insert_delivery(int provide_code, int detail_code, int quantity, int price)
 {
+
+    _delivery_dev deliv_dev(delivery(provide_code, detail_code, quantity, price));
+    insert_slave(&deliv_dev, SLAVE_FILE, PROVIDERS_DATA_FILE, PROVIDERS_INDEX_FILE);
 }

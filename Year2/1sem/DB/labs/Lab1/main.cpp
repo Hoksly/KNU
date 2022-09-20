@@ -8,25 +8,32 @@
 
 using namespace std;
 
+struct tmp
+{
+    int i, mas;
+    string s1, s2, s3;
+};
+
 int main()
 {
     provider *pr;
     ifstream file;
 
-    file.open("SampleData/Providers.txt");
-    vector<pair<int, pair<string, string>>> V;
+    file.open("SampleData/Details.txt");
+    vector<tmp> V;
 
-    pair<int, pair<string, string>> p;
+    tmp tt;
     while (!file.eof())
     {
-        file >> p.first >> p.second.first >> p.second.second;
-        cout << p.first << p.second.first << p.second.second << endl;
-        V.push_back(p);
+
+        file >> tt.i >> tt.s1 >> tt.mas >> tt.s2 >> tt.s3;
+
+        V.push_back(tt);
     }
     V.pop_back();
-    for (pair<int, pair<string, string>> a : V)
+    for (tmp a : V)
     {
-        insert_provider(a.first, a.second.first.c_str(), a.second.second.c_str());
+        insert_detail(a.i, a.s1.c_str(), a.mas, a.s2.c_str(), a.s3.c_str());
     }
 
     return 0;

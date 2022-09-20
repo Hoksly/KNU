@@ -3,11 +3,11 @@
 inline provider *clean_dev(_provider_dev *prov)
 {
     provider *ret = new provider;
-    *ret = prov->pv;
+    *ret = prov->master;
     return ret;
 }
 
-_provider_dev *get_m_dev(int code, char *ind_filename, char *data_filename)
+_provider_dev *get_m_dev(int code, const char *ind_filename, const char *data_filename)
 {
 
     long index = search(code, ind_filename);
@@ -69,11 +69,11 @@ inline delivery *clean_deliv_dev(_delivery_dev *dev)
 {
     delivery *ret = new delivery;
 
-    *ret = dev->dv;
+    *ret = dev->master;
     return ret;
 }
 
-_delivery_dev *get_s_dev(int detail_code, int provider_code, char *filename)
+_delivery_dev *get_s_dev(int detail_code, int provider_code, const char *filename)
 {
 
     int count, first_index = -1;
@@ -89,7 +89,7 @@ _delivery_dev *get_s_dev(int detail_code, int provider_code, char *filename)
 
     while (deliv)
     {
-        if (deliv->dv.code_d == detail_code)
+        if (deliv->master.code_d == detail_code)
             break;
 
         tmp = next_delivery(deliv, deliv_file);
@@ -108,7 +108,7 @@ delivery *get_s(int detail_code, int provider_code)
     if (!dv)
         return nullptr;
     delivery *ret = new delivery;
-    *ret = dv->dv;
+    *ret = dv->master;
 
     delete dv;
     return ret;

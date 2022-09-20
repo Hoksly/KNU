@@ -2,7 +2,7 @@
 
 using std::ifstream;
 
-int search(int code, char *filename)
+int search(int code, const char *filename)
 {
     // Binary search in file by code
     // returns a key
@@ -59,7 +59,7 @@ int search(int code, char *filename)
     return -1;
 }
 
-void change_index(int code, int new_index, char filename[] = "data/S.ind")
+void change_index(int code, int new_index, const char *filename)
 {
     int index;
 
@@ -101,7 +101,7 @@ void change_index(int code, int new_index, char filename[] = "data/S.ind")
     }
 }
 
-void remove_index_record(int code, char filename[] = "data/S.ind")
+void remove_index_record(int code, const char filename[] = "data/S.ind")
 {
     int index;
 
@@ -141,9 +141,8 @@ void remove_index_record(int code, char filename[] = "data/S.ind")
     }
 }
 
-void insert_index(int index, int code, char filename[] = "data/S.ind")
+void insert_index(int index, int code, const char *filename)
 {
-
     std::pair<int, int> index_code_pair;
     std::vector<std::pair<int, int>> data;
     data.reserve(20);
@@ -156,7 +155,7 @@ void insert_index(int index, int code, char filename[] = "data/S.ind")
     // here is weak moment
 
     bool added = false;
-    while (ifile && !ifile.eof())
+    while (ifile.is_open() && !ifile.eof())
     {
 
         ifile >> index_code_pair.first >> index_code_pair.second;
@@ -171,16 +170,19 @@ void insert_index(int index, int code, char filename[] = "data/S.ind")
 
     if (!added)
     {
-        data.pop_back(); // for some reason last record adds twice, so we need to pop it
+        if (data.size() > 1)
+            data.pop_back(); // for some reason last record adds twice, so we need to pop it
+
         data.push_back(std::make_pair(index, code));
     }
     else
         data.pop_back();
 
-    ifile.close();
+    if (ifile.is_open())
+        ifile.close();
 
     int sz = data.size();
-
+    std::cout << data.size() << '\n';
     ofile.open(filename);
 
     for (std::pair<int, int> el : data)
@@ -190,7 +192,7 @@ void insert_index(int index, int code, char filename[] = "data/S.ind")
     ofile.close();
 }
 
-_delivery_dev *get_slave(int index, char *slave_file)
+_delivery_dev *get_slave(int index, const char *slave_file)
 {
     FILE *file = fopen(slave_file, "rb");
     fseek(file, sizeof(_delivery_dev) * index, 0);

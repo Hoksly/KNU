@@ -1,9 +1,5 @@
 #include "del.hpp"
 
-void del_m(int code)
-{
-}
-
 void del_m_dev(int code, char *data_filename, char *index_filename)
 {
     _provider_dev *prov_to_del, *last;
@@ -31,4 +27,14 @@ void del_m_dev(int code, char *data_filename, char *index_filename)
     // deliting last record, works only in Linux
     truncate(data_filename, ftell(file) - sizeof(_provider_dev));
     fclose(file);
+}
+
+void del_provider(int code)
+{
+    del_m_dev(code, PROVIDERS_DATA_FILE, PROVIDERS_INDEX_FILE);
+}
+
+void del_detail(int code)
+{
+    del_m_dev(code, PROVIDERS_DATA_FILE, PROVIDERS_INDEX_FILE);
 }

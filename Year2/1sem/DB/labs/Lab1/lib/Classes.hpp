@@ -70,6 +70,20 @@ struct detail
     detail() = default;
 };
 
+struct _detail_dev
+{
+    detail dt;
+
+    int detail_count = 0;
+    long first_detail = -1;
+    int position;
+
+    unsigned char to_del = 0;
+
+    _detail_dev(detail d) : dt(d) {}
+    _detail_dev() = default;
+};
+
 struct delivery
 {
     int code_p;
@@ -86,4 +100,5 @@ struct _delivery_dev
     delivery dv;
     int next_ind = -1;
     int prev_ind = -1;
+    int index = -1;
 };

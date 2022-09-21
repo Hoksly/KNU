@@ -197,7 +197,7 @@ _delivery_dev *get_slave(int index, const char *slave_file)
     FILE *file = fopen(slave_file, "rb");
     fseek(file, sizeof(_delivery_dev) * index, 0);
 
-    _delivery_dev *dv = new _delivery_dev;
+    _delivery_dev *dv = new + n;
     fread(dv, sizeof(_delivery_dev), 1, file);
 
     fclose(file);

@@ -44,3 +44,54 @@ void del_detail(int code)
 {
     del_m_dev(code, PROVIDERS_DATA_FILE, PROVIDERS_INDEX_FILE);
 }
+
+_provider_dev *get_slave(int slave_index, int seek_begin = SEEK_SET)
+{
+    if (slave_index == -1)
+        return nullptr; // just in case ...
+
+    FILE *file = fopen(SLAVE_FILE, "r+b");
+
+    fseek(file, index * sizeof(_delivery_dev), seek_begin);
+
+    _delivery_dev *del_dev = new _delivery_dev;
+    fread(del_dev, sizeof(_delivery_dev), 1, file);
+
+    fclose(file);
+    return del_dev;
+}
+inline void remove_slave(int index)
+{
+    _delivery_dev *del_dev = get_slave(index);
+
+    int rm_index = del_dev->index;
+    _provider_dev *master = get_m_dev(del_dev->master.code_p, PROVIDERS_INDEX_FILE, PROVIDERS_DATA_FILE);
+
+    if (master->first_delivery != rm_index)
+    {
+        _delivery_dev *previous = get_slave(del_dev->prev_ind);
+        previous->next_ind = del_dev->next_ind;
+
+        delete previous;
+    }
+    else
+    {
+        master->first_delivery = del_dev->next_ind;
+    }
+}
+
+void delete_slaves(int slave_index)
+{
+
+    FILE *file = fopen(SLAVE_FILE, "r+b");
+
+    if (!file)
+        return;
+
+    do
+    {
+        rewind(file);
+        fseek(file, slave_index * sizeof(_delivery_dev), 0);
+
+    } while (/* condition */);
+}

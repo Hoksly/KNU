@@ -11,7 +11,7 @@ _provider_dev *get_m_dev(int code, const char *ind_filename, const char *data_fi
 {
 
     long index = search(code, ind_filename);
-
+    // std::cout << "INDEX: " << index << '\n';
     if (index == -1)
     {
 
@@ -24,7 +24,7 @@ _provider_dev *get_m_dev(int code, const char *ind_filename, const char *data_fi
 
     long struc_porition = fseek(data_file, sizeof(_provider_dev) * index, 0);
 
-    fread(to_find, sizeof(provider), 1, data_file);
+    fread(to_find, sizeof(_provider_dev), 1, data_file);
 
     fclose(data_file);
 
@@ -102,8 +102,8 @@ _delivery_dev *get_s_dev(int detail_code, int provider_code, const char *filenam
 
 delivery *get_s(int detail_code, int provider_code)
 {
-    char filename[] = "data/SP.fl";
-    _delivery_dev *dv = get_s_dev(detail_code, provider_code, filename);
+
+    _delivery_dev *dv = get_s_dev(detail_code, provider_code, SLAVE_FILE);
 
     if (!dv)
         return nullptr;

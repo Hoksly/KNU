@@ -103,7 +103,6 @@ struct _delivery_dev
     int next_ind = -1;
     int prev_ind = -1;
     int index = -1;
-    char is_first = -1;
 
     _delivery_dev(delivery del) : master(del) {}
     _delivery_dev() = default;

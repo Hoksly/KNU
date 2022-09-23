@@ -176,14 +176,16 @@ void delete_slaves(int slave_index)
 {
 
     FILE *file = fopen(SLAVE_FILE, "r+b");
-
+    _delivery_dev *slave;
     if (!file)
         return;
 
     do
     {
         rewind(file);
-        fseek(file, slave_index * sizeof(_delivery_dev), 0);
+        slave = get_slave(slave_index);
+        remove_slave(slave_index);
+        slave_index = slave->next_ind;
 
-    } while (/* condition */);
+    } while (slave_index);
 }

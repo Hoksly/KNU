@@ -17,8 +17,6 @@ void insert_master(master_T dev_pr, const char *index_filename, const char *data
     else
         datafile = fopen(data_filename, "w+b");
 
-    cout << (long)datafile << endl;
-
     fseek(datafile, 0L, SEEK_END);
     int index = ftell(datafile) / sizeof(master_T);
 
@@ -33,8 +31,9 @@ void insert_master(master_T dev_pr, const char *index_filename, const char *data
 void insert_slave(_delivery_dev *slave, const char *slave_filename, const char *master_datafilename, const char *master_indexfilename)
 {
     _provider_dev *prov = get_m_dev(slave->master.code_p, master_indexfilename, master_datafilename);
+    cout << "HERE1" << endl;
     _delivery_dev *last_deliv = find_last_slave(prov->position);
-
+    cout << "HERE2" << endl;
     FILE *datafile;
     datafile = fopen(slave_filename, "r+b");
     if (!datafile)
@@ -46,20 +45,17 @@ void insert_slave(_delivery_dev *slave, const char *slave_filename, const char *
     slave->index = index;
     if (last_deliv)
     {
+        cout << "FUCKING SLAVE " << last_deliv << endl;
         last_deliv->next_ind = index;
         slave->prev_ind = last_deliv->index;
     }
 
     fwrite(slave, sizeof(_delivery_dev), 1, datafile);
 
-    _update_provider_dev(prov);
     // in case we have last delivery we need to update it
     if (last_deliv)
-    {
-        rewind(datafile);
-        fseek(datafile, sizeof(_delivery_dev) * last_deliv->index, 0);
-        fwrite(last_deliv, sizeof(_delivery_dev), 1, datafile);
-    }
+        _update_delivery_dev(last_deliv);
+
     // if no update master first
     else
     {
@@ -72,6 +68,7 @@ void insert_slave(_delivery_dev *slave, const char *slave_filename, const char *
     if (last_deliv)
         delete last_deliv;
 
+    _update_provider_dev(prov);
     delete prov;
     fclose(datafile);
 }

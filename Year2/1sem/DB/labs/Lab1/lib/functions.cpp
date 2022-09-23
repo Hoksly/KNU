@@ -11,17 +11,15 @@ int search(int code, const char *filename)
     std::pair<int, int> gg;
     std::vector<std::pair<int, int>> data;
     data.reserve(20);
-    std::cout << "HERE11" << std::endl;
+
     ifstream ifile;
 
     ifile.open(filename);
-    std::cout << "HERE12" << std::endl;
 
     if (!ifile)
     {
         return -1;
     }
-    std::cout << "HERE13" << std::endl;
 
     // here is weak moment
     while (!ifile.eof())
@@ -29,12 +27,12 @@ int search(int code, const char *filename)
         ifile >> gg.first >> gg.second;
         data.push_back(gg);
     }
-    std::cout << "HERE14" << std::endl;
 
     int beg = 0, end = data.size(), mid;
 
     while (end - beg > 1)
     {
+        // std::cout << "ITERATION: " << beg << ' ' << end << '\n';
         mid = (beg + end) / 2;
         if (data[mid].second > code)
             end = mid;
@@ -45,16 +43,14 @@ int search(int code, const char *filename)
         else
             return data[mid].first;
     }
-    std::cout << data.size() << std::endl;
-    std::cout << data[beg].second << std::endl;
-    std::cout << data[end].second << std::endl;
+    // std::cout << data.size() << std::endl;
+    // std::cout << data[beg].second << std::endl;
+    // std::cout << data[end].second << std::endl;
 
     if (data[beg].second == code)
         return data[beg].first;
     if (data[end].second == code)
         return data[end].first;
-
-    std::cout << "FUCk" << std::endl;
 
     return -1;
 }
@@ -195,7 +191,11 @@ void insert_index(int index, int code, const char *filename)
 _delivery_dev *get_slave(int index, const char *slave_file)
 {
     FILE *file = fopen(slave_file, "rb");
+    if (!file)
+        return nullptr;
     fseek(file, sizeof(_delivery_dev) * index, 0);
+    if (ftell(file) == 0)
+        return nullptr;
 
     _delivery_dev *dv = new _delivery_dev;
     fread(dv, sizeof(_delivery_dev), 1, file);
@@ -213,12 +213,14 @@ _delivery_dev *find_last_slave(int first_slave_index)
     do
     {
         dv = get_slave(first_slave_index, SLAVE_FILE);
+        if (dv)
+            first_slave_index = dv->next_ind;
         if (tmp)
         {
             delete tmp;
             tmp = dv;
         }
-    } while (dv->next_ind != -1);
+    } while (dv && dv->next_ind != -1);
 
     return dv;
 }

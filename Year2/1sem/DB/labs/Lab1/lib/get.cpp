@@ -85,18 +85,23 @@ _delivery_dev *get_s_dev(int detail_code, int provider_code, const char *filenam
     FILE *deliv_file = fopen(filename, "rb");
     _delivery_dev *deliv, *tmp;
 
-    deliv = get_delivery_by_index(first_index, deliv_file);
-
-    while (deliv)
+    tmp = get_delivery_by_index(first_index, deliv_file);
+    deliv = tmp;
+    while (tmp && deliv->master.code_d != detail_code)
     {
         if (deliv->master.code_d == detail_code)
             break;
-
+        std::cout << "SEARCHING " << tmp->master.code_d << '\n';
         tmp = next_delivery(deliv, deliv_file);
-        delete deliv;
-        deliv = tmp;
-    }
 
+        if (tmp)
+        {
+            delete deliv;
+            deliv = tmp;
+        };
+    }
+    std::cout << "EXIT " << tmp << '\n';
+    std::cout << deliv->master.code_d << ' ' << deliv->master.code_p << '\n';
     return deliv;
 }
 
@@ -110,6 +115,5 @@ delivery *get_s(int detail_code, int provider_code)
     delivery *ret = new delivery;
     *ret = dv->master;
 
-    delete dv;
     return ret;
 }

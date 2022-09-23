@@ -99,14 +99,15 @@ void insert_slaves_from_file(string filename = "SampleData/Delivery.txt")
 
 int main()
 {
-    insert_providers_from_file();
-    insert_slaves_from_file();
+    // insert_providers_from_file();
+    //  insert_slaves_from_file();
 
     delivery *slave = get_s(1, 1);
 
     if (!slave)
         cout << "FUCK" << endl;
 
+    cout << "PRINTING" << endl;
     cout << slave->code_d << ' ' << slave->code_p << endl;
     cout << slave->price << ' ' << slave->quantity << endl;
 }

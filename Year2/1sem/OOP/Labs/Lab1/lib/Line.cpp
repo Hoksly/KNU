@@ -48,4 +48,21 @@ bool Line::passes_through(Point A)
 
 Vector Line::normal_vecor()
 {
+
+    double x = -(this->_b) / this->_k;
+    double y = this->_b;
+
+    if (x * y >= 0)
+    {
+        x = abs(x);
+        y = abs(y);
+    }
+    else if (x > 0) // y < 0
+    {
+        x = -x;
+        y = -y;
+    }
+
+    // our normal vector wiil always
+    return Vector(x, y); // (-b / k, b)
 }

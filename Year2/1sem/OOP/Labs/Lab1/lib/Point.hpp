@@ -11,4 +11,4 @@ public:
     inline double x() { return _x; }
     inline double y() { return _y; }
     inline std::pair<double, double> get() { return std::make_pair(_x, _y); }
-}
+};

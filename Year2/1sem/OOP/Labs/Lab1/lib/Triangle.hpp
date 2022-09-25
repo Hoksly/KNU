@@ -12,10 +12,6 @@ public:
     Point C() { return _C; }
 };
 
-Triangle::Triangle(Point A, Point B, Point C)
-{
-}
-
 Triangle::~Triangle()
 {
 }

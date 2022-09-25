@@ -2,5 +2,9 @@
 class Segment
 {
     Line _l;
-    double beg, end;
+    Point _beg, _end;
+
+public:
+    Segment(Line l, Point A, Point B);
+    Segment(Point A, Point B);
 };

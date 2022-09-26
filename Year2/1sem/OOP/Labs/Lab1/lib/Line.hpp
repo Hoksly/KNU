@@ -11,6 +11,8 @@ class Line
 
 public:
     Line(Point A, Point B);
+    Line(Point A, Vector v);
+
     std::string str();
     std::pair<double, double> pair();
 

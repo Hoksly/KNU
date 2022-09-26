@@ -8,6 +8,12 @@ Line::Line(Point A, Point B)
     _b = (B.y() - A.y()) / (B.x() - A.x()) * (-A.x()) + A.y();
 }
 
+Line::Line(Point A, Vector v)
+{
+    _k = v.y() / v.x();
+    _b = (-A.x() * v.y()) / v.x() + A.y();
+}
+
 std::string Line::str()
 {
     std::string s = "y = ";
@@ -52,17 +58,5 @@ Vector Line::normal_vecor()
     double x = -(this->_b) / this->_k;
     double y = this->_b;
 
-    if (x * y >= 0)
-    {
-        x = abs(x);
-        y = abs(y);
-    }
-    else if (x > 0) // y < 0
-    {
-        x = -x;
-        y = -y;
-    }
-
-    // our normal vector wiil always
     return Vector(x, y); // (-b / k, b)
 }

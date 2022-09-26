@@ -11,7 +11,7 @@ _provider_dev *get_m_dev(int code, const char *ind_filename, const char *data_fi
 {
 
     long index = search(code, ind_filename);
-    // std::cout << "INDEX: " << index << '\n';
+
     if (index == -1)
     {
 
@@ -73,12 +73,15 @@ inline delivery *clean_deliv_dev(_delivery_dev *dev)
     return ret;
 }
 
-_delivery_dev *get_s_dev(int detail_code, int provider_code, const char *filename)
+_delivery_dev *get_s_dev(int provider_code, int detail_code, const char *filename)
 {
 
     int count, first_index = -1;
 
     _provider_dev *prov = get_m_dev(provider_code, "data/S.ind", "data/S.fl");
+    if (!prov)
+        return nullptr;
+
     first_index = prov->position;
     count = prov->delivery_count;
 
@@ -91,7 +94,7 @@ _delivery_dev *get_s_dev(int detail_code, int provider_code, const char *filenam
     {
         if (deliv->master.code_d == detail_code)
             break;
-        std::cout << "SEARCHING " << tmp->master.code_d << '\n';
+        // std::cout << "SEARCHING FOR " << detail_code << " GOT " << tmp->master.code_d << '\n';
         tmp = next_delivery(deliv, deliv_file);
 
         if (tmp)
@@ -100,9 +103,17 @@ _delivery_dev *get_s_dev(int detail_code, int provider_code, const char *filenam
             deliv = tmp;
         };
     }
-    std::cout << "EXIT " << tmp << '\n';
-    std::cout << deliv->master.code_d << ' ' << deliv->master.code_p << '\n';
-    return deliv;
+    // std::cout << "EXIT " << deliv << '\n';
+    delete prov;
+
+    if (deliv && deliv->master.code_d == detail_code && deliv->master.code_p == provider_code)
+        return deliv;
+    else
+    {
+        if (deliv)
+            delete deliv;
+        return nullptr;
+    }
 }
 
 delivery *get_s(int detail_code, int provider_code)

@@ -190,13 +190,18 @@ void insert_index(int index, int code, const char *filename)
 
 _delivery_dev *get_slave(int index, const char *slave_file)
 {
+    // std::cout << "Trying to get slave: " << index << '\n';
     FILE *file = fopen(slave_file, "rb");
     if (!file)
         return nullptr;
-    fseek(file, sizeof(_delivery_dev) * index, 0);
+
+    // checking if file is empty
+    fseek(file, 0L, SEEK_END);
     if (ftell(file) == 0)
         return nullptr;
+    rewind(file);
 
+    fseek(file, sizeof(_delivery_dev) * index, 0);
     _delivery_dev *dv = new _delivery_dev;
     fread(dv, sizeof(_delivery_dev), 1, file);
 
@@ -207,20 +212,50 @@ _delivery_dev *get_slave(int index, const char *slave_file)
 
 _delivery_dev *find_last_slave(int first_slave_index)
 {
+    // std::cout << "Running with " << first_slave_index << '\n';
     _delivery_dev *dv, *tmp;
     dv = tmp = nullptr;
-
+    if (first_slave_index == -1)
+        return nullptr;
     do
     {
         dv = get_slave(first_slave_index, SLAVE_FILE);
-        if (dv)
-            first_slave_index = dv->next_ind;
+
+        if (!dv)
+            return nullptr;
+
+        // std::cout << "SLAVE SEARCHING: " << dv->index << '\n';
+        first_slave_index = dv->next_ind;
+        // std::cout << "NOW searching for: " << first_slave_index << '\n';
+
         if (tmp)
-        {
             delete tmp;
-            tmp = dv;
-        }
+        tmp = dv;
+
     } while (dv && dv->next_ind != -1);
 
     return dv;
+}
+
+void print_slave(_delivery_dev *slave)
+{
+    using std::cout;
+    cout << "SLAVE: " << slave->index << '\n';
+    cout << slave->master.code_p << ' ' << slave->master.code_d << ' ' << slave->master.quantity << ' ' << slave->master.price << '\n';
+    cout << slave->prev_ind << ' ' << slave->next_ind << '\n';
+}
+void print_all_slaves()
+{
+    using std::cout;
+
+    FILE *slave_file = fopen(SLAVE_FILE, "rb");
+
+    _delivery_dev *slave = new _delivery_dev;
+    while (!feof(slave_file))
+    {
+        fread(slave, sizeof(_delivery_dev), 1, slave_file);
+        print_slave(slave);
+    }
+    delete slave;
+    fclose(slave_file);
 }

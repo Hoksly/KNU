@@ -1,6 +1,7 @@
 #include "lib/get.hpp"
 #include "lib/insert.hpp"
 #include "lib/update.hpp"
+#include "lib/del.hpp"
 #include <iostream>
 #define MASTER_INDEX_FILE "data/S.ind"
 #include <fstream>
@@ -99,15 +100,15 @@ void insert_slaves_from_file(string filename = "SampleData/Delivery.txt")
 
 int main()
 {
-    // insert_providers_from_file();
-    //  insert_slaves_from_file();
-
-    delivery *slave = get_s(1, 1);
-
-    if (!slave)
-        cout << "FUCK" << endl;
-
-    cout << "PRINTING" << endl;
-    cout << slave->code_d << ' ' << slave->code_p << endl;
-    cout << slave->price << ' ' << slave->quantity << endl;
+    insert_providers_from_file();
+    insert_slaves_from_file();
 }
+/*
+2 1 1012 3003
+3 2 1030 3005
+4 4 1040 3004
+5 5 1050 300121
+6 12 1060 30033
+7 112 103 2112
+8 133 12 432
+*/

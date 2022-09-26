@@ -30,10 +30,11 @@ void insert_master(master_T dev_pr, const char *index_filename, const char *data
 
 void insert_slave(_delivery_dev *slave, const char *slave_filename, const char *master_datafilename, const char *master_indexfilename)
 {
+    // cout << "SLAVE INSERTION: " << slave->master.code_p << ' ' << slave->master.code_d << endl;
     _provider_dev *prov = get_m_dev(slave->master.code_p, master_indexfilename, master_datafilename);
-    cout << "HERE1" << endl;
-    _delivery_dev *last_deliv = find_last_slave(prov->position);
-    cout << "HERE2" << endl;
+
+    _delivery_dev *last_deliv = find_last_slave(prov->first_delivery);
+
     FILE *datafile;
     datafile = fopen(slave_filename, "r+b");
     if (!datafile)
@@ -41,11 +42,11 @@ void insert_slave(_delivery_dev *slave, const char *slave_filename, const char *
 
     fseek(datafile, 0L, SEEK_END);
     int index = ftell(datafile) / sizeof(_delivery_dev);
-
+    // cout << "INSERTION INDEX: " << index << endl;
     slave->index = index;
     if (last_deliv)
     {
-        cout << "FUCKING SLAVE " << last_deliv << endl;
+        // cout << "FUCKING SLAVE " << slave->index << endl;
         last_deliv->next_ind = index;
         slave->prev_ind = last_deliv->index;
     }
@@ -59,8 +60,10 @@ void insert_slave(_delivery_dev *slave, const char *slave_filename, const char *
     // if no update master first
     else
     {
+        // cout << "MASTER " << prov->master.code << " IS CHANGING TO " << index << endl;
         prov->delivery_count = 0;
         prov->first_delivery = index;
+        // cout << "CHANGED: " << prov->first_delivery << endl;
     }
 
     prov->delivery_count++;
@@ -71,6 +74,8 @@ void insert_slave(_delivery_dev *slave, const char *slave_filename, const char *
     _update_provider_dev(prov);
     delete prov;
     fclose(datafile);
+
+    // cout << "END" << endl;
 }
 
 int insert_provider(int code, const char *surname, const char *city)

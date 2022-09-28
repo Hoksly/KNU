@@ -10,7 +10,7 @@ void victor<T>::__copy_victor(T *new_place)
     }
 }
 
-template <class T>
+template <typename T>
 void victor<T>::__reallocate_victor(v_size target_size)
 {
     T *new_victor = new T[_size + target_size];
@@ -98,7 +98,7 @@ iterator victor<T>::insert(const iterator &position, const T &element)
 
     // in case we don't have enough place
     if (_size == _capacity)
-        __reallocate_vector(_capacity * 2);
+        this->__reallocate_vector(_capacity * 2);
 
     __move_right(position, 1);
     _base[position] = element;
@@ -111,8 +111,9 @@ iterator victor<T>::insert(const iterator &position, const T &element)
 template <class T>
 victor<T> &victor<T>::push_back(const T &element)
 {
+
     if (_size == _capacity)
-        __reallocate_vector(_capacity * 2); // not a greatest formula, but let it be...
+        this->__reallocate_vector(_capacity * 2); // not a greatest formula, but let it be...
 
     _base[_size + 1] = element;
     _size++;

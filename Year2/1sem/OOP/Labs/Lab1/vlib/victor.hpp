@@ -1,7 +1,6 @@
 
 #include <iostream>
 #include <string.h>
-#include "doctest.h"
 
 #ifndef VICTOR_H
 #define VICTOR_H
@@ -20,9 +19,9 @@ private:
 
     T __get_element(const iterator index);
     void __copy_victor(T *new_place);
-    void __reallocate_victor(v_size target_size);
     void __move_left(v_size from, v_size n_of_positions);
     void __move_right(v_size from, v_size n_of_positions);
+    void __reallocate_victor(v_size target_size);
 
 public:
     victor(v_size size);

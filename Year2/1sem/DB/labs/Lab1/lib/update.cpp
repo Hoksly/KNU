@@ -26,3 +26,35 @@ void _update_delivery_dev(_delivery_dev *slave)
     fwrite(slave, sizeof(_delivery_dev), 1, file);
     fclose(file);
 }
+
+int update_slave(int pcode, int dcode, int qunt, int price, char option)
+{
+    std::cout << "HERE1" << std::endl;
+    _delivery_dev *slave = get_s_dev(pcode, dcode, SLAVE_FILE);
+    std::cout << "HERE2" << std::endl;
+    if (!slave)
+        return 1; // no such slave
+    if (option == 'q')
+        slave->master.quantity = qunt;
+    else if (option == 'p')
+        slave->master.price = price;
+
+    std::cout << "HERE3" << std::endl;
+    _update_delivery_dev(slave);
+    return 0;
+}
+
+int update_master(int code, std::string sur, std::string city, char option)
+{
+    _provider_dev *master = get_m_dev(code, PROVIDERS_INDEX_FILE, PROVIDERS_DATA_FILE);
+
+    if (option == 's')
+    {
+        strcpy(master->master.sur, sur.c_str());
+    }
+    else if (option == 'c')
+        strcpy(master->master.city, city.c_str());
+
+    _update_provider_dev(master);
+    return 0;
+}

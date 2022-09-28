@@ -240,9 +240,9 @@ _delivery_dev *find_last_slave(int first_slave_index)
 void print_slave(_delivery_dev *slave)
 {
     using std::cout;
-    cout << "SLAVE: " << slave->index << '\n';
-    cout << slave->master.code_p << ' ' << slave->master.code_d << ' ' << slave->master.quantity << ' ' << slave->master.price << '\n';
-    cout << slave->prev_ind << ' ' << slave->next_ind << '\n';
+    cout << "Index in file: " << slave->index << '\n';
+    cout << "  pcode: " << slave->master.code_p << "\n  dcode: " << slave->master.code_d << "\n  qt: " << slave->master.quantity << "\n  pr: " << slave->master.price << '\n';
+    // cout << slave->prev_ind << ' ' << slave->next_ind << '\n';
 }
 void print_all_slaves()
 {
@@ -258,4 +258,26 @@ void print_all_slaves()
     }
     delete slave;
     fclose(slave_file);
+}
+
+void print_master(_provider_dev *master)
+{
+    using std::cout;
+    using std::endl;
+    cout << "Position: " << master->position << endl;
+    cout << "  code: " << master->master.code << "\n  surname: " << master->master.sur << "\n  city: " << master->master.city << endl;
+}
+
+void print_all_masters()
+{
+    FILE *master_file = fopen(PROVIDERS_DATA_FILE, "rb");
+
+    _provider_dev *master = new _provider_dev;
+    while (!feof(master_file))
+    {
+        fread(master, sizeof(_provider_dev), 1, master_file);
+        print_master(master);
+    }
+    delete master;
+    fclose(master_file);
 }

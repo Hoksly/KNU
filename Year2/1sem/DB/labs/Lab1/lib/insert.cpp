@@ -3,8 +3,7 @@
 #include <string.h>
 using namespace std;
 
-template <typename master_T>
-void insert_master(master_T dev_pr, const char *index_filename, const char *data_filename)
+int insert_master(_provider_dev dev_pr, const char *index_filename, const char *data_filename)
 {
 
     FILE *datafile, *tmp;
@@ -17,21 +16,28 @@ void insert_master(master_T dev_pr, const char *index_filename, const char *data
     else
         datafile = fopen(data_filename, "w+b");
 
+    if (get_m(dev_pr.master.code))
+        return 1; // master already exist
+
     fseek(datafile, 0L, SEEK_END);
-    int index = ftell(datafile) / sizeof(master_T);
+    int index = ftell(datafile) / sizeof(_provider_dev);
 
     dev_pr.position = index;
 
-    fwrite(&dev_pr, sizeof(master_T), 1, datafile);
+    fwrite(&dev_pr, sizeof(_provider_dev), 1, datafile);
     fclose(datafile);
 
     insert_index(index, dev_pr.master.code, index_filename);
+    return 0;
 }
 
-void insert_slave(_delivery_dev *slave, const char *slave_filename, const char *master_datafilename, const char *master_indexfilename)
+int insert_slave(_delivery_dev *slave, const char *slave_filename, const char *master_datafilename, const char *master_indexfilename)
 {
     // cout << "SLAVE INSERTION: " << slave->master.code_p << ' ' << slave->master.code_d << endl;
     _provider_dev *prov = get_m_dev(slave->master.code_p, master_indexfilename, master_datafilename);
+
+    if (!prov)
+        return 1; // no such master
 
     _delivery_dev *last_deliv = find_last_slave(prov->first_delivery);
 
@@ -42,11 +48,11 @@ void insert_slave(_delivery_dev *slave, const char *slave_filename, const char *
 
     fseek(datafile, 0L, SEEK_END);
     int index = ftell(datafile) / sizeof(_delivery_dev);
-    // cout << "INSERTION INDEX: " << index << endl;
+
     slave->index = index;
     if (last_deliv)
     {
-        // cout << "FUCKING SLAVE " << slave->index << endl;
+
         last_deliv->next_ind = index;
         slave->prev_ind = last_deliv->index;
     }
@@ -75,6 +81,8 @@ void insert_slave(_delivery_dev *slave, const char *slave_filename, const char *
     delete prov;
     fclose(datafile);
 
+    return 0;
+
     // cout << "END" << endl;
 }
 
@@ -83,22 +91,12 @@ int insert_provider(int code, const char *surname, const char *city)
     provider prov(code, surname, city);
     _provider_dev dev_prov(prov);
 
-    insert_master(dev_prov, PROVIDERS_INDEX_FILE, PROVIDERS_DATA_FILE);
-
-    return 0;
+    return insert_master(dev_prov, PROVIDERS_INDEX_FILE, PROVIDERS_DATA_FILE);
 }
 
-void insert_detail(int code, const char *name, int mas, const char *color, const char *city)
-{
-    detail det(code, name, mas, color, city);
-    _detail_dev det_dv(det);
-
-    insert_master(det_dv, DETAILS_INDEX_FILE, DETAILS_DATA_FILE);
-}
-
-void insert_delivery(int provide_code, int detail_code, int quantity, int price)
+int insert_delivery(int provide_code, int detail_code, int quantity, int price)
 {
 
     _delivery_dev deliv_dev(delivery(provide_code, detail_code, quantity, price));
-    insert_slave(&deliv_dev, SLAVE_FILE, PROVIDERS_DATA_FILE, PROVIDERS_INDEX_FILE);
+    return insert_slave(&deliv_dev, SLAVE_FILE, PROVIDERS_DATA_FILE, PROVIDERS_INDEX_FILE);
 }

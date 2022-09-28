@@ -229,7 +229,7 @@ int rm_slave(int code_p, int code_d)
     FILE *file = fopen(SLAVE_FILE, "rb");
     _delivery_dev *slave = new _delivery_dev;
     if (!file)
-        return 2;
+        return 2; // error while opening file
 
     while (!feof(file))
     {
@@ -245,5 +245,5 @@ int rm_slave(int code_p, int code_d)
             return 0;
         }
     }
-    return 1;
+    return 1; // no such slave
 }

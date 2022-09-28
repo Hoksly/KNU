@@ -14,3 +14,5 @@ _delivery_dev *find_last_slave(int first_slave_index);
 
 void print_slave(_delivery_dev *slave);
 void print_all_slaves();
+void print_all_masters();
+void print_master(_provider_dev *master);

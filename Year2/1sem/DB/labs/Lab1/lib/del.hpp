@@ -10,3 +10,4 @@
 void delete_slaves(int slave_index);
 int rm_slave(int code_p, int code_d);
 int del_provider(int code);
+int rm_slave(int code_p, int code_d);

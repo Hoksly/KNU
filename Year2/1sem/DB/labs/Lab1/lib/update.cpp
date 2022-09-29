@@ -29,9 +29,9 @@ void _update_delivery_dev(_delivery_dev *slave)
 
 int update_slave(int pcode, int dcode, int qunt, int price, char option)
 {
-    std::cout << "HERE1" << std::endl;
+
     _delivery_dev *slave = get_s_dev(pcode, dcode, SLAVE_FILE);
-    std::cout << "HERE2" << std::endl;
+
     if (!slave)
         return 1; // no such slave
     if (option == 'q')

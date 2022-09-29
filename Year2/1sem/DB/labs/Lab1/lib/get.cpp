@@ -29,8 +29,10 @@ _provider_dev *get_m_dev(int code, const char *ind_filename, const char *data_fi
     fclose(data_file);
 
     provider *ret = clean_dev(to_find);
-
-    return to_find;
+    if (to_find->alive)
+        return to_find;
+    delete to_find;
+    return nullptr;
 }
 
 provider *get_m(int code)
@@ -106,7 +108,7 @@ _delivery_dev *get_s_dev(int provider_code, int detail_code, const char *filenam
     // std::cout << "EXIT " << deliv << '\n';
     delete prov;
 
-    if (deliv && deliv->master.code_d == detail_code && deliv->master.code_p == provider_code)
+    if (deliv && deliv->alive && deliv->master.code_d == detail_code && deliv->master.code_p == provider_code)
         return deliv;
     else
     {

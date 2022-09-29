@@ -437,6 +437,9 @@ void run_interactive_mode()
 
 int main()
 {
+    insert_providers_from_file();
+    insert_slaves_from_file();
+
     run_interactive_mode();
 }
 /*

@@ -254,7 +254,8 @@ void print_all_slaves()
     while (!feof(slave_file))
     {
         fread(slave, sizeof(_delivery_dev), 1, slave_file);
-        print_slave(slave);
+        if (slave->alive)
+            print_slave(slave);
     }
     delete slave;
     fclose(slave_file);
@@ -276,7 +277,8 @@ void print_all_masters()
     while (!feof(master_file))
     {
         fread(master, sizeof(_provider_dev), 1, master_file);
-        print_master(master);
+        if (master->alive)
+            print_master(master);
     }
     delete master;
     fclose(master_file);

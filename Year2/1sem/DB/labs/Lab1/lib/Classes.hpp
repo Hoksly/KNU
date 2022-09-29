@@ -34,6 +34,7 @@ struct _provider_dev
     int delivery_count = 0;
     long first_delivery = -1;
     int position;
+    int alive = 1;
 
     unsigned char to_del = 0;
 
@@ -103,6 +104,7 @@ struct _delivery_dev
     int next_ind = -1;
     int prev_ind = -1;
     int index = -1;
+    int alive = 1;
 
     _delivery_dev(delivery del) : master(del) {}
     _delivery_dev() = default;

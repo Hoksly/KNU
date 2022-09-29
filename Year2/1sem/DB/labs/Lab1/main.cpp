@@ -433,12 +433,14 @@ void run_interactive_mode()
             break;
         }
     }
+    clear_master_trash();
+    clear_slave_trash();
 }
 
 int main()
 {
-    insert_providers_from_file();
-    insert_slaves_from_file();
+    // insert_providers_from_file();
+    // insert_slaves_from_file();
 
     run_interactive_mode();
 }

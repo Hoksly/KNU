@@ -21,6 +21,7 @@ void delete_slaves_but_not_actully_delete(int first_slave_index)
 {
     FILE *file = fopen(SLAVE_FILE, "r+b");
     _delivery_dev *slave;
+    cout << "SLAVE: " << first_slave_index << endl;
     if (!file)
         return;
 
@@ -30,6 +31,7 @@ void delete_slaves_but_not_actully_delete(int first_slave_index)
         slave = get_slave(first_slave_index);
         if (!slave)
             return;
+
         slave->alive = 0;
         _update_delivery_dev(slave);
         first_slave_index = slave->next_ind;
@@ -81,7 +83,11 @@ int del_provider(int code)
     {
         // del_m_dev(code, PROVIDERS_DATA_FILE, PROVIDERS_INDEX_FILE);
         _provider_dev *master = get_m_dev(code, PROVIDERS_INDEX_FILE, PROVIDERS_DATA_FILE);
-        del_m_dev(code, PROVIDERS_DATA_FILE, PROVIDERS_INDEX_FILE);
+        master->alive = 0;
+        _update_provider_dev(master);
+
+        delete_slaves_but_not_actully_delete(master->first_delivery);
+        // del_m_dev(code, PROVIDERS_DATA_FILE, PROVIDERS_INDEX_FILE);
 
         delete master;
         return 0;

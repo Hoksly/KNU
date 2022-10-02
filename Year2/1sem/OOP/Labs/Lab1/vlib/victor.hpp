@@ -1,12 +1,11 @@
 
 #include <iostream>
 #include <string.h>
+#include "sort.hpp"
+#include "def.hpp"
 
 #ifndef VICTOR_H
 #define VICTOR_H
-
-typedef int _iterator; // maybe i will write it later
-typedef long long v_size;
 
 template <class T>
 class victor
@@ -26,6 +25,9 @@ private:
 public:
     victor(v_size size);
     victor(v_size size, T init_item);
+    victor();
+
+    ~victor();
 
     inline v_size size() { return _size; }
     inline v_size capacity() { return _capacity; }
@@ -50,9 +52,16 @@ public:
     T &operator[](v_size index);
     victor operator=(const victor &other_victor);
 
-    // debuging
+    // output
     void print();
     std::string str();
+    template <typename C>
+    friend std::ostream &operator<<(std::ostream &out, const victor<C> &v);
+
+    // sotring
+    void sort(); // implementing regular quick sort
+
+    void sort(void (*sort_function)(victor<T> &container));
 };
 
 template <class T>
@@ -96,7 +105,6 @@ void victor<T>::__move_left(v_size position, v_size n_of_positions)
 template <class T>
 void victor<T>::__move_right(v_size from, v_size n_of_positions)
 {
-    std::cout << "Alright" << std::endl;
     for (v_size i = 0; i < n_of_positions; ++i)
     {
         for (v_size cur_position = _size + i; cur_position > from + i; --cur_position)
@@ -133,6 +141,16 @@ victor<T>::victor(v_size size, T init_object) : victor(size)
     _size = size;
 }
 
+template <class T>
+victor<T>::~victor()
+{
+    delete _base;
+}
+
+template <class T>
+victor<T>::victor()
+{
+}
 template <class T>
 victor<T> &victor<T>::clear()
 {
@@ -181,7 +199,7 @@ victor<T> &victor<T>::push_back(const T &element)
 
     if (_size == _capacity)
         this->__reallocate_victor(_capacity + 1); // not a greatest formula, but let it be...
-    std::cout << "HERE" << element << ' ' << _size << std::endl;
+
     _base[_size] = element; // index of last element is size-1
 
     _size++;
@@ -226,7 +244,7 @@ victor<T> &victor<T>::shrink_to_fit()
 template <class T>
 T &victor<T>::operator[](v_size index)
 {
-    if (index >= 0 && index < _size)
+    if (index > -1 && index < _size)
         return _base[index];
 
     throw std::out_of_range("Index is out of victor range"); // "index out of victor range"
@@ -235,6 +253,7 @@ T &victor<T>::operator[](v_size index)
 template <class T>
 void victor<T>::print()
 {
+
     for (v_size i = 0; i < _size; ++i)
         std::cout << _base[i] << ' ';
 
@@ -245,12 +264,31 @@ template <class T>
 std::string victor<T>::str()
 {
     std::string s;
-    // in case it can't convert objects to string it will throw an error ?
+    // in case it can't convert objects to string it will thrvictor<T>::vicow an error ?
 
     for (v_size i = 0; i < _size; ++i)
         s += to_string(_base[i]) + ' ';
 
     return s;
 }
+template <class Y>
+std::ostream &operator<<(std::ostream &os, const victor<Y> &v)
+{
 
+    for (v_size i = 0; i < v._size; ++i)
+        os << v._base[i] << ' ';
+
+    return os;
+}
+template <typename T>
+void victor<T>::sort()
+{
+    quick_sort(*this, 0, _size - 1);
+}
+
+template <typename T>
+void victor<T>::sort(void (*sort_function)(victor<T> &container))
+{
+    sort_function(*this);
+}
 #endif

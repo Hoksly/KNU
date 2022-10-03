@@ -1,6 +1,9 @@
+#include "Figure.hpp"
 #include "Point.hpp"
 
-class Triangle
+#ifndef _TRIANGLE_HPP
+#define _TRIANGLE_HPP
+class Triangle : Figure
 {
 private:
     Point _A, _B, _C;
@@ -11,3 +14,5 @@ public:
     Point B() { return _B; }
     Point C() { return _C; }
 };
+
+#endif

@@ -1,5 +1,9 @@
 #include <string>
 
+#include "Figure.hpp"
+
+#ifndef _POINT_HPP
+#define _POINT_HPP
 class Point
 {
 
@@ -16,4 +20,8 @@ public:
 
     void move(double x, double y);
     void move(std::pair<double, double> v);
+
+    bool operator==(const Point &B) { return _x == B._x && _y == B._y; }
 };
+
+#endif

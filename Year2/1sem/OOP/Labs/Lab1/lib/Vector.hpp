@@ -7,7 +7,9 @@ using std::operator+;
 using std::operator-;
 using std::operator==;
 
-class Vector
+#ifndef _VECTOR_HPP
+#define _VECTOR_HPP
+class Vector : Figure
 {
     double _x, _y;
 
@@ -33,3 +35,5 @@ public:
     std::pair<double, double> pair();
     void print();
 };
+
+#endif

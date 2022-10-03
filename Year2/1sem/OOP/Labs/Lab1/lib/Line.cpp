@@ -51,6 +51,10 @@ bool Line::passes_through(Point A)
         return true;
     return false;
 }
+bool Line::is_paralel(Line l1)
+{
+    return this->_k == l1._k;
+}
 
 Vector Line::normal_vecor()
 {
@@ -59,4 +63,13 @@ Vector Line::normal_vecor()
     double y = this->_b;
 
     return Vector(x, y); // (-b / k, b)
+}
+
+Point Line::random_point()
+{
+    srand(time(NULL));
+    double random_x = rand() % 100;
+    double random_y = _k * random_x + _b;
+
+    return Point(random_x, random_y);
 }

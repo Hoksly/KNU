@@ -1,7 +1,7 @@
 
 #include <iostream>
 #include <string.h>
-#include "sort.hpp"
+#include "universalsort.hpp"
 #include "def.hpp"
 
 #ifndef VICTOR_H
@@ -57,6 +57,8 @@ public:
     std::string str();
     template <typename C>
     friend std::ostream &operator<<(std::ostream &out, const victor<C> &v);
+
+    // friends from std
 
     // sotring
     void sort(); // implementing regular quick sort
@@ -125,7 +127,7 @@ victor<T>::victor(v_size size)
 
     _base = new T[size];
 
-    _size = 0;
+    _size = size;
     _capacity = size;
 }
 
@@ -138,7 +140,6 @@ victor<T>::victor(v_size size, T init_object) : victor(size)
     {
         *tmp = init_object;
     }
-    _size = size;
 }
 
 template <class T>
@@ -280,6 +281,7 @@ std::ostream &operator<<(std::ostream &os, const victor<Y> &v)
 
     return os;
 }
+
 template <typename T>
 void victor<T>::sort()
 {

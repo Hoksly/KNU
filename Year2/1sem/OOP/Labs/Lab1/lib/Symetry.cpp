@@ -1,5 +1,4 @@
 #include "Symetry.hpp"
-#include <vector>
 
 Point Symetry::symetry(Point A, Line l)
 {
@@ -11,7 +10,6 @@ Point Symetry::symetry(Point A, Line l)
     Line interception_line = Line(A, normal);
 
     Point interception = l.intercept(interception_line)[0];
-
     Vector distance(A, interception);
 
     interception.move((std::pair<double, double>)distance);
@@ -61,6 +59,17 @@ Circle Symetry::symetry(Circle C, Line l)
     return Circle(new_O, C.r());
 }
 
-Point Symetry::symetry(Circle C, Point A)
+Point Symetry::symetry(Point A, Circle C)
 {
+    Vector OA(C.O(), A);
+
+    double OA_len = A.distance_to(C.O());
+
+    double OB_len = pow(C.r(), 2) / OA_len;
+
+    OA.scale_to(OB_len);
+    Point B = C.O();
+
+    B.move(OA.x(), OA.y());
+    return B;
 }

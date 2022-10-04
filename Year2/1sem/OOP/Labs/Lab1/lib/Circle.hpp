@@ -8,7 +8,7 @@ class Circle
     double _r;
 
 public:
-    Circle(Point, double);
+    Circle(Point O, double r) : _O(O), _r(r){};
 
     inline double r() { return _r; }
     inline Point O() { return _O; }

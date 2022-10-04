@@ -1,7 +1,9 @@
 #include "Figure.hpp"
 #include "Line.hpp"
+
 #ifndef _SEGMENT_HPP
 #define _SEGMENT_HPP
+
 class Segment
 {
     Line _l;

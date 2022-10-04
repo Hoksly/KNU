@@ -25,6 +25,8 @@ public:
 
     // Other Methods
     void scale_to(double target_len);
+    void rotate_right(double angle_rad);
+    void rotate_90();
 
     Vector operator+(Vector);
     Vector operator-(Vector);

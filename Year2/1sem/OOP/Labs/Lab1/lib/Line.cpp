@@ -43,6 +43,8 @@ std::vector<Point> Line::intercept(Line B)
     double y0 = this->_k * x0 + this->_b;              // y0 = k1 * x0 + b1
 
     Points.push_back(Point(x0, y0));
+
+    return Points;
 }
 
 bool Line::passes_through(Point A)
@@ -58,16 +60,28 @@ bool Line::is_paralel(Line l1)
 
 Vector Line::normal_vecor()
 {
+    double x, y;
+    if (_b != 0)
+    {
+        x = -(this->_b) / this->_k;
+        y = this->_b;
+        return Vector(x, y);
+    }
 
-    double x = -(this->_b) / this->_k;
-    double y = this->_b;
+    Point A = random_point();
+    Point B = random_point();
+    while (A == B)
+        B = random_point();
 
-    return Vector(x, y); // (-b / k, b)
+    Vector dest_V(A, B);
+    dest_V.rotate_90();
+    return dest_V;
 }
 
 Point Line::random_point()
 {
     srand(time(NULL));
+
     double random_x = rand() % 100;
     double random_y = _k * random_x + _b;
 

@@ -33,7 +33,7 @@ public:
     inline v_size capacity() { return _capacity; }
 
     victor &clear();
-    victor &erase(const _iterator position);
+    victor &erase(const _iterator position);                    // none
     victor &erase(const _iterator first, const _iterator last); // removes elements in range [first, last]
 
     _iterator insert(const _iterator &position, const T &element);
@@ -44,13 +44,13 @@ public:
     victor &reserve(const v_size additional_space);
     victor &shrink_to_fit();
 
-    victor copy();
+    victor copy(); // none
 
     void swap(const _iterator first, const _iterator second);
-    v_size search(const T &value);
+    v_size search(const T &value); // none
 
     T &operator[](v_size index);
-    victor operator=(const victor &other_victor);
+    victor operator=(const victor &other_victor); // none
 
     // output
     void print();
@@ -212,15 +212,13 @@ T victor<T>::pop_back()
 {
     if (_size > 0)
     {
-        T poped_element = _base[size];
+        T poped_element = _base[_size - 1];
         _size--;
+        return poped_element;
     }
-    else
-    {
-        throw std::out_of_range(); //"Can't pop empty victor"
-    }
-}
 
+    throw std::out_of_range("victor is empty"); //"Can't pop empty victor"
+}
 template <class T>
 victor<T> &victor<T>::reserve(const v_size additional_space)
 {
@@ -267,8 +265,11 @@ std::string victor<T>::str()
     std::string s;
     // in case it can't convert objects to string it will thrvictor<T>::vicow an error ?
 
-    for (v_size i = 0; i < _size; ++i)
-        s += to_string(_base[i]) + ' ';
+    for (v_size i = 0; i < _size - 1; ++i)
+        s += std::to_string(_base[i]) + ' ';
+
+    if (_size > 0)
+        s += std::to_string(_base[_size - 1]);
 
     return s;
 }

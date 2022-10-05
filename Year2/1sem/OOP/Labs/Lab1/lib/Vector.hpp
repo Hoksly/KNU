@@ -20,8 +20,8 @@ public:
     Vector(Point a, Point b);
 
     // Getters
-    inline double x() { return _x; }
-    inline double y() { return _y; }
+    inline double x() const { return _x; }
+    inline double y() const { return _y; }
 
     // Other Methods
     void scale_to(double target_len);
@@ -30,11 +30,11 @@ public:
 
     Vector operator+(Vector);
     Vector operator-(Vector);
-    Vector operator==(Vector);
+    bool operator==(const Vector &A) const;
     inline operator std::pair<double, double>() const { return std::make_pair(_x, _y); }
 
-    std::string str();
-    std::pair<double, double> pair();
+    std::string str() const;
+    std::pair<double, double> pair() const;
     void print();
 };
 

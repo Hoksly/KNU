@@ -15,6 +15,27 @@ void Vector::scale_to(double target_len)
     _y *= mult;
 }
 
+bool Vector::operator==(const Vector &A) const
+{
+    Vector B = *this;
+    // std::cout << A.str() << std::endl;
+    // std::cout << B.str() << std::endl;
+    if (fabs(B.x()) > 1.e-8 && fabs(B.y()) > 1.e-8)
+    {
+        return (A.x() / B.x() - A.y() / B.y()) < 1.e-5;
+    }
+    if (fabs(A.x()) < 1.e-8 && fabs(B.x()) < 1.e-8)
+    {
+        return true;
+    }
+
+    if (fabs(A.y()) < 1.e-8 && fabs(B.y()) < 1.e-8)
+    {
+        return true;
+    }
+    return false;
+}
+
 Vector Vector::operator+(Vector b)
 {
     return Vector(this->_x + b._x, this->_y + b._y);
@@ -25,7 +46,7 @@ Vector Vector::operator-(Vector b)
     return Vector(this->_x - b._x, this->_y - b._y);
 }
 
-std::string Vector::str()
+std::string Vector::str() const
 {
     std::string s = "(";
     s += std::to_string(_x) + ", ";
@@ -33,7 +54,7 @@ std::string Vector::str()
     return s;
 }
 
-std::pair<double, double> Vector::pair()
+std::pair<double, double> Vector::pair() const
 {
     return std::make_pair(_x, _y);
 }

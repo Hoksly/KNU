@@ -21,3 +21,7 @@ TEST_CASE("Point-Line symetry")
     CHECK_EQ(B_sym.x(), 5);
     CHECK_EQ(B_sym.y(), 0);
 }
+
+TEST_CASE("Line-Line Symetry")
+{
+}

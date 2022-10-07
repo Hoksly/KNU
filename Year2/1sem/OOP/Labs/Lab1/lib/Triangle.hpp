@@ -24,7 +24,7 @@ public:
     bool operator==(const Triangle &T2) const;
     double S() const;
 
-    std::string str() const;
+    std::string str() const override;
 };
 
 #endif

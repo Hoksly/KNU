@@ -33,7 +33,7 @@ public:
     bool operator==(const Vector &A) const;
     inline operator std::pair<double, double>() const { return std::make_pair(_x, _y); }
 
-    std::string str() const;
+    std::string str() const override;
     std::pair<double, double> pair() const;
     void print();
 };

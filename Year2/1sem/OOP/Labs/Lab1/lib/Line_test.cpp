@@ -60,3 +60,26 @@ TEST_CASE("Line passes through")
     CHECK(l2.passes_through(Point(2.5, 2.5)));
     CHECK_FALSE(l2.passes_through(Point(12, 332)));
 }
+
+TEST_CASE("Line-Circle interception")
+{
+    Circle C(Point(0, 0), 2);
+
+    Line l1(Point(1, 1), Point(5, 5));  // 2
+    Line l2(Point(-5, 0), Point(0, 5)); // 0
+    Line l3(Point(5, 2), Point(7, 2));  // 1
+    Line l4(Point(1, 1), Point(1, 5));  // 2
+
+    std::vector<Point> points;
+    points = l1.intercept(C);
+    CHECK_EQ(points.size(), 2);
+
+    points = l2.intercept(C);
+    CHECK_EQ(points.size(), 0);
+
+    points = l3.intercept(C);
+    CHECK_EQ(points.size(), 1);
+
+    points = l4.intercept(C);
+    CHECK_EQ(points.size(), 2);
+}

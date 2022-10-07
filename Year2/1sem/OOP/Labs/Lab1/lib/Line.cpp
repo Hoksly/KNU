@@ -1,5 +1,23 @@
 #include "Line.hpp"
 
+std::vector<double> Line::__solve_quadratic_eqasion(double a, double b, double c)
+{
+    double D = pow(b, 2) - 4 * a * c;
+    std::vector<double> results;
+    if (D > 0)
+    {
+        results.push_back(-b + sqrt(D) / (2 * a));
+        results.push_back((-b - sqrt(D)) / (2 * a));
+    }
+
+    else if (D == 0)
+    {
+        results.push_back(-b / (2 * a));
+    }
+
+    return results;
+}
+
 Line::Line(Point A, Point B)
 {
     // using A as x0 and y0
@@ -37,7 +55,7 @@ Line::Line(Point A, Vector v)
     }
 }
 
-std::string Line::str()
+std::string Line::str() const
 {
     std::string s = "y = ";
 
@@ -67,7 +85,7 @@ std::vector<Point> Line::intercept(Line B)
 
     if (this->_angle - B._angle == 0) // paralel
     {
-        std::cout << this->angle() << ' ' << B.angle() << std::endl;
+
         return Points;
     }
 
@@ -95,6 +113,38 @@ std::vector<Point> Line::intercept(Line B)
     return Points;
 }
 
+std::vector<Point> Line::intercept(Circle C)
+{
+    std::vector<Point> points;
+
+    if (_angle != M_PI_2)
+    {
+        std::vector<double> X_of_interceptions = __solve_quadratic_eqasion(
+            pow(_k, 2) + 1,
+            (2 * _b * _k) - (2 * _k * C.O().y()) - 2 * C.O().x(),
+            pow(_b, 2) - pow(C.r(), 2) + pow(C.O().x(), 2) - 2 * _b * C.O().y() + pow(C.O().y(), 2));
+
+        for (double x : X_of_interceptions)
+        {
+            points.push_back(Point(x, _k * x + _b));
+        }
+    }
+    else
+    {
+        std::vector<double> Y_of_interceptions = __solve_quadratic_eqasion(
+            1,
+            2 * C.O().y(),
+            -pow(C.r(), 2) + pow(_b - C.O().x(), 2));
+
+        for (double y : Y_of_interceptions)
+        {
+            points.push_back(Point(_b, y));
+        }
+    }
+
+    return points;
+}
+
 bool Line::passes_through(Point A)
 {
     if (this->_angle == M_PI_2)
@@ -103,7 +153,7 @@ bool Line::passes_through(Point A)
             return true;
         return false;
     }
-    if (A.y() == this->_k * A.x() + this->_b)
+    if (fabs(A.y() - (this->_k * A.x() + this->_b)) < 1.e-5)
         return true;
     return false;
 }

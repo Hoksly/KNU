@@ -13,8 +13,8 @@ public:
     Point(double x, double y) : _x(x), _y(y) {}
     Point(std::pair<double, double> p) : _x(p.first), _y(p.second) {}
 
-    inline double x() { return _x; }
-    inline double y() { return _y; }
+    inline double x() const { return _x; }
+    inline double y() const { return _y; }
 
     inline std::pair<double, double> get() { return std::make_pair(_x, _y); }
 
@@ -32,6 +32,8 @@ public:
     bool operator==(const Point &B) { return _x == B._x && _y == B._y; }
 
     double distance_to(Point B) { return pow(_x - B._x, 2) + pow(_y - B._y, 2); }
+
+    std::string str() const { return "(" + std::to_string(_x) + ", " + std::to_string(_y) + ")"; }
 };
 
 #endif

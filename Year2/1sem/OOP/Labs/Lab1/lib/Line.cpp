@@ -41,7 +41,7 @@ std::string Line::str()
 {
     std::string s = "y = ";
 
-    s += std::to_string(_k) + " + ";
+    s += std::to_string(_k) + "x + ";
     s += std::to_string(_b);
 
     return s;

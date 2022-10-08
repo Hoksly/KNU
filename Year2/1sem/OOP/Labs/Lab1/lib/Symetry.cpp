@@ -1,5 +1,10 @@
 #include "Symetry.hpp"
 
+Point Symetry::__midpoint(Point A, Point B)
+{
+    return Point((A.x() + B.x()) / 2, (A.y() + B.y()) / 2);
+}
+
 Point Symetry::symetry(Point A, Line l)
 {
     if (l.passes_through(A))
@@ -84,7 +89,13 @@ inversion_res Symetry::inversion(Circle C1, Circle C)
     if (C1.passes_trough(C.O()))
     {
         Vector normal_vector(C.O(), C1.O());
-        Point point_on_a_line = inversion(C1.O(), C);
+        Point point_on_a_circle = C1.random_point();
+        while (point_on_a_circle == C.O())
+            point_on_a_circle = C1.random_point();
+
+        Point point_on_a_line = inversion(point_on_a_circle, C);
+
+        normal_vector.rotate_90();
         return Line(point_on_a_line, normal_vector);
     }
 
@@ -93,16 +104,11 @@ inversion_res Symetry::inversion(Circle C1, Circle C)
     Line center_line(C.O(), C1.O());
 
     std::vector<Point> interceptions = center_line.intercept(C1);
-    std::cout << "Point1: " << interceptions[0].str() << std::endl;
-    std::cout << "Point2: " << interceptions[1].str() << std::endl;
-
-    // points must be diametrically oposed
-    assert(fabs(interceptions[0].distance_to(interceptions[1]) - C.r() * 2) < 1.e-5);
 
     Point A1 = inversion(interceptions[0], C);
-    Point B1 = inversion(interceptions[0], C);
+    Point B1 = inversion(interceptions[1], C);
 
-    Point new_O((A1.x() + B1.x()) / 2, (A1.y() + B1.y()) / 2);
+    Point new_O = __midpoint(A1, B1);
     double new_R = new_O.distance_to(A1);
 
     return Circle(new_O, new_R);
@@ -116,17 +122,16 @@ inversion_res Symetry::inversion(Line l1, Circle C)
     Vector normal = l1.normal_vecor();
 
     Line interception_line = Line(C.O(), normal);
-    std::cout << "Line:  " << interception_line.str() << std::endl;
 
     Point interception_of_target_line = interception_line.intercept(l1)[0];
-    std::cout << "Point1: " << interception_of_target_line.str() << std::endl;
 
-    Point new_circle_center = inversion(interception_of_target_line, C);
-    std::cout << "Center: " << new_circle_center.str() << std::endl;
+    Point diametrical_oposite = inversion(interception_of_target_line, C);
+
+    Point new_circle_center = __midpoint(C.O(), diametrical_oposite);
 
     // using that inversed circle will always pass through inversion center
 
-    double new_r = new_circle_center.distance_to(C.O());
+    double new_r = diametrical_oposite.distance_to(C.O()) / 2;
 
     return Circle(new_circle_center, new_r);
 }

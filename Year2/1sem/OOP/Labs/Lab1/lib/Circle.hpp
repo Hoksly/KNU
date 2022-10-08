@@ -11,10 +11,11 @@ class Circle
 
 public:
     Circle(Point O, double r) : _O(O), _r(r){};
+    Circle() = default;
 
     inline double r() { return _r; }
     inline Point O() { return _O; }
-    inline bool passes_trough(Point A) { return fabs(pow(A.x(), 2) + pow(A.y(), 2) - pow(_r, 2)) < 1.e-5; }
+    inline bool passes_trough(Point A) { return fabs(_O.distance_to(A) - _r) < 1.e-5; }
 
     inline std::string str() { return "(x-" + std::to_string(_O.x()) + ")^2 + (y-" + std::to_string(_O.y()) + ")^2 = " + std::to_string(_r) + "^2"; }
 

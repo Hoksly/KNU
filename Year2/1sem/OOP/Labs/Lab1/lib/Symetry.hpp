@@ -10,6 +10,9 @@ typedef boost::variant<Line, Circle> inversion_res;
 
 class Symetry
 {
+private:
+    static Point __midpoint(Point A, Point B);
+
 public:
     static Line symetry(Line, Line);
     static Point symetry(Point, Line);

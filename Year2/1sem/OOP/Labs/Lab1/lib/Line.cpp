@@ -6,7 +6,7 @@ std::vector<double> Line::__solve_quadratic_eqasion(double a, double b, double c
     std::vector<double> results;
     if (D > 0)
     {
-        results.push_back(-b + sqrt(D) / (2 * a));
+        results.push_back((-b + sqrt(D)) / (2 * a));
         results.push_back((-b - sqrt(D)) / (2 * a));
     }
 
@@ -57,7 +57,14 @@ Line::Line(Point A, Vector v)
 
 std::string Line::str() const
 {
-    std::string s = "y = ";
+
+    std::string s = "";
+    if (_angle == M_PI_2)
+    {
+        s += "x = " + std::to_string(_b);
+        return s;
+    }
+    s += "y = ";
 
     s += std::to_string(_k) + "x + ";
     s += std::to_string(_b);

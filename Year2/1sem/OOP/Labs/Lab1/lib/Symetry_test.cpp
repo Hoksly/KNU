@@ -112,33 +112,38 @@ TEST_CASE("Line inversion")
 
     Circle C(Point(0, 0), 1);
 
-    // Line l1_inv = boost::get<Line>(s.inversion(l1, C));
+    Line l1_inv = boost::get<Line>(s.inversion(l1, C));
     Circle l2_inv = boost::get<Circle>(s.inversion(l2, C));
-    // Circle l3_inv = boost::get<Circle>(s.inversion(l3, C));
+    Circle l3_inv = boost::get<Circle>(s.inversion(l3, C));
 
-    // std::cout << l1_inv.str() << std::endl;
-    std::cout << l2_inv.str() << std::endl;
-    // std::cout << l3_inv.str() << std::endl;
-
-    // Point point_on_inverted_1 = l1_inv.random_point();
+    Point point_on_inverted_1 = l1_inv.random_point();
     Point point_on_inverted_2 = l2_inv.random_point();
-    // Point point_on_inverted_3 = l3_inv.random_point();
+    Point point_on_inverted_3 = l3_inv.random_point();
 
-    // std::cout << point_on_inverted_1.str() << std::endl;
-    std::cout << point_on_inverted_2.str() << std::endl;
-    // std::cout << point_on_inverted_3.str() << std::endl;
-
-    // std::cout << s.inversion(point_on_inverted_1, C).str() << std::endl;
-    std::cout << s.inversion(point_on_inverted_2, C).str() << std::endl;
-    // std::cout << s.inversion(point_on_inverted_3, C).str() << std::endl;
-
-    // CHECK(l1.passes_through(s.inversion(point_on_inverted_1, C)));
+    CHECK(l1.passes_through(s.inversion(point_on_inverted_1, C)));
 
     CHECK(l2.passes_through(s.inversion(point_on_inverted_2, C)));
 
-    // CHECK(l3.passes_through(s.inversion(point_on_inverted_3, C)));
+    CHECK(l3.passes_through(s.inversion(point_on_inverted_3, C)));
 }
 
 TEST_CASE("Circle inversion")
 {
+
+    Circle C(Point(0, 0), 3);
+    Symetry S;
+
+    Circle C1(Point(1, 1), 1);
+    Circle C2(Point(0, 1), 1);
+    Circle C3(Point(86, 52), 15);
+
+    Circle C1_inv, C3_inv;
+    Line C2_inv;
+    C1_inv = boost::get<Circle>(S.inversion(C1, C));
+    C2_inv = boost::get<Line>(S.inversion(C2, C));
+    C3_inv = boost::get<Circle>(S.inversion(C3, C));
+
+    CHECK(C1.passes_trough(S.inversion(C1_inv.random_point(), C)));
+    CHECK(C2.passes_trough(S.inversion(C2_inv.random_point(), C)));
+    CHECK(C3.passes_trough(S.inversion(C3_inv.random_point(), C)));
 }

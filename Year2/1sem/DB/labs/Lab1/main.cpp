@@ -148,9 +148,9 @@ void read_and_insert_master()
         cout << SUCCESSFUL_MESAGE << endl;
         break;
     case 1:
-        cout << NO_SUCH_MASTER << endl;
+        cout << "ERROR WHILE INSTERING" << endl;
     case 2:
-        cout << SLAVE_EXIST << endl;
+        cout << "MASTER ALREADY EXIST" << endl;
     }
 }
 

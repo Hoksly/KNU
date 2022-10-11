@@ -36,10 +36,13 @@ int insert_slave(_delivery_dev *slave, const char *slave_filename, const char *m
     // cout << "SLAVE INSERTION: " << slave->master.code_p << ' ' << slave->master.code_d << endl;
     _provider_dev *prov = get_m_dev(slave->master.code_p, master_indexfilename, master_datafilename);
 
+    // cout << "MASTER: " << prov->master.code << endl;
+
     if (!prov)
         return 1; // no such master
 
     _delivery_dev *last_deliv = find_last_slave(prov->first_delivery);
+    // cout << "LAst DELIV: " << last_deliv << endl;
 
     FILE *datafile;
     datafile = fopen(slave_filename, "r+b");

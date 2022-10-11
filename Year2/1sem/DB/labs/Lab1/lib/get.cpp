@@ -81,6 +81,8 @@ _delivery_dev *get_s_dev(int provider_code, int detail_code, const char *filenam
     int count, first_index = -1;
 
     _provider_dev *prov = get_m_dev(provider_code, "data/S.ind", "data/S.fl");
+
+    // std::cout << "MASTER OF SLAVE:" << prov->first_delivery << std::endl;
     if (!prov)
         return nullptr;
 
@@ -92,8 +94,10 @@ _delivery_dev *get_s_dev(int provider_code, int detail_code, const char *filenam
 
     tmp = get_delivery_by_index(first_index, deliv_file);
     deliv = tmp;
+    // std::cout << "GG: " << tmp->master.code_d << std::endl;
     while (tmp && deliv->master.code_d != detail_code)
     {
+        // std::cout << "IN WHILE" << std::endl;
         if (deliv->master.code_d == detail_code)
             break;
         // std::cout << "SEARCHING FOR " << detail_code << " GOT " << tmp->master.code_d << '\n';

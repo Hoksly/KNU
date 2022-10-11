@@ -33,7 +33,7 @@ public:
     inline v_size capacity() { return _capacity; }
 
     victor &clear();
-    victor &erase(const _iterator position);                    // none
+    victor &erase(const _iterator position);
     victor &erase(const _iterator first, const _iterator last); // removes elements in range [first, last]
 
     _iterator insert(const _iterator &position, const T &element);
@@ -169,6 +169,16 @@ victor<T> &victor<T>::erase(const _iterator position)
 
     _size--;
 
+    return *this;
+}
+template <class T>
+victor<T> &victor<T>::erase(const _iterator begin, const _iterator end)
+{
+    if (end >= _size || begin < 0)
+        throw std::__throw_bad_function_call(); // "Postion is out of victor size"
+    
+    if()
+    
     return *this;
 }
 

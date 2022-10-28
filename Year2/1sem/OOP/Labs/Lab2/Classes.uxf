@@ -1,0 +1,42 @@
+<diagram program="umletino" version="15.0.0"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>100</x><y>180</y><w>150</w><h>160</h></coordinates><panel_attributes>User
+--
+username: string
+-user_id : long
+-user_pic: picture
+-followers: list [ids]
+-followings: list [ids]
+--
+
++followers() : hash_tree :
++save_to</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>710</x><y>300</y><w>100</w><h>50</h></coordinates><panel_attributes>UserGraph
+--
+list</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>50</x><y>420</y><w>100</w><h>180</h></coordinates><panel_attributes>/Connection/
+--
+- _type: str
+- _beg : Node
+- _end : Node
+--
++ type()
+
++ beg()
++ end()
+
++ end(Node)
++ beg(Node)</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>540</x><y>290</y><w>120</w><h>130</h></coordinates><panel_attributes>/Node/
+--
+- _type : TypeClass
+- _info : InfoClass
+
+--
+type() : TypeClass
+info() : InfoClass</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>310</x><y>600</y><w>190</w><h>100</h></coordinates><panel_attributes>/InfoClass/
+--
+- _connections : list [Connection]
+- _</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>660</x><y>570</y><w>100</w><h>70</h></coordinates><panel_attributes>/TypeClass/
+--
+- _name : str
+--
+name() : str
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>330</x><y>300</y><w>100</w><h>30</h></coordinates><panel_attributes>/KnoweledgeItem/
+</panel_attributes><additional_attributes></additional_attributes></element></diagram>

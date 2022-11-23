@@ -20,7 +20,7 @@ class Matrix
     
     public:
 
-    Matrix(size_t n, size_t m = 0, bool randInit = false, std::pair<symb, symb> randRange = std::make_pair(60, 90));
+    Matrix(size_t n, size_t m = 0, bool randInit = false, std::pair<symb, symb> randRange = std::make_pair(86, 90));
     Matrix(std::string filename);
 
     inline size_t m() const {return _m;}
@@ -63,13 +63,16 @@ Matrix::Matrix(size_t n_sz, size_t m_sz, bool randInit, std::pair<symb, symb> ra
 
     if (randInit)
     {
-        srand(time(NULL));
+        std::random_device rd;  //Will be used to obtain a seed for the random number engine
+        std::mt19937 gen(rd()); 
+        std::uniform_int_distribution<symb> dist(randRange.first, randRange.second);
         
         for (size_t i = 0; i < _n; ++i)
         {
             for (size_t j = 0; j < _m; ++j)
             {
-                matrix[i][j] = (symb) (rand() % (randRange.second - randRange.first)  + randRange.first); // here is hardcode, but let it be...
+                ;
+                matrix[i][j] = dist(gen); // here is hardcode, but let it be...
             }
         }
     }

@@ -4,7 +4,8 @@
 #include <cmath>
 #include <stdlib.h>
 
-
+#ifndef _RABIN_CARP_SEARCH_HPP
+#define _RABIN_CARP_SEARCH_HPP
 
 std::pair<size_t, size_t> lineSearch(Matrix Target, Matrix Linear)
 {
@@ -16,7 +17,7 @@ void recalculateHex(size_t newHexBeginY, size_t newHexBeginX, const Matrix &Orig
 {
     // moving hex one step right
     // removing left hex
-    std::cout << subMatrixHex << std::endl;
+   
     for (size_t i = 0; i < subN; ++i)
     {
         subMatrixHex -=  Orig[i+newHexBeginY][newHexBeginX-1] * pow(BASEY, subN-1-i) * pow(BASEX, subM-1);
@@ -95,21 +96,24 @@ std::vector<std::pair<size_t, size_t>> rabinCarpSearchAll(Matrix target, Matrix 
     {
         j = 0;
         subMatrixHex = polynomialHexSubMatrix(target, i, 0, example.n(), example.m());
-        std::cout << i << std::endl;
+        
         do
-        {   
+        {  
             if(subMatrixHex == exampleHex)
                 allAnswers.push_back(std::make_pair(i, j));
             ++j;
 
-            if(j < target.m() - example.n() + 1)
+            if(j < target.m() - example.m() + 1)
                 recalculateHex(i, j, target, subMatrixHex, example.n(), example.m());
             else
                 break;
 
-        } while (j < target.m() - example.n() + 1);
+        } while (j < target.m() - example.m() + 1);
         
     }
 
     return allAnswers;
 }
+
+
+#endif

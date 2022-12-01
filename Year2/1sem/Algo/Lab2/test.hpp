@@ -38,15 +38,19 @@ inline int measureCollisions(std::vector<std::pair<size_t, size_t>> &cords, cons
                 if(orig[i+x][j+y] != pattern[i][j])
                 {
                     ++count;
-                   
+
                    goto end; 
                 }
             }
         }  
 
+        
+
         end : 
         ;
-
+        if(count)
+        std::cout << orig.subMatrix(x, y, x+pattern.m()-1, y+pattern.n()-1) << std::endl;
+        std::cout << pattern << std::endl;
     }
 
 
@@ -71,7 +75,7 @@ inline int measureExecutionCollisions(size_t matrixSize,const Matrix &searchPaet
 
 }
 
-void testExecutionTime(std::string fileName = "time.txt", size_t beginFrom = 10, size_t endWhen = 1200)
+void testExecutionTime(std::string fileName = "time.txt", size_t beginFrom = 100, size_t endWhen = 12000)
 {
     std::vector<std::pair<size_t, double>> Results; 
     double time;
@@ -98,7 +102,7 @@ void  testCollisions(std::string fileName = "collisions.txt", size_t beginFrom =
 {
     std::vector<std::pair<size_t, double>> Results; 
     int collisions, foundCount;
-    Matrix pattern(5, 5, true);
+    Matrix pattern(3, 3, true);
     std::ofstream file;
     file.open(fileName);
     if(!file.is_open())
@@ -115,5 +119,16 @@ void  testCollisions(std::string fileName = "collisions.txt", size_t beginFrom =
 
 }
 
+double testComplexity(size_t smallSize = 3000)
+{
+    Matrix pattern(3, 3, true);
+    double timeSmall, timeBig;
+    timeSmall = measureTime(smallSize, pattern);
+    size_t bigSize = smallSize * 2;
+    timeBig = measureTime(bigSize, pattern);
+
+    return timeBig / timeSmall;
+
+}
 
 

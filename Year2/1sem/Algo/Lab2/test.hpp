@@ -75,7 +75,7 @@ inline int measureExecutionCollisions(size_t matrixSize,const Matrix &searchPaet
 
 }
 
-void testExecutionTime(std::string fileName = "time.txt", size_t beginFrom = 100, size_t endWhen = 12000)
+void testExecutionTime(std::string fileName = "time.txt", size_t beginFrom = 10, size_t endWhen = 1200)
 {
     std::vector<std::pair<size_t, double>> Results; 
     double time;
@@ -119,7 +119,7 @@ void  testCollisions(std::string fileName = "collisions.txt", size_t beginFrom =
 
 }
 
-double testComplexity(size_t smallSize = 3000)
+double testComplexity(size_t smallSize = 5000)
 {
     Matrix pattern(3, 3, true);
     double timeSmall, timeBig;

@@ -12,6 +12,6 @@ void printV(vector<pair<size_t, size_t>> V)
 }
 int main()
 {
-   //cout << testComplexity() << endl;
-    testExecutionTime();
+   cout << testComplexity() << endl;
+   // testExecutionTime();
 }

@@ -25,40 +25,35 @@ using namespace std;
 class Solution {
 public:
     int trap(vector<int>& height) {
-        int peakHeight = height[0], peakIndex = 0;
-        bool isGrowing = true;
-        int heightMaxIndex = height.size() - 1, trappedWaterTotal = 0;
-        
+        int leftPointer = 0, rightPointer = height.size()-1;
+        int leftMax = -1, rightMax = -1;
+        int trappedTotal = 0;
 
-        for(int i = 0; i < heightMaxIndex; ++i)
+        while (leftPointer <= rightPointer)
         {
-            if (height[i+1] > height[i])
+            if (height[leftPointer] <= height[rightPointer])
             {
-                isGrowing = true;
-                trappedWaterTotal += cutSub(peakHeight, height[i]);
-            }
-            else
-            {
-                if(isGrowing)
-                {
-                    trappedWaterTotal -= cutSub(peakHeight, height[i]) * (i - peakIndex);
-                    peakHeight = height[i];
-                    peakIndex = i; 
-                }
+                if (height[leftPointer] > leftMax)
+                    leftMax = height[leftPointer];
                 else
                 {
-                    trappedWaterTotal += cutSub(peakHeight, height[i]);
+                    trappedTotal += leftMax - height[leftPointer];
                 }
+                leftPointer++;
+            }
 
-                isGrowing = false;
+            else
+            {
+                if (height[rightPointer] > rightMax)
+                    rightMax = height[rightPointer];
+                else
+                {
+                    trappedTotal += rightMax - height[rightPointer];
+                } 
+                rightPointer--;
             }
         }
-
-        return trappedWaterTotal;
-    }
-
-    inline int cutSub(const int a, const int b)
-    {
-        return (a > b)? a-b: 0;
+        return trappedTotal;
+        
     }
 };

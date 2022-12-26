@@ -1,7 +1,7 @@
 #include "algo.hpp"
 #include <iostream>
 
-long long naiveSearch(std::string text, std::string part)
+long long naiveSearch(const std::string &text, const std::string &part)
 {
     // searching part in text
 
@@ -59,7 +59,7 @@ std::unordered_map<char, int> findShiftTable(const std::string &prototype)
     return shiftTable;
 }
 
-long long horspoolSearch(std::string text, std::string part)
+long long horspoolSearch(const std::string &text, const std::string &part)
 {
     std::unordered_map<char, int> shiftTable = findShiftTable(part); // Initialise shift table calling findShiftTable function
 
@@ -103,7 +103,7 @@ long long horspoolSearch(std::string text, std::string part)
     return -1;
 }
 
-long long rabinCarpSearch(std::string text, std::string part, int charsInAplhabet, ll base, ll primeOne, bool checkCollisions)
+long long rabinCarpSearch(const std::string &text, const std::string &part, int charsInAplhabet, ll base, ll primeOne, bool checkCollisions)
 {
 
     ll leadingPow = 1;

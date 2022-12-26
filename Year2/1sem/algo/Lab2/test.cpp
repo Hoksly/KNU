@@ -14,7 +14,7 @@ std::string generateRandomText(ll textLen)
     return randoms;
 }
 
-void testRandom(std::string functionName, ll *search(const std::string, const std::string), ll textBeg, ll textEnd, ll textStep,
+void testRandom(std::string functionName, ll (*search)(const std::string &, const std::string &), ll textBeg, ll textEnd, ll textStep,
                 ll partBeg, ll partEnd, ll partStep)
 {
     std::string text, part;
@@ -33,13 +33,14 @@ void testRandom(std::string functionName, ll *search(const std::string, const st
             double execTime = duration.count();
             execTime /= 10e6;
 
-            std::cout << functionName << "\n  text size: " << textLen << "\n  sample len: " << partLen << "\n  search time: " << execTime << '\n';
+            std::cout << functionName << "\n  text size: " << textLen << "\n  sample len: " << partLen << "\n  search time: " << execTime << " s" << '\n';
             std::cout << std::endl;
         }
     }
 }
 
-void testReal(std::string filename, std::string functionName, ll *search(const std::string, const std::string), ll partBeg, ll partEnd, ll partStep)
+void testReal(std::string filename, std::string functionName, ll (*search)(const std::string &, const std::string &),
+              ll partBeg, ll partEnd, ll partStep)
 {
     std::ifstream file;
     std::stringstream buffer;
@@ -59,8 +60,8 @@ void testReal(std::string filename, std::string functionName, ll *search(const s
         double execTime = duration.count();
         execTime /= 10e6;
 
-        std::cout << functionName << "\n  text file name: " << filename << "\n text size: " << text.size()
-                  << "\n  sample len: " << partLen << "\n  search time: " << execTime << '\n';
+        std::cout << functionName << "\n  text file name: " << filename << "\n  text size: " << text.size() << " characters"
+                  << "\n  sample len: " << partLen << "\n  search time: " << execTime << " s" << '\n';
         std::cout << std::endl;
     }
 }

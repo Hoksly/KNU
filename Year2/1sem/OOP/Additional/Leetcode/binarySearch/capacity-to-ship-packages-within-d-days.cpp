@@ -6,6 +6,14 @@ with packages on the conveyor belt (in the order given by weights). We may not l
 
 Return the least weight capacity of the ship that will result in all the packages on the conveyor belt being shipped within days days.
 
+
+The main idea:
+    we define function that tell us can we using ship capacity of allowedCapacity transport everything that we need in weights vector
+    then we use binary search to find the minimum of this capactity
+    the complexity is O(n*log(n))
+
+    Note: we can use greedy chech in function canShip because of the problem condition, in general case we need to use something
+    like a backpack problem to answer the question
 */
 
 #include <vector>

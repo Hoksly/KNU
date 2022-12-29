@@ -23,7 +23,7 @@ public:
     {
         int leftBound = 0, rightBound = nums.size() - 1, mid;
 
-        while (rightBound - leftBound != 1)
+        while (rightBound - leftBound > 1)
         {
 
             mid = (rightBound + leftBound) / 2;

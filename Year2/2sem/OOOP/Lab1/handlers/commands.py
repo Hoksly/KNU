@@ -1,28 +1,33 @@
 from loader import bot
 from telebot.types import Message
 from data.translations import COMMANDS_DESCRIPTION
-from utils.database import get_user_lang, get_user_voice_lang, add_user, recreate_db
+from utils.database import Database
+from data.config import DATABASE_FILE
 import telebot
 from data.translations import VOICE_LANGUAGES, COMMANDS_DESCRIPTION, LANGUAGES
 
 
 @bot.message_handler(commands=['start'])
 def start (message: Message):
-    add_user(message.chat.id)
+    databaseObj = Database(DATABASE_FILE)
+    databaseObj.add_user(message.chat.id)
     user_lang = 0
     bot.send_message(message.chat.id, COMMANDS_DESCRIPTION['start'][user_lang])
 
 
 @bot.message_handler(commands=['help'])
 def helpp (message: Message):
-    user_lang = get_user_lang(message.chat.id)
+    databaseObj = Database(DATABASE_FILE)
+
+    user_lang = databaseObj.get_user_lang(message.chat.id)
     bot.send_message(message.chat.id, COMMANDS_DESCRIPTION['help'][user_lang])
 
 
 @bot.message_handler(commands=['voicelang'])
 def lang(message: Message):
     try:
-        user_lang = get_user_lang(message.chat.id)
+        databaseObj = Database(DATABASE_FILE)
+        user_lang = databaseObj.get_user_lang(message.chat.id)
 
         markup = telebot.types.InlineKeyboardMarkup()
 
@@ -36,7 +41,8 @@ def lang(message: Message):
 
 @bot.message_handler(commands=['botlang'])
 def language (message: Message):
-    user_lang = get_user_lang(message.chat.id)
+    databaseObj = Database(DATABASE_FILE)
+    user_lang =  databaseObj.get_user_lang(message.chat.id)
 
     markup = telebot.types.InlineKeyboardMarkup()
     for i in range(len(LANGUAGES[user_lang])):

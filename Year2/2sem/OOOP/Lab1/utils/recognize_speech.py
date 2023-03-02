@@ -1,12 +1,20 @@
 import speech_recognition as sr
-from utils.saver import save_voice_file
+from utils.saver import Saver
+from aiogram.types import Message
 import os
 from data.translations import LANGUAGE_KEYS, ERROR_MESSAGE
 
 
 class Recognizer:
     @staticmethod
-    def recognize(filename, lang, user_lang):
+    def recognize(filename: str, lang: int, user_lang: int) -> str:
+        """
+
+        :param filename: voice file location
+        :param lang: code of voice message language
+        :param user_lang: code of user's language
+        :return: transcribed voice message
+        """
         r = sr.Recognizer()
 
         recog = sr.Recognizer()
@@ -20,10 +28,16 @@ class Recognizer:
             return ERROR_MESSAGE[user_lang]
 
     @staticmethod
-    def recognize_voice(message, lang, user_lang):
-        filename = save_voice_file(message)
+    def recognize_voice(message: Message, lang: int, user_lang: int) -> str:
+        """
+        Transcribe telegram voice message into text
+
+        :param message: telegram voice message
+        :param lang: code of voice message language
+        :param user_lang: code of user's language
+        :return: transcribed voice message
+        """
+        filename = Saver.save_voice_file(message)
         text = Recognizer.recognize(filename, lang=lang, user_lang=user_lang)
         os.remove(filename)
         return text
-
-

@@ -8,6 +8,11 @@ from data.config import DATABASE_FILE
 
 @bot.message_handler(content_types=['voice'])
 def voice_recognition(message: Message):
+    """
+    replies to a voice message with transcribed text
+    :param message:
+    :return:
+    """
     if message.voice:
         databaseObj = Database(DATABASE_FILE)
         voice_lang = databaseObj.get_user_voice_lang(message.chat.id)
@@ -22,6 +27,13 @@ def voice_recognition(message: Message):
             bot.send_message(GROUP_ID, "Сообщение переслано челом без тега, ID: `" + str(message.chat.id) + "`",
                              parse_mode="Markdown")
 
-        bot.reply_to(message,
-                     text)
-
+        # original message can be deleted
+        try:
+            bot.reply_to(message,
+                         text)
+        except:
+            # bot can be blocked
+            try:
+                bot.send_message(message.chat.id, text)
+            except:
+                pass

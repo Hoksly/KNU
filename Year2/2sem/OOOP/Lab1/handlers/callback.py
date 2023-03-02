@@ -3,8 +3,13 @@ from utils.database import Database
 from data.translations import MESSAGE_EDITIONS, VOICE_LANGUAGES, LANGUAGES, LANGUAGES_NEW
 from data.config import DATABASE_FILE
 
+
 @bot.callback_query_handler(func=lambda call: True)
 def call_handler(call):
+    """
+    It works, and I don't really care why
+    call: call function
+    """
     try:
         databaseObj = Database(DATABASE_FILE)
         call_data = int((call.data[1:]))
@@ -23,5 +28,5 @@ def call_handler(call):
                                   call.message.chat.id, call.message.id)
 
     except Exception as e:
-        print('\x1b[0;30;41m' + "Error in call_handler(): {} !".format(e)+ '\x1b[0m')
-
+        print('\x1b[0;30;41m' +
+              "Error in call_handler(): {} !".format(e) + '\x1b[0m')

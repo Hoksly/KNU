@@ -2,7 +2,7 @@ from loader import bot
 from telebot.types import Message
 from data.translations import COMMANDS_DESCRIPTION
 from utils.database import Database
-from data.config import DATABASE_FILE
+from data.config import config
 import telebot
 from data.translations import VOICE_LANGUAGES, COMMANDS_DESCRIPTION, LANGUAGES
 
@@ -14,7 +14,7 @@ def start(message: Message) -> None:
     :param message: telegram message
     :return None:
     """
-    databaseObj = Database(DATABASE_FILE)
+    databaseObj = Database(config.database_file)
     databaseObj.add_user(message.chat.id)
     user_lang = 0
     bot.send_message(message.chat.id, COMMANDS_DESCRIPTION['start'][user_lang])
@@ -27,7 +27,7 @@ def helpp(message: Message):
     :param message: telegram message
     :return None:
     """
-    databaseObj = Database(DATABASE_FILE)
+    databaseObj = Database(config.database_file)
 
     user_lang = databaseObj.get_user_lang(message.chat.id)
     bot.send_message(message.chat.id, COMMANDS_DESCRIPTION['help'][user_lang])
@@ -41,7 +41,7 @@ def lang(message: Message):
     :return:
     """
     try:
-        databaseObj = Database(DATABASE_FILE)
+        databaseObj = Database(config.database_file)
         user_lang = databaseObj.get_user_lang(message.chat.id)
 
         markup = telebot.types.InlineKeyboardMarkup()
@@ -61,7 +61,7 @@ def language(message: Message):
     :param message:
     :return:
     """
-    databaseObj = Database(DATABASE_FILE)
+    databaseObj = Database(config.database_file)
     user_lang = databaseObj.get_user_lang(message.chat.id)
 
     markup = telebot.types.InlineKeyboardMarkup()

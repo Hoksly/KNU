@@ -1,4 +1,4 @@
 from telebot import TeleBot
-from data import config
+from data.config import config
 
-bot = TeleBot(token=config.TOKEN)
+bot = TeleBot(token=config.token)

@@ -1,7 +1,7 @@
 from loader import bot
 from utils.database import Database
 from data.translations import MESSAGE_EDITIONS, VOICE_LANGUAGES, LANGUAGES, LANGUAGES_NEW
-from data.config import DATABASE_FILE
+from data.config import config
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -11,7 +11,7 @@ def call_handler(call):
     call: call function
     """
     try:
-        databaseObj = Database(DATABASE_FILE)
+        databaseObj = Database(config.database_file)
         call_data = int((call.data[1:]))
         call_mode = call.data[0]
         user_lang = databaseObj.get_user_lang(call.message.chat.id)

@@ -1,0 +1,12 @@
+Glossary
+*********
+.. glossary::
+
+   Transcription
+      The process of converting speech in an audio file into written text
+
+   Transcript
+      Text that was obtained by transcription process
+
+   Handler 
+      Something that I will write about later

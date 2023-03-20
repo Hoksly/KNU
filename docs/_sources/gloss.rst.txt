@@ -1,0 +1,9 @@
+.. glossary::
+
+   .. glossary-term:: API
+
+      Application Programming Interface
+
+   .. glossary-definition:: API
+
+      An interface that defines how software components should interact with each other.

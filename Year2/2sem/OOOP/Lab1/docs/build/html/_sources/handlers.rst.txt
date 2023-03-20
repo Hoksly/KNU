@@ -1,0 +1,37 @@
+handlers package
+================
+
+Submodules
+----------
+
+handlers.callback module
+------------------------
+
+.. automodule:: handlers.callback
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+handlers.commands module
+------------------------
+
+.. automodule:: handlers.commands
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+handlers.voice module
+---------------------
+
+.. automodule:: handlers.voice
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: handlers
+   :members:
+   :undoc-members:
+   :show-inheritance:

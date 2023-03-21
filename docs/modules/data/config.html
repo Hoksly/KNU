@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>data.config &#8212; Voice to Text Bot documentation</title>
+  <link rel="stylesheet" type="text/css" href="../../static/pygments.css" />
+  <link rel="stylesheet" type="text/css" href="../../static/alabaster.css" />
+  <link rel="stylesheet" type="text/css" href="../../static/graphviz.css" />
+  <script data-url_root="../../" id="documentation_options" src="../../static/documentation_options.js"></script>
+  <script src="../../static/jquery.js"></script>
+  <script src="../../static/underscore.js"></script>
+  <script src="../../static/doctools.js"></script>
+  <link rel="index" title="Index" href="../../genindex.html" />
+  <link rel="search" title="Search" href="../../search.html" />
+
+  <link rel="stylesheet" href="../../static/custom.css" type="text/css" />
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+</head>
+
+<body>
+
+
+  <div class="document">
+    <div class="documentwrapper">
+      <div class="bodywrapper">
+
+
+        <div class="body" role="main">
+
+          <h1>Source code for data.config</h1>
+          <div class="highlight">
+            <pre>
+<span></span><span class="kn">import</span> <span class="nn">environs</span>
+
+
+<div class="viewcode-block" id="ConfigClass"><a class="viewcode-back" href="../../data.html#data.config.ConfigClass">[docs]</a><span class="k">class</span> <span class="nc">ConfigClass</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">environs</span><span class="o">.</span><span class="n">Env</span><span class="p">()</span>
+        <span class="n">env</span><span class="o">.</span><span class="n">read_env</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">str</span><span class="p">(</span><span class="s2">&quot;TOKEN&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_admins</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="s2">&quot;ADMINS&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_languages</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;ru&#39;</span><span class="p">:</span> <span class="s1">&#39;ru&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ukr&#39;</span><span class="p">:</span> <span class="s1">&#39;uk-UA&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;eng&#39;</span><span class="p">:</span> <span class="s1">&#39;en-US&#39;</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_voice_folder</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">str</span><span class="p">(</span><span class="s2">&quot;VOICE_FOLDER&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_database_file</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">str</span><span class="p">(</span><span class="s1">&#39;DATABASE_FILE&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_group_id</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="s2">&quot;GROUP_ID&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span>
+
+    <span class="nd">@token</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">admins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_admins</span>
+
+    <span class="nd">@admins</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">admins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_admins</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">languages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_languages</span>
+
+    <span class="nd">@languages</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">languages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_languages</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">voice_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_voice_folder</span>
+
+    <span class="nd">@voice_folder</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">voice_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_voice_folder</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">database_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_database_file</span>
+
+    <span class="nd">@database_file</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">database_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_database_file</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="c1"># Setter and Getter for GROUP_ID</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">group_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_group_id</span>
+
+    <span class="nd">@group_id</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">group_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_group_id</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">ConfigClass</span><span class="p">()</span>
+</pre>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+    <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebarwrapper">
+        <h1 class="logo"><a href="../../index.html">Voice to Text Bot</a></h1>
+
+
+
+
+
+
+
+
+        <h3>Navigation</h3>
+
+        <div class="relations">
+          <h3>Related Topics</h3>
+          <ul>
+            <li><a href="../../index.html">Documentation overview</a>
+              <ul>
+                <li><a href="../index.html">Module code</a>
+                  <ul>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <div id="searchbox" style="display: none" role="search">
+          <h3 id="searchlabel">Quick search</h3>
+          <div class="searchformwrapper">
+            <form class="search" action="../../search.html" method="get">
+              <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off"
+                autocapitalize="off" spellcheck="false" />
+              <input type="submit" value="Go" />
+            </form>
+          </div>
+        </div>
+        <script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+      </div>
+    </div>
+    <div class="clearer"></div>
+  </div>
+  <div class="footer">
+    &copy;2023, hoksly.
+
+    |
+    Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.2</a>
+    &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+
+  </div>
+
+
+
+
+</body>
+
+</html>

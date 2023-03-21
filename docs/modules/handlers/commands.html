@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>handlers.commands &#8212; Voice to Text Bot documentation</title>
+  <link rel="stylesheet" type="text/css" href="../../static/pygments.css" />
+  <link rel="stylesheet" type="text/css" href="../../static/alabaster.css" />
+  <link rel="stylesheet" type="text/css" href="../../static/graphviz.css" />
+  <script data-url_root="../../" id="documentation_options" src="../../static/documentation_options.js"></script>
+  <script src="../../static/jquery.js"></script>
+  <script src="../../static/underscore.js"></script>
+  <script src="../../static/doctools.js"></script>
+  <link rel="index" title="Index" href="../../genindex.html" />
+  <link rel="search" title="Search" href="../../search.html" />
+
+  <link rel="stylesheet" href="../../static/custom.css" type="text/css" />
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+</head>
+
+<body>
+
+
+  <div class="document">
+    <div class="documentwrapper">
+      <div class="bodywrapper">
+
+
+        <div class="body" role="main">
+
+          <h1>Source code for handlers.commands</h1>
+          <div class="highlight">
+            <pre>
+<span></span><span class="kn">from</span> <span class="nn">loader</span> <span class="kn">import</span> <span class="n">bot</span>
+<span class="kn">from</span> <span class="nn">telebot.types</span> <span class="kn">import</span> <span class="n">Message</span>
+<span class="kn">from</span> <span class="nn">data.translations</span> <span class="kn">import</span> <span class="n">COMMANDS_DESCRIPTION</span>
+<span class="kn">from</span> <span class="nn">utils.database</span> <span class="kn">import</span> <span class="n">Database</span>
+<span class="kn">from</span> <span class="nn">data.config</span> <span class="kn">import</span> <span class="n">config</span>
+<span class="kn">import</span> <span class="nn">telebot</span>
+<span class="kn">from</span> <span class="nn">data.translations</span> <span class="kn">import</span> <span class="n">VOICE_LANGUAGES</span><span class="p">,</span> <span class="n">COMMANDS_DESCRIPTION</span><span class="p">,</span> <span class="n">LANGUAGES</span>
+
+
+<div class="viewcode-block" id="start"><a class="viewcode-back" href="../../handlers.html#handlers.commands.start">[docs]</a><span class="nd">@bot</span><span class="o">.</span><span class="n">message_handler</span><span class="p">(</span><span class="n">commands</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="n">Message</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    sends message when /start command sends, adds user to database if not added yet</span>
+<span class="sd">    :param message: telegram message</span>
+<span class="sd">    :return None:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">databaseObj</span> <span class="o">=</span> <span class="n">Database</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">database_file</span><span class="p">)</span>
+    <span class="n">databaseObj</span><span class="o">.</span><span class="n">add_user</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="n">user_lang</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">COMMANDS_DESCRIPTION</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">][</span><span class="n">user_lang</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="helpp"><a class="viewcode-back" href="../../handlers.html#handlers.commands.helpp">[docs]</a><span class="nd">@bot</span><span class="o">.</span><span class="n">message_handler</span><span class="p">(</span><span class="n">commands</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;help&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">helpp</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="n">Message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    sends help message when /help command sends</span>
+<span class="sd">    :param message: telegram message</span>
+<span class="sd">    :return None:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">databaseObj</span> <span class="o">=</span> <span class="n">Database</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">database_file</span><span class="p">)</span>
+
+    <span class="n">user_lang</span> <span class="o">=</span> <span class="n">databaseObj</span><span class="o">.</span><span class="n">get_user_lang</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">COMMANDS_DESCRIPTION</span><span class="p">[</span><span class="s1">&#39;help&#39;</span><span class="p">][</span><span class="n">user_lang</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="lang"><a class="viewcode-back" href="../../handlers.html#handlers.commands.lang">[docs]</a><span class="nd">@bot</span><span class="o">.</span><span class="n">message_handler</span><span class="p">(</span><span class="n">commands</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;voicelang&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">lang</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="n">Message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sends message that allow change language of voice message</span>
+<span class="sd">    :param message:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">databaseObj</span> <span class="o">=</span> <span class="n">Database</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">database_file</span><span class="p">)</span>
+        <span class="n">user_lang</span> <span class="o">=</span> <span class="n">databaseObj</span><span class="o">.</span><span class="n">get_user_lang</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+        <span class="n">markup</span> <span class="o">=</span> <span class="n">telebot</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">InlineKeyboardMarkup</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">VOICE_LANGUAGES</span><span class="p">[</span><span class="n">user_lang</span><span class="p">])):</span>
+            <span class="n">markup</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">telebot</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">InlineKeyboardButton</span><span class="p">(</span><span class="n">VOICE_LANGUAGES</span><span class="p">[</span><span class="n">user_lang</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">callback_data</span><span class="o">=</span><span class="s1">&#39;V&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span>
+        <span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">COMMANDS_DESCRIPTION</span><span class="p">[</span><span class="s1">&#39;lang&#39;</span><span class="p">][</span><span class="n">user_lang</span><span class="p">],</span> <span class="n">reply_markup</span><span class="o">=</span><span class="n">markup</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\x1b</span><span class="s1">[0;30;41m&#39;</span> <span class="o">+</span> <span class="s2">&quot;Error in lang(): </span><span class="si">{}</span><span class="s2"> !&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\x1b</span><span class="s1">[0m&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="language"><a class="viewcode-back" href="../../handlers.html#handlers.commands.language">[docs]</a><span class="nd">@bot</span><span class="o">.</span><span class="n">message_handler</span><span class="p">(</span><span class="n">commands</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;botlang&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">language</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="n">Message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sends message that allows change language of bot</span>
+<span class="sd">    :param message:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">databaseObj</span> <span class="o">=</span> <span class="n">Database</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">database_file</span><span class="p">)</span>
+    <span class="n">user_lang</span> <span class="o">=</span> <span class="n">databaseObj</span><span class="o">.</span><span class="n">get_user_lang</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="n">markup</span> <span class="o">=</span> <span class="n">telebot</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">InlineKeyboardMarkup</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">LANGUAGES</span><span class="p">[</span><span class="n">user_lang</span><span class="p">])):</span>
+        <span class="n">markup</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">telebot</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">InlineKeyboardButton</span><span class="p">(</span><span class="n">LANGUAGES</span><span class="p">[</span><span class="n">user_lang</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="n">callback_data</span><span class="o">=</span><span class="s1">&#39;L&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span>
+    <span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">COMMANDS_DESCRIPTION</span><span class="p">[</span><span class="s1">&#39;language&#39;</span><span class="p">][</span><span class="n">user_lang</span><span class="p">],</span> <span class="n">reply_markup</span><span class="o">=</span><span class="n">markup</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="text"><a class="viewcode-back" href="../../handlers.html#handlers.commands.text">[docs]</a><span class="nd">@bot</span><span class="o">.</span><span class="n">message_handler</span><span class="p">(</span><span class="n">content_types</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="n">Message</span><span class="p">):</span>
+    <span class="n">helpp</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+</pre>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+    <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebarwrapper">
+        <h1 class="logo"><a href="../../index.html">Voice to Text Bot</a></h1>
+
+
+
+
+
+
+
+
+        <h3>Navigation</h3>
+
+        <div class="relations">
+          <h3>Related Topics</h3>
+          <ul>
+            <li><a href="../../index.html">Documentation overview</a>
+              <ul>
+                <li><a href="../index.html">Module code</a>
+                  <ul>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <div id="searchbox" style="display: none" role="search">
+          <h3 id="searchlabel">Quick search</h3>
+          <div class="searchformwrapper">
+            <form class="search" action="../../search.html" method="get">
+              <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off"
+                autocapitalize="off" spellcheck="false" />
+              <input type="submit" value="Go" />
+            </form>
+          </div>
+        </div>
+        <script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+      </div>
+    </div>
+    <div class="clearer"></div>
+  </div>
+  <div class="footer">
+    &copy;2023, hoksly.
+
+    |
+    Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.2</a>
+    &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+
+  </div>
+
+
+
+
+</body>
+
+</html>

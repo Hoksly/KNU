@@ -1,0 +1,47 @@
+utils package
+=============
+
+Submodules
+----------
+
+utils.database module
+---------------------
+
+.. automodule:: utils.database
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+utils.recognize\_speech module
+------------------------------
+
+.. automodule:: utils.recognize_speech
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+utils.saver module
+------------------
+
+.. automodule:: utils.saver
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. glossary::
+
+    .. glossary-term:: API
+
+       Application Programming Interface
+
+    .. glossary-definition:: API
+
+       An interface that defines how software components should interact with each other.

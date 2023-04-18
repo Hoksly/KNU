@@ -30,8 +30,12 @@ public:
 template <class Key>
 class PolynomialHashingFunctionGenerator : public AbstractlHashingFunctionGenerator<Key>
 {
+
 public:
-    std::unique_ptr<hashFucntion<Key>> getHashFunction(size_t p, size_t m) const override
+    PolynomialHashingFunctionGenerator() = default;
+
+    std::unique_ptr<hashFucntion<Key>>
+    getHashFunction(size_t p, size_t m) const override
     {
         std::random_device rd;  // obtain a random number from hardware
         std::mt19937 gen(rd()); // seed the generator

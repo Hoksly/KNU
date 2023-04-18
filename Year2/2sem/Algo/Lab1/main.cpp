@@ -2,6 +2,6 @@
 #include <set>
 int main()
 {
-    std::set<int> a = {1, 2, 4};
-    idealHashSet<int, std::set<int>, LazyPrimesGenerator<size_t>> st(a, LazyPrimesGenerator<size_t>());
+    std::set<std::string> a = {"123123", "221", "123"};
+    idealHashSet<std::string, std::set<std::string>, LazyPrimesGenerator<size_t>> st(a, LazyPrimesGenerator<size_t>());
 }

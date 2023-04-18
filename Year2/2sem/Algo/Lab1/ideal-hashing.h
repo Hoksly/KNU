@@ -27,8 +27,9 @@ idealHashSet<Key, Set, PrimesGeneratorStrategy>::idealHashSet(Set keysSet, Prime
     m = keysSet.size();
     p = gen.getNexPrime(m);
     std::vector<size_t> calc(m, 0);
-    std::unique_ptr<PolynomyalHashingFunctionGenerator<Key>> polGen;
-    // mainHashFunction = polGen.getHashFunction(p, m);
+    std::unique_ptr<PolynomialHashingFunctionGenerator<Key>> polGen;
+
+    mainHashFunction = polGen->getHashFunction(p, m);
 
     for (auto key = keysSet.begin(); key != keysSet.end(); key++)
     {

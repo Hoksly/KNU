@@ -10,7 +10,7 @@ class linearHashFucntion : public hashFucntion<Key>
 public:
     linearHashFucntion(size_t _a, size_t _b, size_t _m, size_t _p) : a(_a), b(_b), m(_m), p(_p) {}
 
-    inline size_t getHash(Key keyValue) const override
+    inline size_t getHash(Key &keyValue) const override
     {
         return ((keyValue * a + b) % p) % m;
     }

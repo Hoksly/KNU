@@ -12,7 +12,7 @@ class idealHashSet
 private:
     std::vector<std::vector<Key>> linksStorage;
     std::vector<hashFucntion<Key>> secondFucntions;
-    hashFucntion<Key> mainHashFunction;
+    std::unique_ptr<hashFucntion<Key>> mainHashFunction;
 
     size_t m, p;
 
@@ -27,12 +27,12 @@ idealHashSet<Key, Set, PrimesGeneratorStrategy>::idealHashSet(Set keysSet, Prime
     m = keysSet.size();
     p = gen.getNexPrime(m);
     std::vector<size_t> calc(m, 0);
-    PolynomyalHashingFunctionGenerator<Key> polGen;
-    mainHashFunction = polGen.getHashFunction(p, m);
+    std::unique_ptr<PolynomyalHashingFunctionGenerator<Key>> polGen;
+    // mainHashFunction = polGen.getHashFunction(p, m);
 
     for (auto key = keysSet.begin(); key != keysSet.end(); key++)
     {
-        calc[mainHashFunction(*key)]++;
+        // calc[mainHashFunction(*key)]++;
     }
 }
 

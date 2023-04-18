@@ -3,11 +3,14 @@
 template <class Key>
 class hashFucntion
 {
-    size_t getHash(Key);
+public:
+    virtual ~hashFucntion() = default;
+    virtual size_t getHash(Key) = 0;
 };
 
 template <class Key>
 class AbstractlHashingFunctionGenerator
 {
-    hashFucntion<Key> getHashFunction(size_t p, size_t m);
+public:
+    virtual hashFucntion<Key> getHashFunction(size_t p, size_t m) = 0;
 };

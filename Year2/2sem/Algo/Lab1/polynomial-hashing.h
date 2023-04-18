@@ -34,15 +34,10 @@ class PolynomialHashingFunctionGenerator : public AbstractlHashingFunctionGenera
 public:
     PolynomialHashingFunctionGenerator() = default;
 
-    std::unique_ptr<hashFucntion<Key>>
-    getHashFunction(size_t p, size_t m) const override
+    std::unique_ptr<hashFucntion<Key>> getHashFunction(size_t p, size_t m) const override
     {
-        std::random_device rd;  // obtain a random number from hardware
-        std::mt19937 gen(rd()); // seed the generator
-        std::hash<size_t> h;
-        size_t seed = rd();
-        size_t b = h(seed ^ reinterpret_cast<size_t>(&m));
+        getRandomSizeT gen;
 
-        return std::make_unique<polynomialHashFunction<Key>>(polynomialHashFunction<Key>(b, p, m));
+        return std::make_unique<polynomialHashFunction<Key>>(polynomialHashFunction<Key>(gen.getNumberInRange(1, p - 1), p, m));
     }
 };

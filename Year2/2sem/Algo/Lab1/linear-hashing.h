@@ -19,10 +19,11 @@ public:
 template <class Key>
 class linearHashingFunctionGenerator : public AbstractlHashingFunctionGenerator<Key>
 {
-    linearHashFucntion<Key> getHashFunction(size_t p, size_t m) const override
+public:
+    std::unique_ptr<hashFucntion<Key>> getHashFunction(size_t p, size_t m) const override
     {
         getRandomSizeT gen;
 
-        return linearHashFucntion<Key>(gen.getNumberInRange(1, p - 1), gen.getNumberInRange(0, p - 1), m, p);
+        return std::make_unique<linearHashFucntion<Key>>(linearHashFucntion<Key>(gen.getNumberInRange(1, p - 1), gen.getNumberInRange(0, p - 1), m, p));
     }
 };

@@ -2,165 +2,90 @@
 #include <iostream>
 using namespace std;
 
-int parseI(char *&s)
+class Solution
 {
-    int i = 0;
-
-    while (*s)
+public:
+    int romanToInt(string s)
     {
-        switch (*s)
+        int val = 0;
+
+        size_t sz = s.size();
+
+        for (size_t i = 0; i < sz; ++i)
         {
-        case 'I':
-            i--;
-            break;
-        case 'V':
-            s++;
-            return i + 5;
+            if (s[i] == 'M')
+                val += 1000;
 
-        case 'X':
-            s++;
-            return i + 10;
+            else if (s[i] == 'D')
+                val += 500;
 
-        default:
-            s++;
-            return abs(i);
+            else if (s[i] == 'C')
+            {
+                if (i < sz - 1)
+                {
+                    if (s[i + 1] == 'M')
+                    {
+                        val -= 100;
+                        continue;
+                    }
+                    if (s[i + 1] == 'D')
+                    {
+                        val -= 100;
+                        continue;
+                    }
+                }
+                val += 100;
+            }
+
+            else if (s[i] == 'L')
+            {
+                val += 50;
+            }
+
+            else if (s[i] == 'X')
+            {
+                if (i < sz - 1)
+                {
+                    if (s[i + 1] == 'L')
+                    {
+                        val -= 10;
+                        continue;
+                    }
+                    if (s[i + 1] == 'C')
+                    {
+                        val -= 10;
+                        continue;
+                    }
+                }
+                val += 10;
+            }
+            else if (s[i] == 'V')
+                val += 5;
+            else
+            {
+                if (i < sz - 1)
+                {
+                    if (s[i + 1] == 'V')
+                    {
+                        val -= 1;
+                        continue;
+                    }
+                    if (s[i + 1] == 'X')
+                    {
+                        val -= 1;
+                        continue;
+                    }
+                }
+                val += 1;
+            }
         }
-        s++;
+
+        return val;
     }
-
-    return abs(i);
-}
-
-int parseX(char *&s)
-{
-    int i = 0;
-
-    while (*s)
-    {
-
-        switch (*s)
-        {
-        case 'X':
-            i -= 10;
-            break;
-        case 'L':
-            s++;
-            return i + 50;
-
-        case 'C':
-            s++;
-            return i + 100;
-
-        default:
-            s++;
-            return abs(i);
-        }
-        s++;
-    }
-
-    return abs(i);
-}
-
-int parseC(char *&s)
-{
-    int i = 0;
-
-    while (*s)
-    {
-
-        switch (*s)
-        {
-        case 'C':
-            i -= 100;
-            break;
-        case 'D':
-            s++;
-            return i + 500;
-
-        case 'M':
-            s++;
-            return i + 1000;
-
-        default:
-            s++;
-            return abs(i);
-        }
-        s++;
-    }
-    return abs(i);
-}
-
-int RomanToInt(char *c)
-{
-    using namespace std;
-
-    int res = 0;
-
-    while (*c)
-    {
-        switch (*c)
-        {
-        case 'M':
-            res += 1000;
-            c++;
-
-            break;
-        case 'D':
-            res += 500;
-            c++;
-
-            break;
-
-        case 'C':
-            res += parseC(c);
-
-            break;
-
-        case 'X':
-            res += parseX(c);
-
-            break;
-
-        case 'I':
-            res += parseI(c);
-
-            break;
-
-        case 'V':
-            res += 5;
-
-            c++;
-            break;
-
-        case 'L':
-            res += 50;
-
-            c++;
-            break;
-        }
-    }
-
-    return res;
-}
-
-inline char *copy(std::string s)
-{
-    char *c = new char[20];
-    int i;
-    for (i = 0; i < s.length(); ++i)
-        c[i] = s[i];
-    c[i + 1] = '\0';
-
-    return c;
-}
+};
 
 int main()
 {
-
-    std::string s;
-
-    std::cin >> s;
-
-    std::cout << RomanToInt(copy(s)) << '\n';
-    return 0;
+    Solution s;
+    s.romanToInt("MCMXCIV");
 }

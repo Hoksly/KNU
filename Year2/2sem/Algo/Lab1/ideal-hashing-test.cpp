@@ -1,43 +1,72 @@
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+
 #include "doctest.h"
+#include "ideal-hashing.h"
+#include "utils.h"
+#include <set>
 
-/*
-TEST_CASE("Vector initialization")
+using namespace std;
+
+TEST_CASE("Insertion tests")
 {
-    victor<int> A(10);
-    A[3] = 100;
-    CHECK_EQ(A[3], 100);
-    CHECK_THROWS_AS(victor<int> A(-1), std::bad_alloc);
+    getRandomSizeT gen;
+    std::set<std::string> stringSet;
+    size_t totalString = gen.getNumberInRange(10, 1000);
+    getRandomString stingGen;
+
+    for (size_t i = 0; i < totalString; ++i)
+    {
+        stringSet.insert(stingGen.getStringInRange(10, 1000));
+    }
+
+    idealHashSet<std::string, std::set<std::string>, LazyPrimesGenerator<size_t>>
+        st(stringSet, LazyPrimesGenerator<size_t>());
+
+    for (string s : stringSet)
+    {
+        st.insert(s);
+    }
+    for (string s : stringSet)
+    {
+        CHECK(st.contains(s));
+    }
 }
 
-TEST_CASE("Pushing and popping elements in vector")
+TEST_CASE("Erasing")
 {
-    victor<int> V;
-    V.push_back(10);
+    getRandomSizeT gen;
+    std::set<std::string> stringSet;
+    size_t totalString = gen.getNumberInRange(10, 1000);
+    getRandomString stingGen;
 
-    CHECK_EQ(V[0], 10);
-    CHECK_EQ(V.size(), 1);
+    for (size_t i = 0; i < totalString; ++i)
+    {
+        stringSet.insert(stingGen.getStringInRange(10, 1000));
+    }
 
-    CHECK_EQ(10, V.pop_back());
+    idealHashSet<std::string, std::set<std::string>, LazyPrimesGenerator<size_t>>
+        st(stringSet, LazyPrimesGenerator<size_t>());
 
-    CHECK_EQ(V.size(), 0);
-    CHECK_THROWS_AS(V.pop_back(), std::out_of_range);
+    for (string s : stringSet)
+    {
+        st.insert(s);
+    }
+
+    for (string s : stringSet)
+    {
+        st.erase(s);
+    }
+
+    for (string s : stringSet)
+    {
+        CHECK(!st.contains(s));
+    }
 }
 
-TEST_CASE("Inserting elem")
+TEST_CASE("Pushing wrong element")
 {
-    victor<int> V;
+    std::set<std::string> a = {"123123", "221", "123", "1231", "__x", "ddaq"};
+    idealHashSet<std::string, std::set<std::string>, LazyPrimesGenerator<size_t>> st(a, LazyPrimesGenerator<size_t>());
 
-    V.push_back(0);
-    V.push_back(2);
-    V.insert(1, 1);
-
-    CHECK(V.str().size() == 5);
-    CHECK(V.size() == 3);
-    CHECK(V.str() == "0 1 2");
+    CHECK_THROWS_AS(st.insert("444"), std::invalid_argument);
 }
-
-TEST_CASE("Insert Sort")
-{
-}
-
-*/

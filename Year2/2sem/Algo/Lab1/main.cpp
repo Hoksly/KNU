@@ -6,5 +6,5 @@ int main()
     idealHashSet<std::string, std::set<std::string>, LazyPrimesGenerator<size_t>> st(a, LazyPrimesGenerator<size_t>());
 
     for (std::string s : a)
-        st.insert(s);
+        st.insert("444");
 }

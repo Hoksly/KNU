@@ -1,19 +1,19 @@
 #pragma once
 #include <random>
 #include <iostream>
-
+#include <limits>
 template <class keyType>
-class getNumberStrategy
+class getNumber
 {
 public:
-    keyType getNumberInRange(keyType, keyType);
+    virtual keyType getNumberInRange(keyType, keyType) = 0;
 };
 
 template <class rangeType = size_t>
-class getRandomSizeT : getNumberStrategy<rangeType>
+class getRandomSizeT : getNumber<rangeType>
 {
 public:
-    rangeType getNumberInRange(rangeType beg, rangeType end)
+    rangeType getNumberInRange(rangeType beg, rangeType end) override
     {
         std::random_device rd;  // obtain a random number from hardware
         std::mt19937 gen(rd()); // seed the generator
@@ -23,15 +23,42 @@ public:
     }
 };
 
+class getRandomString
+{
+
+public:
+    std::string getStringInRange(size_t beg, size_t end)
+    {
+        constexpr size_t kMaxChar = static_cast<char>(std::numeric_limits<char>::max());
+
+        std::random_device rd;  // obtain a random number from hardware
+        std::mt19937 gen(rd()); // seed the generator
+        std::uniform_int_distribution<> distr(beg, end);
+
+        size_t stringSize = distr(gen);
+
+        std::string s;
+        s.resize(stringSize);
+
+        std::uniform_int_distribution<> distr2(static_cast<char>(std::numeric_limits<char>::min()), static_cast<char>(std::numeric_limits<char>::max()));
+
+        for (size_t i = 0; i < stringSize; ++i)
+        {
+            s[i] = distr2(gen);
+        }
+        return s;
+    }
+};
+
 template <class keyType = size_t>
-class PrimesGeneratorStrategy
+class PrimesGenerator
 {
 public:
     keyType getNexPrime(keyType beg);
 };
 
 template <class keyType = size_t>
-class LazyPrimesGenerator : PrimesGeneratorStrategy<keyType>
+class LazyPrimesGenerator : public PrimesGenerator<keyType>
 {
 private:
     bool isPrime(keyType n)

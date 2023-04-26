@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include "abstract-hashing.h"
 #include "utils.h"
 #include "polynomial-hashing.h"
@@ -14,6 +15,8 @@ private:
     std::vector<std::unique_ptr<hashFucntion<Key>>> secondFucntions;
     std::unique_ptr<hashFucntion<Key>> mainHashFunction;
 
+    std::unique_ptr<Set> allowedElements;
+
     size_t m, p;
 
     size_t size;
@@ -24,13 +27,17 @@ public:
      *  @param keysSet Set of elements that will be stored in container
      *  @param gen  A primes generator object
      */
-    idealHashSet(Set keysSet, PrimesGeneratorStrategy gen)
+    idealHashSet(const Set &keysSet, PrimesGeneratorStrategy gen, bool debug = false)
     {
         {
             m = keysSet.size();
             p = gen.getNexPrime(m);
             std::vector<size_t> calc(m, 0);
             PolynomialHashingFunctionGenerator<Key> polGen;
+
+#ifdef __IDEALHASH_DEBUG
+            allowedElements = std::make_unique<Set>(keysSet);
+#endif
 
             mainHashFunction = polGen.getHashFunction(p, m);
 
@@ -71,6 +78,11 @@ public:
     {
         size_t firstLevelHash, secondLevelHash;
 
+#ifdef __IDEALHASH_DEBUG
+        if (allowedElements->find(__x) == allowedElements->end())
+            throw std::invalid_argument("Such element is not allowed");
+#endif
+
         firstLevelHash = mainHashFunction->getHash(__x);
         secondLevelHash = secondFucntions[firstLevelHash]->getHash(__x);
 
@@ -92,6 +104,11 @@ public:
 
     bool contains(Key __x)
     {
+
+#ifdef __IDEALHASH_DEBUG
+        if (allowedElements->find(__x) == allowedElements->end())
+            throw std::invalid_argument("Such element is not allowed");
+#endif
         size_t firstLevelHash, secondLevelHash;
 
         firstLevelHash = mainHashFunction->getHash(__x);
@@ -114,6 +131,11 @@ public:
      */
     void erase(Key __x)
     {
+
+#ifdef __IDEALHASH_DEBUG
+        if (allowedElements->find(__x) == allowedElements->end())
+            throw std::invalid_argument("Such element is not allowed");
+#endif
         size_t firstLevelHash, secondLevelHash;
 
         firstLevelHash = mainHashFunction->getHash(__x);

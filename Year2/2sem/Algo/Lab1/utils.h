@@ -81,7 +81,7 @@ void print(T t)
 }
 
 template <typename T, typename... Args>
-void print(T t, Args... args) // recursive variadic function
+void print(T t, Args... args)
 {
     std::cout << t << ' ';
 

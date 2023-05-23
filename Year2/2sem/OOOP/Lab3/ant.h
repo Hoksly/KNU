@@ -1,18 +1,17 @@
 #include <vector>
-
+#include "map.h"
 using std::vector;
 #ifndef ANT_H
 #define ANT_H
 
-template <class MapT>
+template <class feromoneT, class distanceT>
 class Ant
 {
 
     vector<size_t> path;
 
 public:
-    Ant() = default;
-    virtual void run(const MapT &) = 0;
+    void run(size_t begin, const Map<distanceT, feromoneT> &);
 };
 
 #endif

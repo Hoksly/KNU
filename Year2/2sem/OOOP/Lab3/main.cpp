@@ -7,11 +7,27 @@
 #include <iostream>
 #include <memory>
 
+template <class distanceT>
+using mapCoroutine = typename boost::coroutines2::coroutine<std::vector<std::vector<distanceT>>>;
+
+template <class distanceT>
+void printMap(std::vector<std::vector<distanceT>> &map)
+{
+    for (auto &row : map)
+    {
+        for (auto &el : row)
+        {
+            std::cout << el << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
 int main()
 {
     Colony<double, double> col;
 
-    for (int i = 0; i < 1; i++)
+    for (int i = 0; i < 100; i++)
     {
         std::unique_ptr<BasicChooseStrategy<double, double>> basicStrat = std::make_unique<BasicChooseStrategy<double, double>>(1, 1);
         std::unique_ptr<ChooseNextStrategy<double, double>> str = std::move(basicStrat);
@@ -36,6 +52,14 @@ int main()
                                           colPtr,
                                           updateStrategy);
 
-    alg.run(0, 1);
+    mapCoroutine<double>::pull_type source([&](mapCoroutine<double>::push_type &yield)
+                                           { alg.run(0, 10, yield); });
+
+    for (auto value : source)
+    {
+        printMap(value);
+        std::cout << std::endl;
+    }
+
     return 0;
 }

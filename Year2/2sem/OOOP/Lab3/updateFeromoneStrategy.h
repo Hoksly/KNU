@@ -22,7 +22,7 @@ public:
         {
             for (size_t j = 0; j < feromone.size(); ++j)
             {
-                feromone[i][j] *= decayCoeff;
+                map.getFeromone()[i][j] *= decayCoeff;
             }
         }
     }

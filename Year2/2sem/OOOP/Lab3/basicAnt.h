@@ -32,7 +32,6 @@ public:
 template <class feromoneT, class distanceT>
 void BasicAnt<feromoneT, distanceT>::run(size_t begin, Map<distanceT, feromoneT> &map)
 {
-    std::cout << "BasicAnt run\n";
     this->path.resize(map.size() + 1);
     available.resize(map.size());
 

@@ -12,11 +12,11 @@ class BasicAnt : public Ant<feromoneT, distanceT>
     vector<size_t> sth;
 
     std::unique_ptr<ChooseNextStrategy<feromoneT, distanceT>> chooseStrat;
-    size_t choose(std::size_t curNode, const Map<distanceT, feromoneT> &);
+    size_t choose(std::size_t curNode, Map<distanceT, feromoneT> &);
     size_t curNode;
     vector<bool> available;
 
-    size_t choose(const Map<distanceT, feromoneT> &map)
+    size_t choose(Map<distanceT, feromoneT> &map)
     {
         return chooseStrat->choose(curNode, map, available);
     }
@@ -24,13 +24,13 @@ class BasicAnt : public Ant<feromoneT, distanceT>
 public:
     BasicAnt(std::unique_ptr<ChooseNextStrategy<feromoneT, distanceT>> str) { chooseStrat = std::move(str); };
 
-    void run(size_t begin, const Map<distanceT, feromoneT> &) override;
+    void run(size_t begin, Map<distanceT, feromoneT> &) override;
     vector<size_t> getPathBegin() { return this->path.begin(); };
     vector<size_t> getPathEnd() { return this->path.end(); };
 };
 
 template <class feromoneT, class distanceT>
-void BasicAnt<feromoneT, distanceT>::run(size_t begin, const Map<distanceT, feromoneT> &map)
+void BasicAnt<feromoneT, distanceT>::run(size_t begin, Map<distanceT, feromoneT> &map)
 {
     std::cout << "BasicAnt run\n";
     this->path.resize(map.size() + 1);

@@ -13,7 +13,7 @@ protected:
     vector<size_t> path;
 
 public:
-    virtual void run(size_t begin, const Map<distanceT, feromoneT> &) = 0;
+    virtual void run(size_t begin, Map<distanceT, feromoneT> &) = 0;
     vector<size_t> getPath() { return path; };
 };
 

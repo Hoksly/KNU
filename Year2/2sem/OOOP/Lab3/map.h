@@ -17,8 +17,12 @@ public:
 
     void randomInit(size_t size, feromoneT initFeromone);
 
-    inline vector<feromoneT> getFeromone(size_t y) { return feromone[y]; }
-    inline vector<distanceT> getDistance(size_t y) { return distance[y]; }
+    inline vector<vector<feromoneT>> &getFeromone() { return feromone; }
+    inline vector<vector<distanceT>> &getDistance() { return distance; }
+    inline vector<feromoneT> &getFeromone(size_t y) { return feromone[y]; }
+    inline vector<distanceT> &getDistance(size_t y) { return distance[y]; }
+
+    inline size_t size() const { return feromone.size(); }
 
     inline void updateFeromone(feromoneT decayCoeff);
 };

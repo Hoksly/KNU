@@ -11,7 +11,7 @@ int main()
 {
     Colony<double, double> col;
 
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 1; i++)
     {
         std::unique_ptr<BasicChooseStrategy<double, double>> basicStrat = std::make_unique<BasicChooseStrategy<double, double>>(1, 1);
         std::unique_ptr<ChooseNextStrategy<double, double>> str = std::move(basicStrat);
@@ -24,7 +24,18 @@ int main()
 
     Map<double, double> map;
 
+    std::unique_ptr<BasicFeromoneDecay<double, double>> basicDecay = std::make_unique<BasicFeromoneDecay<double, double>>(0.5);
+    std::unique_ptr<UpdateFeromoneStrategy<double, double>> updateStrategy = std::move(basicDecay);
+
     map.randomInit(10, 1);
-    AntAlgorithm<double, double> alg();
+
+    std::unique_ptr<Map<double, double>> mapPtr = std::make_unique<Map<double, double>>(std::move(map));
+    std::unique_ptr<Colony<double, double>> colPtr = std::make_unique<Colony<double, double>>(std::move(col));
+
+    BasicAntAlgorithm<double, double> alg(mapPtr,
+                                          colPtr,
+                                          updateStrategy);
+
+    alg.run(0, 1);
     return 0;
 }

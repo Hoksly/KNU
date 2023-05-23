@@ -1,14 +1,21 @@
-template <class feromoneT>
+template <class feromoneT, class distanceT>
 class UpdateFeromoneStrategy
 {
 public:
-    virtual void updateFeromone(feromoneT decayCoeff) = 0;
+    virtual void updateFeromone(Map<distanceT, feromoneT> &map) = 0;
 };
 
 template <class feromoneT, class distanceT>
-class BasicFeromoneDecay : public UpdateFeromoneStrategy<feromoneT>
+class BasicFeromoneDecay : public UpdateFeromoneStrategy<feromoneT, distanceT>
 {
-    void updateFeromone(feromoneT decayCoeff, Map<distanceT, feromoneT> &map)
+private:
+    feromoneT decayCoeff;
+
+public:
+    BasicFeromoneDecay() = default;
+    BasicFeromoneDecay(feromoneT decayCoeff) : decayCoeff(decayCoeff) {}
+
+    void updateFeromone(Map<distanceT, feromoneT> &map) override
     {
         vector<vector<feromoneT>> feromone = map.getFeromone();
         for (size_t i = 0; i < feromone.size(); ++i)

@@ -14,7 +14,7 @@ template <class feromoneT, class distanceT>
 class ChooseNextStrategy
 {
 public:
-    std::size_t choose(std::size_t curNode, const Map<distanceT, feromoneT> &, const vector<bool> &);
+    virtual std::size_t choose(std::size_t curNode, Map<distanceT, feromoneT> &, const vector<bool> &) = 0;
 };
 
 template <class feromoneT, class distanceT>
@@ -22,7 +22,7 @@ class BasicChooseStrategy : public ChooseNextStrategy<distanceT, feromoneT>
 {
     feromoneT feromoneImpact = 1;
     distanceT distanceImpact = 1;
-    vector<distanceT> imapctCombined;
+    vector<std::pair<distanceT, size_t>> imapctCombined;
 
     distanceT getRandomValue()
     {
@@ -46,11 +46,11 @@ class BasicChooseStrategy : public ChooseNextStrategy<distanceT, feromoneT>
 
         for (size_t i = 0; i < n; ++i)
         {
-            curSum += imapctCombined[i];
+            curSum += imapctCombined[i].first;
             if (val < curSum)
-                return i;
+                return imapctCombined[i].second;
         }
-        return n - 1;
+        return imapctCombined[n - 1].second;
     }
 
 public:
@@ -58,12 +58,11 @@ public:
     BasicChooseStrategy(feromoneT a, distanceT b) : feromoneImpact(a), distanceImpact(b) {}
 
     std::size_t
-    choose(std::size_t curNode, const Map<distanceT, feromoneT> &map, const vector<bool> &availiable)
+    choose(std::size_t curNode, Map<distanceT, feromoneT> &map, const vector<bool> &availiable) override
     {
-        vector<feromoneT> feromone = map.feromone(curNode);
-        vector<distanceT> distance = map.distance(curNode);
-
-        imapctCombined.reserve(feromone.size() / 2);
+        vector<feromoneT> feromone = map.getFeromone(curNode);
+        vector<distanceT> distance = map.getDistance(curNode);
+        imapctCombined.clear();
 
         size_t n = feromone.size();
         for (size_t i = 0; i < n; ++i)
@@ -71,17 +70,19 @@ public:
             if (!availiable[i])
                 continue;
 
-            imapctCombined.push_back(
-                pow(feromone[i], feromoneImpact) *
-                pow(distance[i], distanceImpact));
+            imapctCombined.push_back(std::make_pair(pow(feromone[i], feromoneImpact) *
+                                                        pow(distance[i], distanceImpact),
+                                                    i));
         }
 
-        distanceT sum = (std::accumulate(imapctCombined.begin(), imapctCombined.end(), 0));
+        distanceT sum = 0;
+        for (auto &c : imapctCombined)
+            sum += c.first;
 
-        std::for_each(imapctCombined.begin(), imapctCombined.end(), [sum](distanceT &c)
-                      { c /= sum; });
+        std::for_each(imapctCombined.begin(), imapctCombined.end(), [sum](std::pair<distanceT, size_t> &c)
+                      { c.first /= sum; });
 
-        return chooseFromNormalized;
+        return chooseFromNormalized();
     }
 };
 

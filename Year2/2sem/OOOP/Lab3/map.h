@@ -19,8 +19,12 @@ public:
 
     inline vector<vector<feromoneT>> &getFeromone() { return feromone; }
     inline vector<vector<distanceT>> &getDistance() { return distance; }
+
     inline vector<feromoneT> &getFeromone(size_t y) { return feromone[y]; }
     inline vector<distanceT> &getDistance(size_t y) { return distance[y]; }
+
+    inline feromoneT &getFeromone(size_t y, size_t x) { return feromone[y][x]; }
+    inline distanceT &getDistance(size_t y, size_t x) { return distance[y][x]; }
 
     inline size_t size() const { return feromone.size(); }
 

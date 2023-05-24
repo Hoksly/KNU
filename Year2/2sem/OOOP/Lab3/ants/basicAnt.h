@@ -1,5 +1,5 @@
 #include "ant.h"
-#include "chooseStrategy.h"
+#include "../chooseNextNodeStrategies/chooseStrategy.h"
 #include <iostream>
 
 using std::size_t;

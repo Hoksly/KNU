@@ -1,9 +1,9 @@
-#include "map.h"
-#include "colony.h"
-#include "chooseStrategy.h"
-#include "updateFeromoneStrategies/updateFeromoneStrategy.h"
-#include "ant.h"
-#include "chooseBestRootStrategies/chooseBestRoot.h"
+#include "../maps/map.h"
+#include "../colonies/colony.h"
+#include "../chooseNextNodeStrategies/chooseStrategy.h"
+#include "../updateFeromoneStrategies/updateFeromoneStrategy.h"
+#include "../ants/ant.h"
+#include "../chooseBestRootStrategies/chooseBestRoot.h"
 
 #include <vector>
 #include <boost/coroutine2/coroutine.hpp>

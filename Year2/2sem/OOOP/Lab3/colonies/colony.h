@@ -2,8 +2,9 @@
 #include <vector>
 #include <memory>
 
-#include "ant.h"
-#include "map.h"
+#include "../ants/ant.h"
+#include "../maps/map.h"
+
 #ifndef COLONY_H
 #define COLONY_H
 template <class distanceT, class feromoneT>

@@ -1,5 +1,5 @@
 #include <vector>
-#include "map.h"
+#include "../maps/map.h"
 #include <iostream>
 
 using std::vector;

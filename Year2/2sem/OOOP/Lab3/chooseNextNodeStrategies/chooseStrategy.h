@@ -1,4 +1,4 @@
-#include "map.h"
+#include "../maps/map.h"
 #include <vector>
 #include <cmath>
 #include <numeric>

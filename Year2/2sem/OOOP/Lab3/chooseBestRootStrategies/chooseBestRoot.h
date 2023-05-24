@@ -1,5 +1,5 @@
-#include "../map.h"
-#include "../colony.h"
+#include "../maps/map.h"
+#include "../colonies/colony.h"
 
 #include <vector>
 #ifndef CHOOSE_BEST_ROOT_H

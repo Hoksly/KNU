@@ -1,11 +1,10 @@
-#include "antAlgorithm.h"
-#include "basicAntAlgotiyhm.h"
-#include "colony.h"
-#include "basicAnt.h"
-#include "chooseStrategy.h"
+#include "antAlgorithms/basicAntAlgotiyhm.h"
+#include "colonies/colony.h"
+#include "maps/map.h"
+#include "ants/basicAnt.h"
+#include "chooseNextNodeStrategies/chooseStrategy.h"
 #include "updateFeromoneStrategies/basicFeromoneDecayStrategy.h"
 #include "chooseBestRootStrategies/chooseBestFeromoneRoot.h"
-#include "map.h"
 #include <iostream>
 #include <memory>
 

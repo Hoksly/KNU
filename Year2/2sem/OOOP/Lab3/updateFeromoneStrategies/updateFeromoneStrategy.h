@@ -1,4 +1,4 @@
-#include "../colony.h"
+#include "../colonies/colony.h"
 #ifndef UPDATE_FEROMONE_STRATEGY_H
 #define UPDATE_FEROMONE_STRATEGY_H
 

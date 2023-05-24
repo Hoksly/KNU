@@ -1,8 +1,10 @@
 #include "antAlgorithm.h"
+#include "basicAntAlgotiyhm.h"
 #include "colony.h"
 #include "basicAnt.h"
 #include "chooseStrategy.h"
-
+#include "updateFeromoneStrategies/basicFeromoneDecayStrategy.h"
+#include "chooseBestRootStrategies/chooseBestFeromoneRoot.h"
 #include "map.h"
 #include <iostream>
 #include <memory>
@@ -26,11 +28,11 @@ void printMap(std::vector<std::vector<distanceT>> &map)
 int main()
 {
     Colony<double, double> col;
-
+    ChooseStrategyFactory<double, double> strategyFactory;
     for (int i = 0; i < 100; i++)
     {
-        std::unique_ptr<BasicChooseStrategy<double, double>> basicStrat = std::make_unique<BasicChooseStrategy<double, double>>(1, 1);
-        std::unique_ptr<ChooseNextStrategy<double, double>> str = std::move(basicStrat);
+
+        std::unique_ptr<ChooseNextStrategy<double, double>> str = strategyFactory.createStrategy("basic", 1, 1);
 
         BasicAnt<double, double> ant(std::move(str)); // Create BasicAnt object with the moved ChooseNextStrategy
 
@@ -48,18 +50,26 @@ int main()
     std::unique_ptr<Map<double, double>> mapPtr = std::make_unique<Map<double, double>>(std::move(map));
     std::unique_ptr<Colony<double, double>> colPtr = std::make_unique<Colony<double, double>>(std::move(col));
 
+    std::unique_ptr<ChooseBestFeromoneRoot<double, double>> chooseRootStrategy = std::make_unique<ChooseBestFeromoneRoot<double, double>>();
+    std::unique_ptr<ChooseBestRootStrategy<double, double>> chooseRootStrategyPtr = std::move(chooseRootStrategy);
+
     BasicAntAlgorithm<double, double> alg(mapPtr,
                                           colPtr,
-                                          updateStrategy);
+                                          updateStrategy,
+                                          chooseRootStrategyPtr);
 
     mapCoroutine<double>::pull_type source([&](mapCoroutine<double>::push_type &yield)
-                                           { alg.run(0, 10, yield); });
+                                           { alg.run(0, 100, yield); });
 
-    for (auto value : source)
+    vector<size_t> bestPath = alg.getBestPath();
+
+    for (auto &el : bestPath)
     {
-        printMap(value);
-        std::cout << std::endl;
+        std::cout << el << " ";
     }
+    std::cout << std::endl;
+
+    std::cout << alg.calcBestPathLength(bestPath) << std::endl;
 
     return 0;
 }

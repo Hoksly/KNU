@@ -20,6 +20,7 @@ public:
     Colony(size_t size) { population.reserve(size); };
     Colony(const std::vector<std::unique_ptr<Ant<distanceT, feromoneT>>> &pop) { population = pop; };
 
+    inline std::vector<std::unique_ptr<Ant<distanceT, feromoneT>>> &getPopulation() { return population; };
     inline std::unique_ptr<Ant<distanceT, feromoneT>> &operator[](size_t i) { return population[i]; };
     inline const std::unique_ptr<Ant<distanceT, feromoneT>> &operator[](size_t i) const { return population[i]; };
 

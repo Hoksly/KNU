@@ -22,7 +22,17 @@ class BasicAnt : public Ant<feromoneT, distanceT>
     }
 
 public:
-    BasicAnt(std::unique_ptr<ChooseNextStrategy<feromoneT, distanceT>> str) { chooseStrat = std::move(str); };
+    BasicAnt(std::unique_ptr<ChooseNextStrategy<feromoneT, distanceT>> str)
+    {
+        chooseStrat = std::move(str);
+        this->feromoneSpread = 1;
+    };
+
+    BasicAnt(std::unique_ptr<ChooseNextStrategy<feromoneT, distanceT>> str, feromoneT feromoneSpread)
+    {
+        chooseStrat = std::move(str);
+        this->feromoneSpread = feromoneSpread;
+    };
 
     void run(size_t begin, Map<distanceT, feromoneT> &) override;
     vector<size_t> getPathBegin() { return this->path.begin(); };

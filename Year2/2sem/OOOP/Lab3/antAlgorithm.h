@@ -1,12 +1,17 @@
 #include "map.h"
 #include "colony.h"
 #include "chooseStrategy.h"
-#include "updateFeromoneStrategy.h"
+#include "updateFeromoneStrategies/updateFeromoneStrategy.h"
 #include "ant.h"
+#include "chooseBestRootStrategies/chooseBestRoot.h"
+
 #include <vector>
 #include <boost/coroutine2/coroutine.hpp>
 #include <iostream>
 #include <memory>
+
+#ifndef ANT_ALGORITHM_H
+#define ANT_ALGORITHM_H
 
 template <class distanceT>
 using mapCoroutine = typename boost::coroutines2::coroutine<std::vector<std::vector<distanceT>>>;
@@ -18,73 +23,27 @@ protected:
     std::unique_ptr<Map<distanceT, feromoneT>> map;
     std::unique_ptr<Colony<feromoneT, distanceT>> colony;
     std::unique_ptr<UpdateFeromoneStrategy<feromoneT, distanceT>> updateStrategy;
+    std::unique_ptr<ChooseBestRootStrategy<feromoneT, distanceT>> chooseRootStrategy;
 
 public:
     AntAlgorithm(std::unique_ptr<Map<distanceT, feromoneT>> &map,
                  std::unique_ptr<Colony<feromoneT, distanceT>> &colony,
-                 std::unique_ptr<UpdateFeromoneStrategy<feromoneT, distanceT>> &updateStrategy)
+                 std::unique_ptr<UpdateFeromoneStrategy<feromoneT, distanceT>> &updateStrategy,
+                 std::unique_ptr<ChooseBestRootStrategy<feromoneT, distanceT>> &chooseRootStrategy)
     {
         this->map = std::move(map);
         this->colony = std::move(colony);
         this->updateStrategy = std::move(updateStrategy);
+        this->chooseRootStrategy = std::move(chooseRootStrategy);
     }
 
     virtual void run(size_t begin, size_t iterations) = 0;
     virtual void run(size_t begin, size_t iterations, typename mapCoroutine<distanceT>::push_type &sink) = 0;
+
+    virtual std::vector<size_t> getBestPath() = 0;
+
+    virtual distanceT calcBestPathLength(std::vector<size_t>) = 0;
+    virtual distanceT calcBestPathLength() = 0;
 };
 
-template <class feromoneT, class distanceT>
-class BasicAntAlgorithm : public AntAlgorithm<feromoneT, distanceT>
-{
-protected:
-    void runOnce(size_t begin);
-    void runOnce(size_t begin, typename mapCoroutine<distanceT>::push_type &sink);
-
-public:
-    BasicAntAlgorithm(std::unique_ptr<Map<distanceT, feromoneT>> &map,
-                      std::unique_ptr<Colony<feromoneT, distanceT>> &colony,
-                      std::unique_ptr<UpdateFeromoneStrategy<feromoneT, distanceT>> &updateStrategy)
-        : AntAlgorithm<feromoneT, distanceT>(map, colony, updateStrategy) {}
-
-    void run(size_t begin, size_t iterations) override;
-    void run(size_t begin, size_t iterations, typename mapCoroutine<distanceT>::push_type &sink) override;
-};
-
-template <class feromoneT, class distanceT>
-void BasicAntAlgorithm<feromoneT, distanceT>::runOnce(size_t begin)
-{
-    for (auto &ant : *(this->colony))
-    {
-        ant->run(begin, *(this->map));
-    }
-    this->updateStrategy->updateFeromone(*(this->map));
-}
-
-template <class feromoneT, class distanceT>
-void BasicAntAlgorithm<feromoneT, distanceT>::run(size_t begin, size_t iterations)
-{
-    for (size_t i = 0; i < iterations; ++i)
-    {
-        runOnce(begin);
-    }
-}
-template <class feromoneT, class distanceT>
-void BasicAntAlgorithm<feromoneT, distanceT>::runOnce(size_t begin, typename mapCoroutine<distanceT>::push_type &sink)
-{
-    for (auto &ant : *(this->colony))
-    {
-        ant->run(begin, *(this->map));
-    }
-
-    this->updateStrategy->updateFeromone(*(this->map));
-    sink(this->map->getFeromone());
-}
-
-template <class feromoneT, class distanceT>
-void BasicAntAlgorithm<feromoneT, distanceT>::run(size_t begin, size_t iterations, typename mapCoroutine<distanceT>::push_type &sink)
-{
-    for (size_t i = 0; i < iterations; ++i)
-    {
-        runOnce(begin, sink);
-    }
-}
+#endif

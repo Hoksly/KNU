@@ -22,6 +22,7 @@ class BasicChooseStrategy : public ChooseNextStrategy<distanceT, feromoneT>
 {
     feromoneT feromoneImpact = 1;
     distanceT distanceImpact = 1;
+
     vector<std::pair<distanceT, size_t>> imapctCombined;
 
     distanceT getRandomValue()
@@ -83,6 +84,61 @@ public:
                       { c.first /= sum; });
 
         return chooseFromNormalized();
+    }
+};
+
+template <class feromoneT, class distanceT>
+class ChooseMaxFeromoneStratgey : public ChooseNextStrategy<distanceT, feromoneT>
+{
+    std::size_t choose(std::size_t curNode, Map<distanceT, feromoneT> &map, const vector<bool> &availiable) override
+    {
+        vector<feromoneT> feromone = map.getFeromone(curNode);
+        vector<distanceT> distance = map.getDistance(curNode);
+
+        size_t n = feromone.size();
+        feromoneT maxFeromone = 0;
+        size_t maxFeromoneIndex = 0;
+
+        for (size_t i = 0; i < n; ++i)
+        {
+            if (!availiable[i])
+                continue;
+
+            if (feromone[i] > maxFeromone)
+            {
+                maxFeromone = feromone[i];
+                maxFeromoneIndex = i;
+            }
+        }
+
+        return maxFeromoneIndex;
+    }
+};
+
+template <class feromoneT, class distanceT>
+class ChooseStrategyFactory
+{
+public:
+    static std::unique_ptr<ChooseNextStrategy<feromoneT, distanceT>>
+
+    createStrategy(std::string name, feromoneT a = 1, distanceT b = 1)
+    {
+        if (name == "basic")
+        {
+            std::unique_ptr<BasicChooseStrategy<feromoneT, distanceT>> basicStrat = std::make_unique<BasicChooseStrategy<feromoneT, distanceT>>(a, b);
+            std::unique_ptr<ChooseNextStrategy<feromoneT, distanceT>> str = std::move(basicStrat);
+            return str;
+        }
+        else if (name == "feromone")
+        {
+
+            std::unique_ptr<ChooseMaxFeromoneStratgey<feromoneT, distanceT>> basicStrat = std::make_unique<ChooseMaxFeromoneStratgey<feromoneT, distanceT>>();
+            std::unique_ptr<ChooseNextStrategy<feromoneT, distanceT>> str = std::move(basicStrat);
+            return str;
+        }
+
+        else
+            return nullptr;
     }
 };
 

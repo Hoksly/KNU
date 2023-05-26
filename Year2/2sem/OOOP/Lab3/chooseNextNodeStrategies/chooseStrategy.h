@@ -119,21 +119,21 @@ template <class feromoneT, class distanceT>
 class ChooseStrategyFactory
 {
 public:
-    static std::unique_ptr<ChooseNextStrategy<feromoneT, distanceT>>
+    static std::shared_ptr<ChooseNextStrategy<feromoneT, distanceT>>
 
     createStrategy(std::string name, feromoneT a = 1, distanceT b = 1)
     {
         if (name == "basic")
         {
-            std::unique_ptr<BasicChooseStrategy<feromoneT, distanceT>> basicStrat = std::make_unique<BasicChooseStrategy<feromoneT, distanceT>>(a, b);
-            std::unique_ptr<ChooseNextStrategy<feromoneT, distanceT>> str = std::move(basicStrat);
+            std::shared_ptr<BasicChooseStrategy<feromoneT, distanceT>> basicStrat = std::make_unique<BasicChooseStrategy<feromoneT, distanceT>>(a, b);
+            std::shared_ptr<ChooseNextStrategy<feromoneT, distanceT>> str = std::move(basicStrat);
             return str;
         }
         else if (name == "feromone")
         {
 
-            std::unique_ptr<ChooseMaxFeromoneStratgey<feromoneT, distanceT>> basicStrat = std::make_unique<ChooseMaxFeromoneStratgey<feromoneT, distanceT>>();
-            std::unique_ptr<ChooseNextStrategy<feromoneT, distanceT>> str = std::move(basicStrat);
+            std::shared_ptr<ChooseMaxFeromoneStratgey<feromoneT, distanceT>> basicStrat = std::make_unique<ChooseMaxFeromoneStratgey<feromoneT, distanceT>>();
+            std::shared_ptr<ChooseNextStrategy<feromoneT, distanceT>> str = std::move(basicStrat);
             return str;
         }
 

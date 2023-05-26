@@ -5,6 +5,7 @@
 #include "chooseNextNodeStrategies/chooseStrategy.h"
 #include "updateFeromoneStrategies/basicFeromoneDecayStrategy.h"
 #include "chooseBestRootStrategies/chooseBestFeromoneRoot.h"
+#include "antAlgorithms/antAlgorithmFactory.h"
 #include <iostream>
 #include <memory>
 
@@ -26,41 +27,15 @@ void printMap(std::vector<std::vector<distanceT>> &map)
 
 int main()
 {
-    Colony<double, double> col;
-    ChooseStrategyFactory<double, double> strategyFactory;
-    for (int i = 0; i < 100; i++)
-    {
+    AntAlgorithmFactory<double, double> factory;
+    std::shared_ptr<AntAlgorithm<double, double>> algPtr = factory.createAlgorithm("multithreaded", 100, 0.5);
 
-        std::unique_ptr<ChooseNextStrategy<double, double>> str = strategyFactory.createStrategy("basic", 1, 1);
-
-        BasicAnt<double, double> ant(std::move(str)); // Create BasicAnt object with the moved ChooseNextStrategy
-
-        std::unique_ptr<Ant<double, double>> ptr = std::make_unique<BasicAnt<double, double>>(std::move(ant)); // Move the BasicAnt object to unique_ptr
-        col.addAnt(std::move(ptr));                                                                            // Move the unique_ptr to addAnt function
-    }
-
-    Map<double, double> map;
-
-    std::unique_ptr<BasicFeromoneDecay<double, double>> basicDecay = std::make_unique<BasicFeromoneDecay<double, double>>(0.5);
-    std::unique_ptr<UpdateFeromoneStrategy<double, double>> updateStrategy = std::move(basicDecay);
-
-    map.randomInit(10, 1);
-
-    std::unique_ptr<Map<double, double>> mapPtr = std::make_unique<Map<double, double>>(std::move(map));
-    std::unique_ptr<Colony<double, double>> colPtr = std::make_unique<Colony<double, double>>(std::move(col));
-
-    std::unique_ptr<ChooseBestFeromoneRoot<double, double>> chooseRootStrategy = std::make_unique<ChooseBestFeromoneRoot<double, double>>();
-    std::unique_ptr<ChooseBestRootStrategy<double, double>> chooseRootStrategyPtr = std::move(chooseRootStrategy);
-
-    BasicAntAlgorithm<double, double> alg(mapPtr,
-                                          colPtr,
-                                          updateStrategy,
-                                          chooseRootStrategyPtr);
+    algPtr->getMap()->fromFile("input.txt", 1.0, "coordinates");
 
     mapCoroutine<double>::pull_type source([&](mapCoroutine<double>::push_type &yield)
-                                           { alg.run(0, 100, yield); });
+                                           { algPtr->run(0, 10000, yield); });
 
-    vector<size_t> bestPath = alg.getBestPath();
+    vector<size_t> bestPath = algPtr->getBestPath();
 
     for (auto &el : bestPath)
     {
@@ -68,7 +43,20 @@ int main()
     }
     std::cout << std::endl;
 
-    std::cout << alg.calcBestPathLength(bestPath) << std::endl;
+    std::cout << algPtr->calcBestPathLength(bestPath) << std::endl;
 
     return 0;
 }
+
+/*
+Write a GUI on Qt for this algorithm assuming that backend is already written.  It must consist of:
+1) Canvas with points, which are nodes of the graph. User can add new points by clicking on the canvas.
+2) Button "Run" which starts the algorithm.
+3) Entry for the number of iterations.
+4) Entry for the number of ants.
+
+Also canvas must support drawing lines that represent quantity of feromone on the edge.
+
+
+
+*/

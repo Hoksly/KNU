@@ -16,7 +16,7 @@ public:
     void updateFeromone(Map<distanceT, feromoneT> &map, Colony<distanceT, feromoneT> &col) override
     {
 
-        std::vector<std::unique_ptr<Ant<distanceT, feromoneT>>> &population = col.getPopulation();
+        std::vector<std::shared_ptr<Ant<distanceT, feromoneT>>> &population = col.getPopulation();
         size_t n = population.size();
         for (size_t i = 0; i < n; ++i)
         {

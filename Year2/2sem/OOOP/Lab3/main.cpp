@@ -8,6 +8,7 @@
 #include "antAlgorithms/antAlgorithmFactory.h"
 #include <iostream>
 #include <memory>
+#include <chrono>
 
 template <class distanceT>
 using mapCoroutine = typename boost::coroutines2::coroutine<std::vector<std::vector<distanceT>>>;
@@ -25,25 +26,62 @@ void printMap(std::vector<std::vector<distanceT>> &map)
     }
 }
 
-int main()
+std::vector<std::pair<double, double>> getRandomPoints(size_t n)
 {
-    AntAlgorithmFactory<double, double> factory;
-    std::shared_ptr<AntAlgorithm<double, double>> algPtr = factory.createAlgorithm("multithreaded", 100, 0.5);
+    double randDist;
+    std::random_device rd;
+    std::mt19937 generator(rd());
+    std::uniform_real_distribution<double> distribution(1.0, 100.0);
 
-    algPtr->getMap()->fromFile("input.txt", 1.0, "coordinates");
+    std::vector<std::pair<double, double>> points(n);
 
-    mapCoroutine<double>::pull_type source([&](mapCoroutine<double>::push_type &yield)
-                                           { algPtr->run(0, 10000, yield); });
-
-    vector<size_t> bestPath = algPtr->getBestPath();
-
-    for (auto &el : bestPath)
+    for (size_t i = 0; i < n; ++i)
     {
-        std::cout << el << " ";
+        points[i].first = distribution(generator);
+        points[i].second = distribution(generator);
     }
-    std::cout << std::endl;
+    return points;
+}
 
-    std::cout << algPtr->calcBestPathLength(bestPath) << std::endl;
+int main(int argc, char *argv[])
+{
+
+    if (argc != 4)
+    {
+        std::cout << "Usage: " << argv[0] << " <size of map>, <size of colony> <iterations>" << std::endl;
+        return 1;
+    }
+
+    size_t mapSize = std::stoi(argv[1]);
+    size_t colonySize = std::stoi(argv[2]);
+    size_t iterations = std::stoi(argv[3]);
+
+    AntAlgorithmFactory<double, double> factory;
+    std::shared_ptr<AntAlgorithm<double, double>> algMultPtr = factory.createAlgorithm("multithreaded", colonySize, 0.6);
+    std::shared_ptr<AntAlgorithm<double, double>> algBasicPtr = factory.createAlgorithm("basic", colonySize, 0.6);
+
+    std::vector<std::pair<double, double>> points = getRandomPoints(mapSize);
+
+    algMultPtr->getMap()->fromCoordinates(points, 1.0);
+
+    auto start = std::chrono::high_resolution_clock::now();
+    algMultPtr->run(0, iterations);
+
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+    std::cout << algMultPtr->calcBestPathLength() << " ";
+    std::cout << static_cast<double>(duration) / 1000.0 << std::endl;
+
+    algBasicPtr->getMap()->fromCoordinates(points, 1.0);
+    start = std::chrono::high_resolution_clock::now();
+
+    algBasicPtr->run(0, iterations);
+    end = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+    std::cout << algBasicPtr->calcBestPathLength() << " ";
+    std::cout << static_cast<double>(duration) / 1000.0 << std::endl;
 
     return 0;
 }

@@ -65,12 +65,14 @@ void MultyThreadedAntAlgorithm<feromoneT, distanceT>::runOnce(size_t begin, type
 {
     boost::asio::thread_pool pool(threadsCount ?: sysconf(_SC_NPROCESSORS_CONF));
     auto mp = this->map;
-    for (auto &ant : *(this->colony))
+
+      for (auto &ant : *(this->colony))
     {
 
         boost::asio::post(pool, [ant, begin, mp]()
                           { ant->run(begin, *(mp)); });
     }
+    pool.join();
 
     this->updateStrategy->updateFeromone(*(this->map), *(this->colony));
     sink(this->map->getFeromone());
@@ -83,6 +85,7 @@ void MultyThreadedAntAlgorithm<feromoneT, distanceT>::run(size_t begin, size_t i
 
     for (size_t i = 0; i < iterations; ++i)
     {
+        std::cout << i << std::endl;
         runOnce(begin, sink);
     }
 }

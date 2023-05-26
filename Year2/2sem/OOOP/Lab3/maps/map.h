@@ -12,8 +12,6 @@ class Map
     vector<vector<feromoneT>> feromone;
     vector<vector<distanceT>> distance;
 
-    void fromCoordinates(const vector<std::pair<distanceT, distanceT>> &points, feromoneT initFeromone);
-
 public:
     Map() = default;
     Map(const vector<std::pair<distanceT, distanceT>> &points, feromoneT initFeromone);
@@ -34,6 +32,7 @@ public:
     inline void updateFeromone(feromoneT decayCoeff);
 
     inline void fromFile(std::string filename, feromoneT initFeromone, std::string mode = "coordinates");
+    void fromCoordinates(const vector<std::pair<distanceT, distanceT>> &points, feromoneT initFeromone);
 };
 
 template <class feromoneT, class distanceT>

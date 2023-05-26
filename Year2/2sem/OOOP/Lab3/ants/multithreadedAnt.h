@@ -3,10 +3,10 @@
 #include <iostream>
 
 using std::size_t;
-#ifndef BASIC_ANT_H
-#define BASIC_ANT_H
+#ifndef MULTITHREADED_ANT_H
+#define MULTITHREADED_ANT_H
 template <class feromoneT, class distanceT>
-class BasicAnt : public Ant<feromoneT, distanceT>
+class MultithreadedAnt : public Ant<feromoneT, distanceT>
 {
 
     vector<size_t> sth;
@@ -16,19 +16,21 @@ class BasicAnt : public Ant<feromoneT, distanceT>
     size_t curNode;
     vector<bool> available;
 
+    size_t begin;
+    Map<distanceT, feromoneT> &mapRef;
     size_t choose(Map<distanceT, feromoneT> &map)
     {
         return chooseStrat->choose(curNode, map, available);
     }
 
 public:
-    BasicAnt(std::shared_ptr<ChooseNextStrategy<feromoneT, distanceT>> str)
+    MultithreadedAnt(std::shared_ptr<ChooseNextStrategy<feromoneT, distanceT>> str)
     {
         chooseStrat = std::move(str);
         this->feromoneSpread = 1;
     };
 
-    BasicAnt(std::shared_ptr<ChooseNextStrategy<feromoneT, distanceT>> str, feromoneT feromoneSpread)
+    MultithreadedAnt(std::shared_ptr<ChooseNextStrategy<feromoneT, distanceT>> str, feromoneT feromoneSpread)
     {
         chooseStrat = std::move(str);
         this->feromoneSpread = feromoneSpread;
@@ -37,12 +39,18 @@ public:
     void run(size_t begin, Map<distanceT, feromoneT> &) override;
     void run() override { throw std::runtime_error("Not implemented for this ant"); };
 
-    vector<size_t> getPathBegin() { return this->path.begin(); };
-    vector<size_t> getPathEnd() { return this->path.end(); };
+    vector<size_t> getPathBegin()
+    {
+        return this->path.begin();
+    };
+    vector<size_t> getPathEnd()
+    {
+        return this->path.end();
+    };
 };
 
 template <class feromoneT, class distanceT>
-void BasicAnt<feromoneT, distanceT>::run(size_t begin, Map<distanceT, feromoneT> &map)
+void MultithreadedAnt<feromoneT, distanceT>::run(size_t begin, Map<distanceT, feromoneT> &map)
 {
     this->path.resize(map.size() + 1);
     available.resize(map.size());

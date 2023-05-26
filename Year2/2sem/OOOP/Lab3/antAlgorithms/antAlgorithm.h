@@ -20,22 +20,27 @@ template <class feromoneT, class distanceT>
 class AntAlgorithm
 {
 protected:
-    std::unique_ptr<Map<distanceT, feromoneT>> map;
-    std::unique_ptr<Colony<feromoneT, distanceT>> colony;
-    std::unique_ptr<UpdateFeromoneStrategy<feromoneT, distanceT>> updateStrategy;
-    std::unique_ptr<ChooseBestRootStrategy<feromoneT, distanceT>> chooseRootStrategy;
+    std::shared_ptr<Map<distanceT, feromoneT>> map;
+    std::shared_ptr<Colony<feromoneT, distanceT>> colony;
+    std::shared_ptr<UpdateFeromoneStrategy<feromoneT, distanceT>> updateStrategy;
+    std::shared_ptr<ChooseBestRootStrategy<feromoneT, distanceT>> chooseRootStrategy;
 
 public:
-    AntAlgorithm(std::unique_ptr<Map<distanceT, feromoneT>> &map,
-                 std::unique_ptr<Colony<feromoneT, distanceT>> &colony,
-                 std::unique_ptr<UpdateFeromoneStrategy<feromoneT, distanceT>> &updateStrategy,
-                 std::unique_ptr<ChooseBestRootStrategy<feromoneT, distanceT>> &chooseRootStrategy)
+    AntAlgorithm(std::shared_ptr<Map<distanceT, feromoneT>> &map,
+                 std::shared_ptr<Colony<feromoneT, distanceT>> &colony,
+                 std::shared_ptr<UpdateFeromoneStrategy<feromoneT, distanceT>> &updateStrategy,
+                 std::shared_ptr<ChooseBestRootStrategy<feromoneT, distanceT>> &chooseRootStrategy)
     {
         this->map = std::move(map);
         this->colony = std::move(colony);
         this->updateStrategy = std::move(updateStrategy);
         this->chooseRootStrategy = std::move(chooseRootStrategy);
     }
+
+    inline std::shared_ptr<Map<distanceT, feromoneT>> &getMap() { return map; }
+    inline std::shared_ptr<Colony<feromoneT, distanceT>> &getColony() { return colony; }
+    inline std::shared_ptr<UpdateFeromoneStrategy<feromoneT, distanceT>> &getUpdateStrategy() { return updateStrategy; }
+    inline std::shared_ptr<ChooseBestRootStrategy<feromoneT, distanceT>> &getChooseRootStrategy() { return chooseRootStrategy; }
 
     virtual void run(size_t begin, size_t iterations) = 0;
     virtual void run(size_t begin, size_t iterations, typename mapCoroutine<distanceT>::push_type &sink) = 0;

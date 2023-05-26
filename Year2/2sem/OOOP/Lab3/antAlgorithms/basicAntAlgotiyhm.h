@@ -12,10 +12,10 @@ protected:
     size_t beginNode = 0;
 
 public:
-    BasicAntAlgorithm(std::unique_ptr<Map<distanceT, feromoneT>> &map,
-                      std::unique_ptr<Colony<feromoneT, distanceT>> &colony,
-                      std::unique_ptr<UpdateFeromoneStrategy<feromoneT, distanceT>> &updateStrategy,
-                      std::unique_ptr<ChooseBestRootStrategy<feromoneT, distanceT>> &chooseRootStrategy)
+    BasicAntAlgorithm(std::shared_ptr<Map<distanceT, feromoneT>> &map,
+                      std::shared_ptr<Colony<feromoneT, distanceT>> &colony,
+                      std::shared_ptr<UpdateFeromoneStrategy<feromoneT, distanceT>> &updateStrategy,
+                      std::shared_ptr<ChooseBestRootStrategy<feromoneT, distanceT>> &chooseRootStrategy)
         : AntAlgorithm<feromoneT, distanceT>(map, colony, updateStrategy, chooseRootStrategy) {}
 
     void run(size_t begin, size_t iterations) override;

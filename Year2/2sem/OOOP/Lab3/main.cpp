@@ -43,58 +43,80 @@ std::vector<std::pair<double, double>> getRandomPoints(size_t n)
     return points;
 }
 
+void testCol()
+{
+    size_t iterations = 100;
+    AntAlgorithmFactory<double, double> factory;
+
+    for (size_t colonySize = 1; colonySize < 2000; colonySize += 20)
+    {
+        std::cout << colonySize << std::endl;
+
+        std::shared_ptr<AntAlgorithm<double, double>> algMultPtr = factory.createAlgorithm("multithreaded", colonySize, 0.6);
+        std::shared_ptr<AntAlgorithm<double, double>> algBasicPtr = factory.createAlgorithm("basic", colonySize, 0.6);
+
+        algMultPtr->getMap()->fromFile("input.txt", 1.0);
+
+        auto start = std::chrono::high_resolution_clock::now();
+        algMultPtr->run(0, iterations);
+
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+        std::cout << algMultPtr->calcBestPathLength() << " ";
+        std::cout << static_cast<double>(duration) / 1000.0 << std::endl;
+
+        algBasicPtr->getMap()->fromFile("input.txt", 1.0);
+        start = std::chrono::high_resolution_clock::now();
+
+        algBasicPtr->run(0, iterations);
+        end = std::chrono::high_resolution_clock::now();
+        duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+        std::cout << algBasicPtr->calcBestPathLength() << " ";
+        std::cout << static_cast<double>(duration) / 1000.0 << std::endl;
+    }
+}
+
+void testMap()
+{
+}
+
+void testIteration()
+{
+
+    AntAlgorithmFactory<double, double> factory;
+    std::shared_ptr<AntAlgorithm<double, double>> algMultPtr = factory.createAlgorithm("multithreaded", 100, 0.6);
+
+    algMultPtr->getMap()->fromFile("input.txt", 1.0);
+
+    for (size_t i = 0; i < 10000; i += 20)
+    {
+        auto start = std::chrono::high_resolution_clock::now();
+
+        algMultPtr->run(0, i);
+        auto end = std::chrono::high_resolution_clock::now();
+        std::cout << i << " ";
+        std::cout << algMultPtr->calcBestPathLength() << " ";
+
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+        std::cout << static_cast<double>(duration) / 1000.0 << std::endl;
+    }
+}
+
 int main(int argc, char *argv[])
 {
 
-    if (argc != 4)
-    {
-        std::cout << "Usage: " << argv[0] << " <size of map>, <size of colony> <iterations>" << std::endl;
-        return 1;
-    }
-
-    size_t mapSize = std::stoi(argv[1]);
-    size_t colonySize = std::stoi(argv[2]);
-    size_t iterations = std::stoi(argv[3]);
+    size_t mapSize = 40;
+    // size_t colonySize = std::stoi(argv[2]);
+    size_t iterations = 100;
 
     AntAlgorithmFactory<double, double> factory;
-    std::shared_ptr<AntAlgorithm<double, double>> algMultPtr = factory.createAlgorithm("multithreaded", colonySize, 0.6);
-    std::shared_ptr<AntAlgorithm<double, double>> algBasicPtr = factory.createAlgorithm("basic", colonySize, 0.6);
 
-    std::vector<std::pair<double, double>> points = getRandomPoints(mapSize);
-
-    algMultPtr->getMap()->fromCoordinates(points, 1.0);
-
-    auto start = std::chrono::high_resolution_clock::now();
-    algMultPtr->run(0, iterations);
-
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-
-    std::cout << algMultPtr->calcBestPathLength() << " ";
-    std::cout << static_cast<double>(duration) / 1000.0 << std::endl;
-
-    algBasicPtr->getMap()->fromCoordinates(points, 1.0);
-    start = std::chrono::high_resolution_clock::now();
-
-    algBasicPtr->run(0, iterations);
-    end = std::chrono::high_resolution_clock::now();
-    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-
-    std::cout << algBasicPtr->calcBestPathLength() << " ";
-    std::cout << static_cast<double>(duration) / 1000.0 << std::endl;
+    freopen("output1.txt", "w", stdout);
+    testIteration();
 
     return 0;
 }
 
-/*
-Write a GUI on Qt for this algorithm assuming that backend is already written.  It must consist of:
-1) Canvas with points, which are nodes of the graph. User can add new points by clicking on the canvas.
-2) Button "Run" which starts the algorithm.
-3) Entry for the number of iterations.
-4) Entry for the number of ants.
-
-Also canvas must support drawing lines that represent quantity of feromone on the edge.
-
-
-
-*/

@@ -71,6 +71,7 @@ public:
             if (!availiable[i])
                 continue;
 
+
             imapctCombined.push_back(std::make_pair(pow(feromone[i], feromoneImpact) *
                                                         pow(distance[i], distanceImpact),
                                                     i));

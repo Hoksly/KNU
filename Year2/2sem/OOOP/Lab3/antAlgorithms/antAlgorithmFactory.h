@@ -8,35 +8,35 @@ class AntAlgorithmFactory
 protected:
     std::shared_ptr<AntAlgorithm<feromoneT, distanceT>> createBasic(size_t antsCount,
                                                                     double decayCoeff, double PheromoneImpact,
-                                                                    double distanceImpact)
+                                                                    double distanceImpact, double  pheromoneSpread)
     {
-        Colony<double, double> col;
-        ChooseStrategyFactory<double, double> strategyFactory;
+        Colony< feromoneT,  distanceT> col;
+        ChooseStrategyFactory< feromoneT,  distanceT> strategyFactory;
         for (int i = 0; i < antsCount; i++)
         {
 
-            std::shared_ptr<ChooseNextStrategy<double, double>> str = strategyFactory.createStrategy("basic",
+            std::shared_ptr<ChooseNextStrategy< feromoneT,  distanceT>> str = strategyFactory.createStrategy("basic",
                                                                                                      PheromoneImpact,
                                                                                                      distanceImpact);
 
-            BasicAnt<double, double> ant(std::move(str)); // Create BasicAnt object with the moved ChooseNextStrategy
+            BasicAnt< feromoneT,  distanceT> ant(std::move(str), pheromoneSpread); // Create BasicAnt object with the moved ChooseNextStrategy
 
-            std::shared_ptr<Ant<double, double>> ptr = std::make_unique<BasicAnt<double, double>>(std::move(ant)); // Move the BasicAnt object to unique_ptr
+            std::shared_ptr<Ant< feromoneT,  distanceT>> ptr = std::make_unique<BasicAnt< feromoneT,  distanceT>>(std::move(ant)); // Move the BasicAnt object to unique_ptr
             col.addAnt(std::move(ptr));                                                                            // Move the unique_ptr to addAnt function
         }
 
-        Map<double, double> map;
+        Map< feromoneT,  distanceT> map;
 
-        std::shared_ptr<BasicFeromoneDecay<double, double>> basicDecay = std::make_unique<BasicFeromoneDecay<double, double>>(decayCoeff);
-        std::shared_ptr<UpdateFeromoneStrategy<double, double>> updateStrategy = std::move(basicDecay);
+        std::shared_ptr<BasicFeromoneDecay< feromoneT,  distanceT>> basicDecay = std::make_unique<BasicFeromoneDecay< feromoneT,  distanceT>>(decayCoeff);
+        std::shared_ptr<UpdateFeromoneStrategy< feromoneT,  distanceT>> updateStrategy = std::move(basicDecay);
 
-        std::shared_ptr<Map<double, double>> mapPtr = std::make_unique<Map<double, double>>(std::move(map));
-        std::shared_ptr<Colony<double, double>> colPtr = std::make_unique<Colony<double, double>>(std::move(col));
+        std::shared_ptr<Map< feromoneT,  distanceT>> mapPtr = std::make_unique<Map< feromoneT,  distanceT>>(std::move(map));
+        std::shared_ptr<Colony< feromoneT,  distanceT>> colPtr = std::make_unique<Colony< feromoneT,  distanceT>>(std::move(col));
 
-        std::shared_ptr<ChooseBestFeromoneRoot<double, double>> chooseRootStrategy = std::make_unique<ChooseBestFeromoneRoot<double, double>>();
-        std::shared_ptr<ChooseBestRootStrategy<double, double>> chooseRootStrategyPtr = std::move(chooseRootStrategy);
+        std::shared_ptr<ChooseBestFeromoneRoot< feromoneT,  distanceT>> chooseRootStrategy = std::make_unique<ChooseBestFeromoneRoot< feromoneT,  distanceT>>();
+        std::shared_ptr<ChooseBestRootStrategy< feromoneT,  distanceT>> chooseRootStrategyPtr = std::move(chooseRootStrategy);
 
-        BasicAntAlgorithm<double, double> alg(mapPtr,
+        BasicAntAlgorithm< feromoneT,  distanceT> alg(mapPtr,
                                               colPtr,
                                               updateStrategy,
                                               chooseRootStrategyPtr);
@@ -46,36 +46,38 @@ protected:
     }
 
     std::shared_ptr<AntAlgorithm<feromoneT, distanceT>> createMultythreaded(size_t antsCount,
-                                                                            double decayCoeff, size_t threadsCount, double PheromoneImpact,  double distanceImpact)
+                                                                            double decayCoeff, size_t threadsCount,
+                                                                            double PheromoneImpact,  double distanceImpact,
+                                                                            double  pheromoneSpread)
 
     {
-        Colony<double, double> col;
-        ChooseStrategyFactory<double, double> strategyFactory;
+        Colony< feromoneT,  distanceT> col;
+        ChooseStrategyFactory< feromoneT,  distanceT> strategyFactory;
         for (int i = 0; i < antsCount; i++)
         {
 
-            std::shared_ptr<ChooseNextStrategy<double, double>> str = strategyFactory.createStrategy("basic",
+            std::shared_ptr<ChooseNextStrategy< feromoneT,  distanceT>> str = strategyFactory.createStrategy("basic",
                                                                                                      PheromoneImpact,
                                                                                                      distanceImpact);
 
-            BasicAnt<double, double> ant(std::move(str)); // Create BasicAnt object with the moved ChooseNextStrategy
+            BasicAnt< feromoneT,  distanceT> ant(std::move(str), pheromoneSpread); // Create BasicAnt object with the moved ChooseNextStrategy
 
-            std::shared_ptr<Ant<double, double>> ptr = std::make_unique<BasicAnt<double, double>>(std::move(ant)); // Move the BasicAnt object to unique_ptr
+            std::shared_ptr<Ant< feromoneT,  distanceT>> ptr = std::make_unique<BasicAnt< feromoneT,  distanceT>>(std::move(ant)); // Move the BasicAnt object to unique_ptr
             col.addAnt(std::move(ptr));                                                                            // Move the unique_ptr to addAnt function
         }
 
-        Map<double, double> map;
+        Map< feromoneT,  distanceT> map;
 
-        std::shared_ptr<BasicFeromoneDecay<double, double>> basicDecay = std::make_unique<BasicFeromoneDecay<double, double>>(decayCoeff);
-        std::shared_ptr<UpdateFeromoneStrategy<double, double>> updateStrategy = std::move(basicDecay);
+        std::shared_ptr<BasicFeromoneDecay< feromoneT,  distanceT>> basicDecay = std::make_unique<BasicFeromoneDecay< feromoneT,  distanceT>>(decayCoeff);
+        std::shared_ptr<UpdateFeromoneStrategy< feromoneT,  distanceT>> updateStrategy = std::move(basicDecay);
 
-        std::shared_ptr<Map<double, double>> mapPtr = std::make_unique<Map<double, double>>(std::move(map));
-        std::shared_ptr<Colony<double, double>> colPtr = std::make_unique<Colony<double, double>>(std::move(col));
+        std::shared_ptr<Map< feromoneT,  distanceT>> mapPtr = std::make_unique<Map< feromoneT,  distanceT>>(std::move(map));
+        std::shared_ptr<Colony< feromoneT,  distanceT>> colPtr = std::make_unique<Colony< feromoneT,  distanceT>>(std::move(col));
 
-        std::shared_ptr<ChooseBestFeromoneRoot<double, double>> chooseRootStrategy = std::make_unique<ChooseBestFeromoneRoot<double, double>>();
-        std::shared_ptr<ChooseBestRootStrategy<double, double>> chooseRootStrategyPtr = std::move(chooseRootStrategy);
+        std::shared_ptr<ChooseBestFeromoneRoot< feromoneT,  distanceT>> chooseRootStrategy = std::make_unique<ChooseBestFeromoneRoot< feromoneT,  distanceT>>();
+        std::shared_ptr<ChooseBestRootStrategy< feromoneT,  distanceT>> chooseRootStrategyPtr = std::move(chooseRootStrategy);
 
-        MultyThreadedAntAlgorithm<double, double> alg(mapPtr,
+        MultyThreadedAntAlgorithm< feromoneT,  distanceT> alg(mapPtr,
                                                       colPtr,
                                                       updateStrategy,
                                                       chooseRootStrategyPtr, threadsCount);
@@ -118,15 +120,16 @@ public:
     }
 
     std::shared_ptr<AntAlgorithm<feromoneT, distanceT>> createAlgorithm(std::string algorithmName, size_t antsCount = 1000,
-                                                                        double decayCoeff = 0.5, double pheromoneImpact = 1.0, double distanceImpact = 1.0, size_t threadsCount = 0)
+                                                                        double decayCoeff = 0.5, double pheromoneImpact = 1.0,
+                                                                        double distanceImpact = 1.0, double pheromoneSpread = 1, size_t threadsCount = 0)
     {
         if (algorithmName == "basic")
         {
-            return createBasic(antsCount, decayCoeff, pheromoneImpact, distanceImpact);
+            return createBasic(antsCount, decayCoeff, pheromoneImpact, distanceImpact, pheromoneSpread);
         }
         else if (algorithmName == "multithreaded")
         {
-            return createMultythreaded(antsCount, decayCoeff, threadsCount, pheromoneImpact, distanceImpact);
+            return createMultythreaded(antsCount, decayCoeff, threadsCount, pheromoneImpact, distanceImpact, pheromoneSpread);
         }
         else
         {

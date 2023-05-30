@@ -88,7 +88,6 @@ void MultyThreadedAntAlgorithm<feromoneT, distanceT>::run(size_t begin, size_t i
 
     for (size_t i = 0; i < iterations; ++i)
     {
-        std::cout << i << std::endl;
         runOnce(begin, sink);
     }
 }

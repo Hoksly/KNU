@@ -61,6 +61,10 @@ public:
         initPheromoneLineEdit->setFixedWidth(100);
         initPheromoneLineEdit->setText("0");
 
+        antPheromoneLineEdit = new QLineEdit(this);
+        antPheromoneLineEdit->setFixedWidth(100);
+        antPheromoneLineEdit->setText("10");
+
         clearButton = new QPushButton("Clear", this);
 
         inputsLayout->addWidget(new QLabel("Iterations:", this));
@@ -78,8 +82,11 @@ public:
         inputsLayout->addWidget(new QLabel("Decay:", this));
         inputsLayout->addWidget(decayCoefficientLineEdit);
 
-        inputsLayout->addWidget(new QLabel("Init Pheromone:", this));
+        inputsLayout->addWidget(new QLabel("Init map pheromone:", this));
         inputsLayout->addWidget(initPheromoneLineEdit);
+
+        inputsLayout->addWidget(new QLabel("Ant pheromone:", this));
+        inputsLayout->addWidget(antPheromoneLineEdit);
 
 
         inputsLayout->addStretch();
@@ -155,6 +162,7 @@ protected:
     QLineEdit *distanceImpactLineEdit;
     QLineEdit *decayCoefficientLineEdit;
     QLineEdit *initPheromoneLineEdit;
+    QLineEdit *antPheromoneLineEdit;
 
 
     QLabel *timeSpentLabel;
@@ -273,6 +281,7 @@ private slots:
         double distanceImpact = distanceImpactLineEdit->text().toDouble();
         double decayCoefficient = decayCoefficientLineEdit->text().toDouble();
         double initPheromone = initPheromoneLineEdit->text().toDouble();
+        double antPheromone = antPheromoneLineEdit->text().toDouble();
 
 
         if(dots.size() == 0 || ants == 0 || iterations == 0)
@@ -285,7 +294,12 @@ private slots:
         clearLines();
 
         AntAlgorithmFactory<double, double> factory;
-        std::shared_ptr<AntAlgorithm<double, double>> algMultPtr = factory.createAlgorithm(algName, ants, decayCoefficient, pheromoneImpact, distanceImpact);
+        std::shared_ptr<AntAlgorithm<double, double>> algMultPtr = factory.createAlgorithm(algName,
+                                                                                           ants,
+                                                                                           decayCoefficient,
+                                                                                           pheromoneImpact,
+                                                                                           distanceImpact,
+                                                                                           antPheromone);
 
         vector<std::pair<double, double>> nodes = exportDots();
         algMultPtr->getMap()->fromCoordinates(nodes, initPheromone);
@@ -368,8 +382,8 @@ private slots:
         for (size_t i = 0; i < pheromoneMap.size(); ++i) {
             for (size_t j = 0; j < pheromoneMap[i].size(); ++j) {
                 const double pheromone = pheromoneMap[i][j];
-                const double normalizedValue = (pheromone - minPheromone) / (maxPheromone - minPheromone);
-
+                //const double normalizedValue = (pheromone - minPheromone) / (maxPheromone - minPheromone);
+                const double normalizedValue = pheromone / 20.0 / 2.5;
 
                 const double thickness = normalizedValue * 2.5;
                 if(thickness == 0)

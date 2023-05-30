@@ -25,7 +25,7 @@ public:
     BasicAnt(std::shared_ptr<ChooseNextStrategy<feromoneT, distanceT>> str)
     {
         chooseStrat = std::move(str);
-        this->feromoneSpread = 1;
+        this->feromoneSpread;
     };
 
     BasicAnt(std::shared_ptr<ChooseNextStrategy<feromoneT, distanceT>> str, feromoneT feromoneSpread)

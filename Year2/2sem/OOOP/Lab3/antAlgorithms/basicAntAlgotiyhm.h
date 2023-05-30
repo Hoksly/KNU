@@ -1,4 +1,7 @@
 #include "antAlgorithm.h"
+#include <chrono>
+
+using namespace std::chrono;
 
 #ifndef BASIC_ANT_ALGORITHM_H
 #define BASIC_ANT_ALGORITHM_H
@@ -20,6 +23,10 @@ public:
 
     void run(size_t begin, size_t iterations) override;
     void run(size_t begin, size_t iterations, typename mapCoroutine<distanceT>::push_type &sink) override;
+
+    double runGetTime(size_t begin, size_t iterations) override;
+    double runGetTime(size_t begin, size_t iterations, typename mapCoroutine<distanceT>::push_type &sink) override;
+
     std::vector<size_t> getBestPath() override;
     distanceT calcBestPathLength(std::vector<size_t>) override;
     distanceT calcBestPathLength() override;
@@ -92,6 +99,31 @@ template <class feromoneT, class distanceT>
 distanceT BasicAntAlgorithm<feromoneT, distanceT>::calcBestPathLength()
 {
     return calcBestPathLength(getBestPath());
+}
+
+template <class feromoneT, class distanceT>
+double BasicAntAlgorithm<feromoneT, distanceT>::runGetTime(size_t begin, size_t iterations) {
+    auto startTime = std::chrono::high_resolution_clock::now();
+    auto endTime = std::chrono::high_resolution_clock::now();
+
+    this->run(begin, iterations);
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+
+    // Print the execution time
+    return static_cast<double>(duration.count()) / 1000.0;
+}
+
+
+template <class feromoneT, class distanceT>
+double BasicAntAlgorithm<feromoneT, distanceT>::runGetTime(size_t begin, size_t iterations, typename mapCoroutine<distanceT>::push_type &sink) {
+    auto startTime = std::chrono::high_resolution_clock::now();
+    auto endTime = std::chrono::high_resolution_clock::now();
+
+    this->run(begin, iterations, sink);
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+
+    // Print the execution time
+    return static_cast<double>(duration.count()) / 1000.0;
 }
 
 #endif

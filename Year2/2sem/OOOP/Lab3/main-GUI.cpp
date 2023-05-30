@@ -39,32 +39,47 @@ public:
         QHBoxLayout *inputsLayout = new QHBoxLayout;
         iterationsLineEdit = new QLineEdit(this);
         iterationsLineEdit->setFixedWidth(100);
+        iterationsLineEdit->setText("10");
 
         antsLineEdit = new QLineEdit(this);
         antsLineEdit->setFixedWidth(100);
+        antsLineEdit->setText("10");
 
         pheromoneImpactLineEdit = new QLineEdit(this);
         pheromoneImpactLineEdit->setFixedWidth(100);
+        pheromoneImpactLineEdit->setText("1");
 
         distanceImpactLineEdit = new QLineEdit(this);
         distanceImpactLineEdit->setFixedWidth(100);
+        distanceImpactLineEdit->setText("1");
 
         decayCoefficientLineEdit = new QLineEdit(this);
         decayCoefficientLineEdit->setFixedWidth(100);
+        decayCoefficientLineEdit->setText("0.5");
+
+        initPheromoneLineEdit = new QLineEdit(this);
+        initPheromoneLineEdit->setFixedWidth(100);
+        initPheromoneLineEdit->setText("0");
 
         clearButton = new QPushButton("Clear", this);
 
         inputsLayout->addWidget(new QLabel("Iterations:", this));
         inputsLayout->addWidget(iterationsLineEdit);
+
         inputsLayout->addWidget(new QLabel("Ants:", this));
         inputsLayout->addWidget(antsLineEdit);
+
         inputsLayout->addWidget(new QLabel("Pheromone impact:", this));
         inputsLayout->addWidget(pheromoneImpactLineEdit);
+
         inputsLayout->addWidget(new QLabel("Distance impact:", this));
         inputsLayout->addWidget(distanceImpactLineEdit);
 
         inputsLayout->addWidget(new QLabel("Decay:", this));
         inputsLayout->addWidget(decayCoefficientLineEdit);
+
+        inputsLayout->addWidget(new QLabel("Init Pheromone:", this));
+        inputsLayout->addWidget(initPheromoneLineEdit);
 
 
         inputsLayout->addStretch();
@@ -74,6 +89,11 @@ public:
         QCheckBox *drawBestPathCheckBox = new QCheckBox("Draw Best Path", this);
         QCheckBox *drawPheromoneCheckBox = new QCheckBox("Draw Pheromone", this);
         QCheckBox *useMultithreadingCheckBox = new QCheckBox("Use multithreading", this);
+
+        drawBestPathCheckBox->setCheckState(Qt::CheckState::Checked);
+        drawPheromoneCheckBox->setCheckState(Qt::CheckState::Checked);
+        useMultithreadingCheckBox->setCheckState(Qt::CheckState::Unchecked);
+
 
         drawingOptionsLayout->addWidget(drawBestPathCheckBox);
         drawingOptionsLayout->addWidget(drawPheromoneCheckBox);
@@ -89,7 +109,7 @@ public:
         timeSpentLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         pathDistanceLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-        timeSpentLabel->setMinimumWidth(100);
+        timeSpentLabel->setMinimumWidth(300);
         pathDistanceLabel->setMinimumWidth(100);
 
 
@@ -97,6 +117,7 @@ public:
         resultsLayout->addWidget(timeSpentLabel);
         resultsLayout->addWidget( new QLabel("Path distance:", this));
         resultsLayout->addWidget(pathDistanceLabel);
+
         resultsLayout->addStretch();
 
 
@@ -133,6 +154,8 @@ protected:
     QLineEdit *pheromoneImpactLineEdit;
     QLineEdit *distanceImpactLineEdit;
     QLineEdit *decayCoefficientLineEdit;
+    QLineEdit *initPheromoneLineEdit;
+
 
     QLabel *timeSpentLabel;
     QLabel *pathDistanceLabel;
@@ -142,7 +165,7 @@ protected:
     QWidget *canvas;
     std::vector<QPair<int, int>> dots;
 
-    bool useMultithreading = true;
+    bool useMultithreading = false;
     bool drawPheromone = true;
     bool drawBestPathState = true;
 
@@ -158,6 +181,7 @@ protected:
             useMultithreading = false;
 
         }
+
     }
 
     void drawPheromoneStateChanged(int state)
@@ -169,6 +193,7 @@ protected:
            drawPheromone = false;
 
         }
+        updateCanvas();
     }
 
     void drawBestPathStateChanged(int state)
@@ -180,6 +205,7 @@ protected:
             drawBestPathState = false;
 
         }
+        updateCanvas();
     }
 
 
@@ -243,18 +269,32 @@ private slots:
         int32_t iterations = iterationsLineEdit->text().toInt();
         int32_t ants = antsLineEdit->text().toInt();
 
+        double pheromoneImpact = pheromoneImpactLineEdit->text().toDouble();
+        double distanceImpact = distanceImpactLineEdit->text().toDouble();
+        double decayCoefficient = decayCoefficientLineEdit->text().toDouble();
+        double initPheromone = initPheromoneLineEdit->text().toDouble();
+
+
+        if(dots.size() == 0 || ants == 0 || iterations == 0)
+                return;
+
+        std::string algName = (useMultithreading? "multithreaded": "basic");
+
         // Export dots to vector of pairs
 
         clearLines();
 
         AntAlgorithmFactory<double, double> factory;
-        std::shared_ptr<AntAlgorithm<double, double>> algMultPtr = factory.createAlgorithm("basic", ants, 0.6);
+        std::shared_ptr<AntAlgorithm<double, double>> algMultPtr = factory.createAlgorithm(algName, ants, decayCoefficient, pheromoneImpact, distanceImpact);
 
         vector<std::pair<double, double>> nodes = exportDots();
-        algMultPtr->getMap()->fromCoordinates(nodes, 1.0);
+        algMultPtr->getMap()->fromCoordinates(nodes, initPheromone);
+
+        auto startTime = std::chrono::high_resolution_clock::now();
 
         Coroutine::pull_type source([&](Coroutine::push_type &yield)
-                                    { algMultPtr->run(0, iterations, yield);});
+                                    {  algMultPtr->run(0, iterations, yield);
+                                    });
 
 
         for(auto &map: source)
@@ -269,8 +309,15 @@ private slots:
         }
 
 
+        auto endTime = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+
+        double timeSpent = static_cast<double>(duration.count()) / 1000.0;
 
         vector<size_t> path = algMultPtr->getBestPath();
+
+        pathDistanceLabel->setText(std::to_string(algMultPtr->calcBestPathLength(path)).c_str());
+        timeSpentLabel->setText(std::to_string(timeSpent).c_str());
 
         drawBestPath(path, nodes);
 
@@ -278,7 +325,7 @@ private slots:
 
         canvas->update();
 
-        qDebug() << iterations << ants;
+
 
     }
 
@@ -302,6 +349,10 @@ private slots:
     void exportPheromoneMap(const vector<vector<double>> &pheromoneMap, const vector<std::pair<double, double>> &nodes)
     {
         pheromoneLines.clear();
+
+        if(!drawPheromone)
+            return;
+
         double minPheromone = std::numeric_limits<double>::max();
         double maxPheromone = std::numeric_limits<double>::lowest();
 
@@ -342,31 +393,38 @@ private slots:
         painter.setRenderHint(QPainter::Antialiasing, true);
 
 
-        for (const auto &line : pheromoneLines) {
-            std::pair<int, int> x = std::get<0>(line);
-            std::pair<int, int> y = std::get<1>(line);
-            double thickness = std::get<2>(line);
-            Qt::GlobalColor color = std::get<3>(line);
+        if(drawPheromone)
+        {
+            for (const auto &line : pheromoneLines) {
+                std::pair<int, int> x = std::get<0>(line);
+                std::pair<int, int> y = std::get<1>(line);
+                double thickness = std::get<2>(line);
+                Qt::GlobalColor color = std::get<3>(line);
 
-            QPen pen(color, 1);
-            pen.setCosmetic(true);
-            pen.setWidthF(thickness);
-            painter.setPen(pen);
-            painter.drawLine(x.first, x.second, y.first, y.second);
+                QPen pen(color, 1);
+                pen.setCosmetic(true);
+                pen.setWidthF(thickness);
+                painter.setPen(pen);
+                painter.drawLine(x.first, x.second, y.first, y.second);
+            }
         }
 
 
-        for (const auto &line : pathLines) {
-            std::pair<int, int> x = std::get<0>(line);
-            std::pair<int, int> y = std::get<1>(line);
-            int thickness = std::get<2>(line);
-            Qt::GlobalColor color = std::get<3>(line);
+        if(drawBestPathState)
+        {
+            for (const auto &line : pathLines) {
+                std::pair<int, int> x = std::get<0>(line);
+                std::pair<int, int> y = std::get<1>(line);
+                int thickness = std::get<2>(line);
+                Qt::GlobalColor color = std::get<3>(line);
 
 
 
-            painter.setPen(QPen(color, thickness));
-            painter.drawLine(x.first, x.second, y.first, y.second);
+                painter.setPen(QPen(color, thickness));
+                painter.drawLine(x.first, x.second, y.first, y.second);
+            }
         }
+
 
     }
 

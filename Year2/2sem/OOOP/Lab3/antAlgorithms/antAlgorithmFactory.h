@@ -7,14 +7,17 @@ class AntAlgorithmFactory
 {
 protected:
     std::shared_ptr<AntAlgorithm<feromoneT, distanceT>> createBasic(size_t antsCount,
-                                                                    double decayCoeff)
+                                                                    double decayCoeff, double PheromoneImpact,
+                                                                    double distanceImpact)
     {
         Colony<double, double> col;
         ChooseStrategyFactory<double, double> strategyFactory;
         for (int i = 0; i < antsCount; i++)
         {
 
-            std::shared_ptr<ChooseNextStrategy<double, double>> str = strategyFactory.createStrategy("basic", 1, 1);
+            std::shared_ptr<ChooseNextStrategy<double, double>> str = strategyFactory.createStrategy("basic",
+                                                                                                     PheromoneImpact,
+                                                                                                     distanceImpact);
 
             BasicAnt<double, double> ant(std::move(str)); // Create BasicAnt object with the moved ChooseNextStrategy
 
@@ -43,7 +46,7 @@ protected:
     }
 
     std::shared_ptr<AntAlgorithm<feromoneT, distanceT>> createMultythreaded(size_t antsCount,
-                                                                            double decayCoeff, size_t threadsCount)
+                                                                            double decayCoeff, size_t threadsCount, double PheromoneImpact,  double distanceImpact)
 
     {
         Colony<double, double> col;
@@ -51,7 +54,9 @@ protected:
         for (int i = 0; i < antsCount; i++)
         {
 
-            std::shared_ptr<ChooseNextStrategy<double, double>> str = strategyFactory.createStrategy("basic", 1, 1);
+            std::shared_ptr<ChooseNextStrategy<double, double>> str = strategyFactory.createStrategy("basic",
+                                                                                                     PheromoneImpact,
+                                                                                                     distanceImpact);
 
             BasicAnt<double, double> ant(std::move(str)); // Create BasicAnt object with the moved ChooseNextStrategy
 
@@ -113,15 +118,15 @@ public:
     }
 
     std::shared_ptr<AntAlgorithm<feromoneT, distanceT>> createAlgorithm(std::string algorithmName, size_t antsCount = 1000,
-                                                                        double decayCoeff = 0.5, size_t threadsCount = 0)
+                                                                        double decayCoeff = 0.5, double pheromoneImpact = 1.0, double distanceImpact = 1.0, size_t threadsCount = 0)
     {
         if (algorithmName == "basic")
         {
-            return createBasic(antsCount, decayCoeff);
+            return createBasic(antsCount, decayCoeff, pheromoneImpact, distanceImpact);
         }
         else if (algorithmName == "multithreaded")
         {
-            return createMultythreaded(antsCount, decayCoeff, threadsCount);
+            return createMultythreaded(antsCount, decayCoeff, threadsCount, pheromoneImpact, distanceImpact);
         }
         else
         {

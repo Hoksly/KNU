@@ -45,6 +45,9 @@ public:
     virtual void run(size_t begin, size_t iterations) = 0;
     virtual void run(size_t begin, size_t iterations, typename mapCoroutine<distanceT>::push_type &sink) = 0;
 
+    virtual double runGetTime(size_t begin, size_t iterations) = 0;
+    virtual double runGetTime(size_t begin, size_t iterations, typename mapCoroutine<distanceT>::push_type &sink) = 0;
+
     virtual std::vector<size_t> getBestPath() = 0;
 
     virtual distanceT calcBestPathLength(std::vector<size_t>) = 0;

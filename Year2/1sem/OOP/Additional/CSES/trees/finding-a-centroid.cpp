@@ -2,33 +2,51 @@
 
 using namespace std;
 
+void dfsCalcSubtreeSize(vector<vector<int>> &treeGraph, vector<int> &subtreeSize, int node, int parent)
+{
+    subtreeSize[node] = 1;
+    for (auto child : treeGraph[node])
+    {
+        if (child != parent)
+        {
+            dfsCalcSubtreeSize(treeGraph, subtreeSize, child, node);
+            subtreeSize[node] += subtreeSize[child];
+        }
+    }
+}
+
+int findCentroid(const vector<vector<int>> &treeGraph, const vector<int> &subtreeSize, int node, int parent, int n)
+{
+    for (int child : treeGraph[node])
+    {
+        if (child != parent && subtreeSize[child] > n / 2)
+        {
+            return findCentroid(treeGraph, subtreeSize, child, node, n);
+        }
+    }
+    return node;
+}
+
 int main()
 {
-    int n, m;
-    cin >> n >> m;
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(NULL);
+
+    int n, x, y;
+    cin >> n;
     vector<vector<int>> treeGraph(n + 1);
-    for (int i = 0; i < n - 1; i++)
+    for (int i = 1; i < n; i++)
     {
-        int x, y;
+
         cin >> x >> y;
         treeGraph[x].push_back(y);
         treeGraph[y].push_back(x);
     }
-    vector<int> lev(n + 1);
-    vector<vector<int>> sparseTable(ceil(log2(n + 1)) + 1, vector<int>(n + 1));
-    dfs(1, 0, sparseTable, treeGraph, lev);
-    for (int i = 1; i < sparseTable.size(); i++)
-    {
-        for (int j = 1; j < sparseTable[i].size(); j++)
-        {
-            sparseTable[i][j] = sparseTable[i - 1][sparseTable[i - 1][j]];
-        }
-    }
-    while (m--)
-    {
-        int x, y;
-        cin >> x >> y;
-        cout << lca(x, y, sparseTable, lev) << endl;
-    }
+    vector<int> subtreeSize(n, 0);
+
+    dfsCalcSubtreeSize(treeGraph, subtreeSize, 1, 0);
+    int xx = findCentroid(treeGraph, subtreeSize, 1, 0, n);
+
+    std::cout << xx << std::endl;
     return 0;
 }

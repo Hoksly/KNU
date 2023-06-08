@@ -16,35 +16,36 @@ int main()
         graph[a - 1].push_back({b - 1, c});
     }
 
-    vector<int> distance(n, INT_MIN);
+    vector<long long> distance(n, LLONG_MAX);
     vector<int> visited(n, 0);
 
     distance[0] = 0;
 
-    queue<pair<int, int>> q;
+    priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<pair<long long, int>>> q;
 
     q.push({0, 0});
 
     while (!q.empty())
     {
-        int a = q.front().second;
+        int a = q.top().second;
         q.pop();
 
         if (visited[a])
             continue;
+
         visited[a] = 1;
         for (auto pp : graph[a])
         {
             int node = pp.first, weight = pp.second;
-            if (distance[a] + weight < distance[b])
+            if (distance[a] + weight < distance[node])
             {
-                distance[b] = distance[a] + weight;
-                q.push({-distance[b], b});
+                distance[node] = distance[a] + weight;
+                q.push({distance[node], node});
             }
         }
     }
 
-    for (int i : distance)
+    for (long long i : distance)
         cout << i << ' ';
     cout << endl;
 }

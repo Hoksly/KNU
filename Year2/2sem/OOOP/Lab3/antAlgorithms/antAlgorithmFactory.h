@@ -2,85 +2,113 @@
 #include "basicAntAlgotiyhm.h"
 #include "multyThreadedAlgorythm.h"
 
+/*
+    * @brief Factory class for creating AntAlgorithm objects.
+    *
+    * @tparam feromoneT Type of the feromone.
+    * @tparam distanceT Type of the distance.
+
+*/
+
 template <class feromoneT = double, class distanceT = double>
 class AntAlgorithmFactory
 {
 protected:
+    /*
+     * @brief Create a basic AntAlgorithm object.
+     *
+     * @param antsCount Number of ants in the colony.
+     * @param decayCoeff Coefficient of the feromone decay.
+     * @param PheromoneImpact Impact of the feromone on the choice of the next node.
+     * @param distanceImpact Impact of the distance on the choice of the next node.
+     * @param pheromoneSpread Spread of the feromone.
+     * @return A shared pointer to the AntAlgorithm object.
+     */
     std::shared_ptr<AntAlgorithm<feromoneT, distanceT>> createBasic(size_t antsCount,
                                                                     double decayCoeff, double PheromoneImpact,
-                                                                    double distanceImpact, double  pheromoneSpread)
+                                                                    double distanceImpact, double pheromoneSpread)
     {
-        Colony< feromoneT,  distanceT> col;
-        ChooseStrategyFactory< feromoneT,  distanceT> strategyFactory;
+        Colony<feromoneT, distanceT> col;
+        ChooseStrategyFactory<feromoneT, distanceT> strategyFactory;
         for (int i = 0; i < antsCount; i++)
         {
 
-            std::shared_ptr<ChooseNextStrategy< feromoneT,  distanceT>> str = strategyFactory.createStrategy("basic",
-                                                                                                     PheromoneImpact,
-                                                                                                     distanceImpact);
+            std::shared_ptr<ChooseNextStrategy<feromoneT, distanceT>> str = strategyFactory.createStrategy("basic",
+                                                                                                           PheromoneImpact,
+                                                                                                           distanceImpact);
 
-            BasicAnt< feromoneT,  distanceT> ant(std::move(str), pheromoneSpread); // Create BasicAnt object with the moved ChooseNextStrategy
+            BasicAnt<feromoneT, distanceT> ant(std::move(str), pheromoneSpread); // Create BasicAnt object with the moved ChooseNextStrategy
 
-            std::shared_ptr<Ant< feromoneT,  distanceT>> ptr = std::make_unique<BasicAnt< feromoneT,  distanceT>>(std::move(ant)); // Move the BasicAnt object to unique_ptr
-            col.addAnt(std::move(ptr));                                                                            // Move the unique_ptr to addAnt function
+            std::shared_ptr<Ant<feromoneT, distanceT>> ptr = std::make_unique<BasicAnt<feromoneT, distanceT>>(std::move(ant)); // Move the BasicAnt object to unique_ptr
+            col.addAnt(std::move(ptr));                                                                                        // Move the unique_ptr to addAnt function
         }
 
-        Map< feromoneT,  distanceT> map;
+        Map<feromoneT, distanceT> map;
 
-        std::shared_ptr<BasicFeromoneDecay< feromoneT,  distanceT>> basicDecay = std::make_unique<BasicFeromoneDecay< feromoneT,  distanceT>>(decayCoeff);
-        std::shared_ptr<UpdateFeromoneStrategy< feromoneT,  distanceT>> updateStrategy = std::move(basicDecay);
+        std::shared_ptr<BasicFeromoneDecay<feromoneT, distanceT>> basicDecay = std::make_unique<BasicFeromoneDecay<feromoneT, distanceT>>(decayCoeff);
+        std::shared_ptr<UpdateFeromoneStrategy<feromoneT, distanceT>> updateStrategy = std::move(basicDecay);
 
-        std::shared_ptr<Map< feromoneT,  distanceT>> mapPtr = std::make_unique<Map< feromoneT,  distanceT>>(std::move(map));
-        std::shared_ptr<Colony< feromoneT,  distanceT>> colPtr = std::make_unique<Colony< feromoneT,  distanceT>>(std::move(col));
+        std::shared_ptr<Map<feromoneT, distanceT>> mapPtr = std::make_unique<Map<feromoneT, distanceT>>(std::move(map));
+        std::shared_ptr<Colony<feromoneT, distanceT>> colPtr = std::make_unique<Colony<feromoneT, distanceT>>(std::move(col));
 
-        std::shared_ptr<ChooseBestFeromoneRoot< feromoneT,  distanceT>> chooseRootStrategy = std::make_unique<ChooseBestFeromoneRoot< feromoneT,  distanceT>>();
-        std::shared_ptr<ChooseBestRootStrategy< feromoneT,  distanceT>> chooseRootStrategyPtr = std::move(chooseRootStrategy);
+        std::shared_ptr<ChooseBestFeromoneRoot<feromoneT, distanceT>> chooseRootStrategy = std::make_unique<ChooseBestFeromoneRoot<feromoneT, distanceT>>();
+        std::shared_ptr<ChooseBestRootStrategy<feromoneT, distanceT>> chooseRootStrategyPtr = std::move(chooseRootStrategy);
 
-        BasicAntAlgorithm< feromoneT,  distanceT> alg(mapPtr,
-                                              colPtr,
-                                              updateStrategy,
-                                              chooseRootStrategyPtr);
+        BasicAntAlgorithm<feromoneT, distanceT> alg(mapPtr,
+                                                    colPtr,
+                                                    updateStrategy,
+                                                    chooseRootStrategyPtr);
 
         std::shared_ptr<AntAlgorithm<feromoneT, distanceT>> algPtr = std::move(std::make_unique<BasicAntAlgorithm<feromoneT, distanceT>>(std::move(alg)));
         return algPtr;
     }
-
+    /*
+     * @brief Create a multythreaded AntAlgorithm object.
+     *
+     * @param antsCount Number of ants in the colony.
+     * @param decayCoeff Coefficient of the feromone decay.
+     * @param threadsCount Number of threads.
+     * @param PheromoneImpact Impact of the feromone on the choice of the next node.
+     * @param distanceImpact Impact of the distance on the choice of the next node.
+     * @param pheromoneSpread Spread of the feromone.
+     * @return A shared pointer to the AntAlgorithm object.
+     */
     std::shared_ptr<AntAlgorithm<feromoneT, distanceT>> createMultythreaded(size_t antsCount,
                                                                             double decayCoeff, size_t threadsCount,
-                                                                            double PheromoneImpact,  double distanceImpact,
-                                                                            double  pheromoneSpread)
+                                                                            double PheromoneImpact, double distanceImpact,
+                                                                            double pheromoneSpread)
 
     {
-        Colony< feromoneT,  distanceT> col;
-        ChooseStrategyFactory< feromoneT,  distanceT> strategyFactory;
+        Colony<feromoneT, distanceT> col;
+        ChooseStrategyFactory<feromoneT, distanceT> strategyFactory;
         for (int i = 0; i < antsCount; i++)
         {
 
-            std::shared_ptr<ChooseNextStrategy< feromoneT,  distanceT>> str = strategyFactory.createStrategy("basic",
-                                                                                                     PheromoneImpact,
-                                                                                                     distanceImpact);
+            std::shared_ptr<ChooseNextStrategy<feromoneT, distanceT>> str = strategyFactory.createStrategy("basic",
+                                                                                                           PheromoneImpact,
+                                                                                                           distanceImpact);
 
-            BasicAnt< feromoneT,  distanceT> ant(std::move(str), pheromoneSpread); // Create BasicAnt object with the moved ChooseNextStrategy
+            BasicAnt<feromoneT, distanceT> ant(std::move(str), pheromoneSpread); // Create BasicAnt object with the moved ChooseNextStrategy
 
-            std::shared_ptr<Ant< feromoneT,  distanceT>> ptr = std::make_unique<BasicAnt< feromoneT,  distanceT>>(std::move(ant)); // Move the BasicAnt object to unique_ptr
-            col.addAnt(std::move(ptr));                                                                            // Move the unique_ptr to addAnt function
+            std::shared_ptr<Ant<feromoneT, distanceT>> ptr = std::make_unique<BasicAnt<feromoneT, distanceT>>(std::move(ant)); // Move the BasicAnt object to unique_ptr
+            col.addAnt(std::move(ptr));                                                                                        // Move the unique_ptr to addAnt function
         }
 
-        Map< feromoneT,  distanceT> map;
+        Map<feromoneT, distanceT> map;
 
-        std::shared_ptr<BasicFeromoneDecay< feromoneT,  distanceT>> basicDecay = std::make_unique<BasicFeromoneDecay< feromoneT,  distanceT>>(decayCoeff);
-        std::shared_ptr<UpdateFeromoneStrategy< feromoneT,  distanceT>> updateStrategy = std::move(basicDecay);
+        std::shared_ptr<BasicFeromoneDecay<feromoneT, distanceT>> basicDecay = std::make_unique<BasicFeromoneDecay<feromoneT, distanceT>>(decayCoeff);
+        std::shared_ptr<UpdateFeromoneStrategy<feromoneT, distanceT>> updateStrategy = std::move(basicDecay);
 
-        std::shared_ptr<Map< feromoneT,  distanceT>> mapPtr = std::make_unique<Map< feromoneT,  distanceT>>(std::move(map));
-        std::shared_ptr<Colony< feromoneT,  distanceT>> colPtr = std::make_unique<Colony< feromoneT,  distanceT>>(std::move(col));
+        std::shared_ptr<Map<feromoneT, distanceT>> mapPtr = std::make_unique<Map<feromoneT, distanceT>>(std::move(map));
+        std::shared_ptr<Colony<feromoneT, distanceT>> colPtr = std::make_unique<Colony<feromoneT, distanceT>>(std::move(col));
 
-        std::shared_ptr<ChooseBestFeromoneRoot< feromoneT,  distanceT>> chooseRootStrategy = std::make_unique<ChooseBestFeromoneRoot< feromoneT,  distanceT>>();
-        std::shared_ptr<ChooseBestRootStrategy< feromoneT,  distanceT>> chooseRootStrategyPtr = std::move(chooseRootStrategy);
+        std::shared_ptr<ChooseBestFeromoneRoot<feromoneT, distanceT>> chooseRootStrategy = std::make_unique<ChooseBestFeromoneRoot<feromoneT, distanceT>>();
+        std::shared_ptr<ChooseBestRootStrategy<feromoneT, distanceT>> chooseRootStrategyPtr = std::move(chooseRootStrategy);
 
-        MultyThreadedAntAlgorithm< feromoneT,  distanceT> alg(mapPtr,
-                                                      colPtr,
-                                                      updateStrategy,
-                                                      chooseRootStrategyPtr, threadsCount);
+        MultyThreadedAntAlgorithm<feromoneT, distanceT> alg(mapPtr,
+                                                            colPtr,
+                                                            updateStrategy,
+                                                            chooseRootStrategyPtr, threadsCount);
 
         std::shared_ptr<AntAlgorithm<feromoneT, distanceT>> algPtr = std::move(std::make_unique<MultyThreadedAntAlgorithm<feromoneT, distanceT>>(std::move(alg)));
         return algPtr;
@@ -88,6 +116,17 @@ protected:
 
 public:
     AntAlgorithmFactory() = default;
+    /*
+     * @brief Create an AntAlgorithm object.
+     *
+     * @param algorithmName Name of the algorithm.
+     * @param map A shared pointer to the Map object.
+     * @param colony A shared pointer to the Colony object.
+     * @param updateStrategy A shared pointer to the UpdateFeromoneStrategy object.
+     * @param chooseRootStrategy A shared pointer to the ChooseBestRootStrategy object.
+     * @return A shared pointer to the AntAlgorithm object.
+     *
+     */
     std::shared_ptr<AntAlgorithm<feromoneT, distanceT>> createAlgorithm(std::string algorithmName,
                                                                         std::shared_ptr<Map<feromoneT, distanceT>> &map,
                                                                         std::shared_ptr<Colony<feromoneT, distanceT>> &colony,
@@ -118,6 +157,19 @@ public:
             throw std::invalid_argument("Invalid algorithm name");
         }
     }
+
+    /*
+     * @brief Create an AntAlgorithm object.
+     *
+     * @param algorithmName Name of the algorithm.
+     * @param antsCount Number of ants in the colony.
+     * @param decayCoeff Coefficient of the feromone decay.
+     * @param PheromoneImpact Impact of the feromone on the choice of the next node.
+     * @param distanceImpact Impact of the distance on the choice of the next node.
+     * @param pheromoneSpread Spread of the feromone.
+     * @param threadsCount Number of threads.
+     * @return A shared pointer to the AntAlgorithm object.
+     */
 
     std::shared_ptr<AntAlgorithm<feromoneT, distanceT>> createAlgorithm(std::string algorithmName, size_t antsCount = 1000,
                                                                         double decayCoeff = 0.5, double pheromoneImpact = 1.0,

@@ -34,6 +34,15 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/*
+ * Implementation of the BasicAntAlgorithm class.
+ */
+
+/*
+ * Run the algorithm once.
+ *
+ * @param begin The index of the node to start from.
+ */
 template <class feromoneT, class distanceT>
 void BasicAntAlgorithm<feromoneT, distanceT>::runOnce(size_t begin)
 {
@@ -44,6 +53,12 @@ void BasicAntAlgorithm<feromoneT, distanceT>::runOnce(size_t begin)
     this->updateStrategy->updateFeromone(*(this->map), *(this->colony));
 }
 
+/*
+ * Run the algorithm for a specified number of iterations, starting from a given index.
+ *
+ * @param begin The index of the node to start from.
+ * @param iterations The number of iterations.
+ */
 template <class feromoneT, class distanceT>
 void BasicAntAlgorithm<feromoneT, distanceT>::run(size_t begin, size_t iterations)
 {
@@ -54,6 +69,14 @@ void BasicAntAlgorithm<feromoneT, distanceT>::run(size_t begin, size_t iteration
         runOnce(begin);
     }
 }
+
+/*
+ * Run the algorithm once, and provide output using a coroutine sink.
+ *
+ * @param begin The index of the node to start from.
+ * @param sink The coroutine sink for output.
+ *
+ */
 template <class feromoneT, class distanceT>
 void BasicAntAlgorithm<feromoneT, distanceT>::runOnce(size_t begin, typename mapCoroutine<distanceT>::push_type &sink)
 {
@@ -65,7 +88,13 @@ void BasicAntAlgorithm<feromoneT, distanceT>::runOnce(size_t begin, typename map
     this->updateStrategy->updateFeromone(*(this->map), *(this->colony));
     sink(this->map->getFeromone());
 }
-
+/*
+ * Run the algorithm for a specified number of iterations, starting from a given index, and provide output using a coroutine sink.
+ *
+ * @param begin The index of the node to start from.
+ * @param iterations The number of iterations.
+ * @param sink The coroutine sink for output.
+ */
 template <class feromoneT, class distanceT>
 void BasicAntAlgorithm<feromoneT, distanceT>::run(size_t begin, size_t iterations, typename mapCoroutine<distanceT>::push_type &sink)
 {
@@ -77,12 +106,22 @@ void BasicAntAlgorithm<feromoneT, distanceT>::run(size_t begin, size_t iteration
     }
 }
 
+/*
+ * Get the best path.
+ *
+ * @return A vector of indices of the nodes in the best path.
+ */
 template <class feromoneT, class distanceT>
 std::vector<size_t> BasicAntAlgorithm<feromoneT, distanceT>::getBestPath()
 {
     return this->chooseRootStrategy->chooseBestRoot(beginNode, *(this->map));
 }
-
+/*
+ * Calculate the length of a given path.
+ *
+ * @param path A vector of indices of the nodes in the path.
+ * @return The length of the path.
+ */
 template <class feromoneT, class distanceT>
 distanceT BasicAntAlgorithm<feromoneT, distanceT>::calcBestPathLength(std::vector<size_t> path)
 {
@@ -94,15 +133,28 @@ distanceT BasicAntAlgorithm<feromoneT, distanceT>::calcBestPathLength(std::vecto
     }
     return length;
 }
-
+/*
+ * Calculate the length of the best path.
+ *
+ * @return The length of the best path.
+ */
 template <class feromoneT, class distanceT>
 distanceT BasicAntAlgorithm<feromoneT, distanceT>::calcBestPathLength()
 {
     return calcBestPathLength(getBestPath());
 }
 
+/*
+    * Run the algorithm for a specified number of iterations, starting from a given index, and return the execution time.
+    *
+    * @param begin The index of the node to start from.
+    * @param iterations The number of iterations.
+    * @return The execution time in seconds.
+
+*/
 template <class feromoneT, class distanceT>
-double BasicAntAlgorithm<feromoneT, distanceT>::runGetTime(size_t begin, size_t iterations) {
+double BasicAntAlgorithm<feromoneT, distanceT>::runGetTime(size_t begin, size_t iterations)
+{
     auto startTime = std::chrono::high_resolution_clock::now();
     auto endTime = std::chrono::high_resolution_clock::now();
 
@@ -112,10 +164,19 @@ double BasicAntAlgorithm<feromoneT, distanceT>::runGetTime(size_t begin, size_t 
     // Print the execution time
     return static_cast<double>(duration.count()) / 1000.0;
 }
+/*
+    * Run the algorithm for a specified number of iterations, starting from a given index, provide output using a coroutine sink, and return the execution time.
+    *
+    * @param begin The index of the node to start from.
+    * @param iterations The number of iterations.
+    * @param sink The coroutine sink for output.
+    * @return The execution time in seconds.
+    *
 
-
+*/
 template <class feromoneT, class distanceT>
-double BasicAntAlgorithm<feromoneT, distanceT>::runGetTime(size_t begin, size_t iterations, typename mapCoroutine<distanceT>::push_type &sink) {
+double BasicAntAlgorithm<feromoneT, distanceT>::runGetTime(size_t begin, size_t iterations, typename mapCoroutine<distanceT>::push_type &sink)
+{
     auto startTime = std::chrono::high_resolution_clock::now();
     auto endTime = std::chrono::high_resolution_clock::now();
 

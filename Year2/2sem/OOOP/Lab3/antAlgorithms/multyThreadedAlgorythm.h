@@ -34,7 +34,16 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+    * Implementation of the BasicAntAlgorithm class.
 
+*/
+
+/*
+ * Run the algorithm once.
+ *
+ * @param begin The index of the node to start from.
+ */
 template <class feromoneT, class distanceT>
 void MultyThreadedAntAlgorithm<feromoneT, distanceT>::runOnce(size_t begin)
 {
@@ -52,7 +61,13 @@ void MultyThreadedAntAlgorithm<feromoneT, distanceT>::runOnce(size_t begin)
 
     this->updateStrategy->updateFeromone(*(this->map), *(this->colony));
 }
+/*
+ * Run the algorithm for a specified number of iterations, starting from a given index.
+ *
+ * @param begin The index of the node to start from.
+ * @param iterations The number of iterations.
 
+*/
 template <class feromoneT, class distanceT>
 void MultyThreadedAntAlgorithm<feromoneT, distanceT>::run(size_t begin, size_t iterations)
 {
@@ -63,13 +78,21 @@ void MultyThreadedAntAlgorithm<feromoneT, distanceT>::run(size_t begin, size_t i
         runOnce(begin);
     }
 }
+
+/*
+ * Run the algorithm for a specified number of iterations, starting from a given index, and provide output using a coroutine sink.
+ *
+ * @param begin The index of the node to start from.
+ * @param iterations The number of iterations.
+ * @param sink The coroutine sink for output.
+ */
 template <class feromoneT, class distanceT>
 void MultyThreadedAntAlgorithm<feromoneT, distanceT>::runOnce(size_t begin, typename mapCoroutine<distanceT>::push_type &sink)
 {
     boost::asio::thread_pool pool(threadsCount ?: sysconf(_SC_NPROCESSORS_CONF));
     auto mp = this->map;
 
-      for (auto &ant : *(this->colony))
+    for (auto &ant : *(this->colony))
     {
 
         boost::asio::post(pool, [ant, begin, mp]()
@@ -80,7 +103,13 @@ void MultyThreadedAntAlgorithm<feromoneT, distanceT>::runOnce(size_t begin, type
     this->updateStrategy->updateFeromone(*(this->map), *(this->colony));
     sink(this->map->getFeromone());
 }
-
+/*
+ * Run the algorithm for a specified number of iterations, starting from a given index, and provide output using a coroutine sink.
+ *
+ * @param begin The index of the node to start from.
+ * @param iterations The number of iterations.
+ * @param sink The coroutine sink for output.
+ */
 template <class feromoneT, class distanceT>
 void MultyThreadedAntAlgorithm<feromoneT, distanceT>::run(size_t begin, size_t iterations, typename mapCoroutine<distanceT>::push_type &sink)
 {
@@ -91,13 +120,23 @@ void MultyThreadedAntAlgorithm<feromoneT, distanceT>::run(size_t begin, size_t i
         runOnce(begin, sink);
     }
 }
-
+/*
+ * Get the best path found by the algorithm.
+ *
+ * @return A vector of node indices.
+ */
 template <class feromoneT, class distanceT>
 std::vector<size_t> MultyThreadedAntAlgorithm<feromoneT, distanceT>::getBestPath()
 {
     return this->chooseRootStrategy->chooseBestRoot(beginNode, *(this->map));
 }
 
+/*
+ * Calculate the length of a given path.
+ *
+ * @param path A vector of node indices.
+ * @return The length of the path.
+ */
 template <class feromoneT, class distanceT>
 distanceT MultyThreadedAntAlgorithm<feromoneT, distanceT>::calcBestPathLength(std::vector<size_t> path)
 {
@@ -109,15 +148,28 @@ distanceT MultyThreadedAntAlgorithm<feromoneT, distanceT>::calcBestPathLength(st
     }
     return length;
 }
-
+/*
+ * Calculate the length of the best path found by the algorithm.
+ *
+ * @return The length of the path.
+ */
 template <class feromoneT, class distanceT>
 distanceT MultyThreadedAntAlgorithm<feromoneT, distanceT>::calcBestPathLength()
 {
     return calcBestPathLength(getBestPath());
 }
 
+/*
+    * Run the ant algorithm for a specified number of iterations, starting from a given index, and return the execution time.
+    *
+    * @param begin The starting index.
+    * @param iterations The number of iterations.
+    * @return The execution time in seconds.
+
+*/
 template <class feromoneT, class distanceT>
-double MultyThreadedAntAlgorithm<feromoneT, distanceT>::runGetTime(size_t begin, size_t iterations) {
+double MultyThreadedAntAlgorithm<feromoneT, distanceT>::runGetTime(size_t begin, size_t iterations)
+{
     auto startTime = std::chrono::high_resolution_clock::now();
     auto endTime = std::chrono::high_resolution_clock::now();
 
@@ -128,9 +180,17 @@ double MultyThreadedAntAlgorithm<feromoneT, distanceT>::runGetTime(size_t begin,
     return static_cast<double>(duration.count()) / 1000.0;
 }
 
+/*
+    * Run the ant algorithm for a specified number of iterations, starting from a given index, provide output using a coroutine sink, and return the execution time.
 
+    * @param begin The starting index.
+    * @param iterations The number of iterations.
+    * @param sink The coroutine sink for output.
+    * @return The execution time in seconds.
+*/
 template <class feromoneT, class distanceT>
-double MultyThreadedAntAlgorithm<feromoneT, distanceT>::runGetTime(size_t begin, size_t iterations, typename mapCoroutine<distanceT>::push_type &sink) {
+double MultyThreadedAntAlgorithm<feromoneT, distanceT>::runGetTime(size_t begin, size_t iterations, typename mapCoroutine<distanceT>::push_type &sink)
+{
     auto startTime = std::chrono::high_resolution_clock::now();
     auto endTime = std::chrono::high_resolution_clock::now();
 

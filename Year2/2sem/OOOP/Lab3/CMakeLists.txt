@@ -19,7 +19,6 @@ include_directories(updateFeromoneStrategies)
 add_executable(Lab3
         antAlgorithms/antAlgorithm.h
         antAlgorithms/basicAntAlgotiyhm.h
-        ants/ant-test.cpp
         ants/ant.h
         ants/basicAnt.h
         ants/feromoneAnt.h
